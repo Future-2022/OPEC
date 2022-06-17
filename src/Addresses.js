@@ -224,6 +224,7 @@ export function getContract(chainId, name) {
     throw new Error(`Unknown contract "${name}" for chainId ${chainId}`);
   }
   return CONTRACTS[chainId][name];  
+  
 }
 
 export const XGMT_EXCLUDED_ACCOUNTS = [
