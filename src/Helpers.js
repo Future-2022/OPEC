@@ -13,10 +13,8 @@ import Token from "./abis/Token.json";
 import _ from "lodash";
 import { getContract } from "./Addresses";
 import useSWR from "swr";
-
 import OrderBookReader from "./abis/OrderBookReader.json";
 import OrderBook from "./abis/OrderBook.json";
-
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 
 const { AddressZero } = ethers.constants;
@@ -100,11 +98,13 @@ export const GLP_COOLDOWN_DURATION = 15 * 60;
 export const THRESHOLD_REDEMPTION_VALUE = expandDecimals(993, 27); // 0.993
 export const FUNDING_RATE_PRECISION = 1000000;
 
+
 export const SWAP = "Swap";
 export const INCREASE = "Increase";
 export const DECREASE = "Decrease";
 export const LONG = "Long";
 export const SHORT = "Short";
+
 
 export const MARKET = "Market";
 export const LIMIT = "Limit";
