@@ -50,6 +50,7 @@ let eventsData = [
     isActive: true,
     validTill: "5/04/2022 12:00:00 PM",
     bodyText: "The GMX referral program is now live! Get fee discounts and refer traders to earn rewards.",
+    
     buttons: [
       {
         text: "Read More",
