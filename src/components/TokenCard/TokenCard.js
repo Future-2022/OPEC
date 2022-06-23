@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 
-import logoImg from "../../img/logo.svg";
+import gmxBigIcon from "../../img/ic_gmx_custom.svg";
+import glpBigIcon from "../../img/ic_glp_custom.svg";
 
 import { ARBITRUM, AVALANCHE, switchNetwork, useChainId } from "../../Helpers";
 
@@ -33,24 +34,27 @@ export default function TokenCard() {
     <div className="Home-token-card-options">
       <div className="Home-token-card-option">
         <div className="Home-token-card-option-icon">
-          <img src={logoImg} alt="gmxBigIcon" width='30px'/> OPEC
+          <img src={gmxBigIcon} alt="gmxBigIcon" /> GMX
         </div>
         <div className="Home-token-card-option-info">
           <div className="Home-token-card-option-title">
-            OPEC is the utility and governance token. Accrues 30% of the platform's generated fees.
+            GMX is the utility and governance token. Accrues 30% of the platform's generated fees.
           </div>
           <div className="Home-token-card-option-apr">
-            Avalanche APR:{" "}
+            Arbitrum APR: <APRLabel chainId={ARBITRUM} label="gmxAprTotal" />, Avalanche APR:{" "}
             <APRLabel chainId={AVALANCHE} label="gmxAprTotal" key="AVALANCHE" />
           </div>
           <div className="Home-token-card-option-action">
             <div className="buy">
+              <Link to="/buy_gmx" className="default-btn" onClick={() => changeNetwork(ARBITRUM)}>
+                Buy on Arbitrum
+              </Link>
               <Link to="/buy_gmx" className="default-btn" onClick={() => changeNetwork(AVALANCHE)}>
                 Buy on Avalanche
               </Link>
             </div>
             <a
-              href="https://opulence.gitbook.io/opec/tokenomics"
+              href="https://gmxio.gitbook.io/gmx/tokenomics"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"
@@ -62,24 +66,27 @@ export default function TokenCard() {
       </div>
       <div className="Home-token-card-option">
         <div className="Home-token-card-option-icon">
-          <img src={logoImg} alt="pOPECBigIcon" width='30px'/> pOPEC
+          <img src={glpBigIcon} alt="glpBigIcon" /> GLP
         </div>
         <div className="Home-token-card-option-info">
           <div className="Home-token-card-option-title">
-            pOPEC is the liquidity provider token. Accrues 70% of the platform's generated fees.
+            GLP is the liquidity provider token. Accrues 70% of the platform's generated fees.
           </div>
           <div className="Home-token-card-option-apr">
-            Avalanche APR:{" "}
+            Arbitrum APR: <APRLabel chainId={ARBITRUM} label="glpAprTotal" key="ARBITRUM" />, Avalanche APR:{" "}
             <APRLabel chainId={AVALANCHE} label="glpAprTotal" key="AVALANCHE" />
           </div>
           <div className="Home-token-card-option-action">
             <div className="buy">
+              <Link to="/buy_glp" className="default-btn" onClick={() => changeNetwork(ARBITRUM)}>
+                Buy on Arbitrum
+              </Link>
               <Link to="/buy_glp" className="default-btn" onClick={() => changeNetwork(AVALANCHE)}>
                 Buy on Avalanche
               </Link>
             </div>
             <a
-              href="https://opulence.gitbook.io/opec/popec"
+              href="https://gmxio.gitbook.io/gmx/glp"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"

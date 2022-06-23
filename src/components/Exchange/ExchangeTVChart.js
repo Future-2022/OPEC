@@ -13,16 +13,13 @@ import {
   formatDateTime,
   usePrevious,
   getLiquidationPrice,
-  useLocalStorageSerializeKey
-} from '../../Helpers'
-import { useChartPrices } from '../../Api'
-import Tab from '../Tab/Tab'
+  useLocalStorageSerializeKey,
+} from "../../Helpers";
+import { useChartPrices } from "../../Api";
+import Tab from "../Tab/Tab";
 
-import {
-  getTokens,
-  getToken
-} from '../../data/Tokens'
-import ChartTokenSelector from './ChartTokenSelector'
+import { getTokens, getToken } from "../../data/Tokens";
+import ChartTokenSelector from "./ChartTokenSelector";
 
 const PRICE_LINE_TEXT_WIDTH = 15;
 
@@ -56,7 +53,7 @@ export function getChartToken(swapOption, fromToken, toToken, chainId) {
   if (toToken.isStable) {
     return fromToken;
   }
-  
+
   return toToken;
 }
 
@@ -64,15 +61,15 @@ const DEFAULT_PERIOD = "4h";
 
 const getSeriesOptions = () => ({
   // https://github.com/tradingview/lightweight-charts/blob/master/docs/area-series.md
-  lineColor: "#3abab4",
+  lineColor: "#5472cc",
   topColor: "rgba(49, 69, 131, 0.4)",
   bottomColor: "rgba(42, 64, 103, 0.0)",
-  lineWidth: 1,
-  priceLineColor: "#4c525e",
+  lineWidth: 2,
+  priceLineColor: "#3a3e5e",
   downColor: "#fa3c58",
   wickDownColor: "#fa3c58",
-  upColor: "#3abab4",
-  wickUpColor: "#3abab4",
+  upColor: "#0ecc83",
+  wickUpColor: "#0ecc83",
   borderVisible: false,
 });
 
@@ -81,7 +78,7 @@ const getChartOptions = (width, height) => ({
   height,
   layout: {
     backgroundColor: "rgba(255, 255, 255, 0)",
-    textColor: "#fff",
+    textColor: "#ccc",
     fontFamily: "Relative",
   },
   localization: {
@@ -93,13 +90,13 @@ const getChartOptions = (width, height) => ({
   grid: {
     vertLines: {
       visible: true,
-      color: "#2f3844",
-      style: 1,
+      color: "rgba(35, 38, 59, 1)",
+      style: 2,
     },
     horzLines: {
       visible: true,
-      color: "#2f3844",
-      style: 1,
+      color: "rgba(35, 38, 59, 1)",
+      style: 2,
     },
   },
   // https://github.com/tradingview/lightweight-charts/blob/master/docs/time-scale.md#time-scale
@@ -135,8 +132,8 @@ export default function ExchangeTVChart(props) {
     positions,
     savedShouldShowPositionLines,
     orders,
-    setToTokenAddress
-  } = props
+    setToTokenAddress,
+  } = props;
   const [currentChart, setCurrentChart] = useState();
   const [currentSeries, setCurrentSeries] = useState();
 
@@ -147,17 +144,17 @@ export default function ExchangeTVChart(props) {
 
   const [hoveredCandlestick, setHoveredCandlestick] = useState();
 
-  const fromToken = getTokenInfo(infoTokens, fromTokenAddress)
-  const toToken = getTokenInfo(infoTokens, toTokenAddress)
+  const fromToken = getTokenInfo(infoTokens, fromTokenAddress);
+  const toToken = getTokenInfo(infoTokens, toTokenAddress);
 
   const [chartToken, setChartToken] = useState({
     maxPrice: null,
-    minPrice: null
-  })
+    minPrice: null,
+  });
   useEffect(() => {
-    const tmp = getChartToken(swapOption, fromToken, toToken, chainId)
-    setChartToken(tmp)
-  }, [swapOption, fromToken, toToken, chainId])
+    const tmp = getChartToken(swapOption, fromToken, toToken, chainId);
+    setChartToken(tmp);
+  }, [swapOption, fromToken, toToken, chainId]);
 
   const symbol = chartToken ? (chartToken.isWrapped ? chartToken.baseSymbol : chartToken.symbol) : undefined;
   const marketName = chartToken ? symbol + "_USD" : undefined;
@@ -419,10 +416,10 @@ export default function ExchangeTVChart(props) {
   }
 
   const onSelectToken = (token) => {
-    const tmp = getTokenInfo(infoTokens, token.address)
-    setChartToken(tmp)
-    setToTokenAddress(swapOption, token.address)
-  }
+    const tmp = getTokenInfo(infoTokens, token.address);
+    setChartToken(tmp);
+    setToTokenAddress(swapOption, token.address);
+  };
 
   return (
     <div className="ExchangeChart tv" ref={ref}>
@@ -440,31 +437,35 @@ export default function ExchangeTVChart(props) {
               />
             </div>
           </div>
-					<div>
-						<div className="ExchangeChart-main-price">{chartToken.maxPrice && formatAmount(chartToken.maxPrice, USD_DECIMALS, 2)}</div>
-						<div className="ExchangeChart-info-label">${chartToken.minPrice && formatAmount(chartToken.minPrice, USD_DECIMALS, 2)}</div>
-					</div>
-					<div>
-						<div className="ExchangeChart-info-label">24h Change</div>
-						<div className={cx({ positive: deltaPercentage > 0, negative: deltaPercentage < 0 })}>
-							{!deltaPercentageStr && "-"}
-							{deltaPercentageStr && deltaPercentageStr}
-						</div>
-					</div>
-					<div className="ExchangeChart-additional-info">
-						<div className="ExchangeChart-info-label">24h High</div>
-						<div>
-							{!high && "-"}
-							{high && high.toFixed(2)}
-						</div>
-					</div>
-					<div className="ExchangeChart-additional-info">
-						<div className="ExchangeChart-info-label">24h Low</div>
-						<div>
-							{!low && "-"}
-							{low && low.toFixed(2)}
-						</div>
-					</div>
+          <div>
+            <div className="ExchangeChart-main-price">
+              {chartToken.maxPrice && formatAmount(chartToken.maxPrice, USD_DECIMALS, 2)}
+            </div>
+            <div className="ExchangeChart-info-label">
+              ${chartToken.minPrice && formatAmount(chartToken.minPrice, USD_DECIMALS, 2)}
+            </div>
+          </div>
+          <div>
+            <div className="ExchangeChart-info-label">24h Change</div>
+            <div className={cx({ positive: deltaPercentage > 0, negative: deltaPercentage < 0 })}>
+              {!deltaPercentageStr && "-"}
+              {deltaPercentageStr && deltaPercentageStr}
+            </div>
+          </div>
+          <div className="ExchangeChart-additional-info">
+            <div className="ExchangeChart-info-label">24h High</div>
+            <div>
+              {!high && "-"}
+              {high && high.toFixed(2)}
+            </div>
+          </div>
+          <div className="ExchangeChart-additional-info">
+            <div className="ExchangeChart-info-label">24h Low</div>
+            <div>
+              {!low && "-"}
+              {low && low.toFixed(2)}
+            </div>
+          </div>
         </div>
       </div>
       <div className="ExchangeChart-bottom App-box App-box-border">

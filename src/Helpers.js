@@ -28,11 +28,12 @@ export const PLACEHOLDER_ACCOUNT = ethers.Wallet.createRandom().address;
 
 export const MAINNET = 56;
 export const AVALANCHE = 43114;
+export const AVALANCHE_TESTNET = 43113;
 export const TESTNET = 97;
 export const ARBITRUM_TESTNET = 421611;
 export const ARBITRUM = 42161;
 // TODO take it from web3
-export const DEFAULT_CHAIN_ID = AVALANCHE;
+export const DEFAULT_CHAIN_ID = AVALANCHE_TESTNET;
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
 export const MIN_PROFIT_TIME = 0;
@@ -45,6 +46,7 @@ const CHAIN_NAMES_MAP = {
   [ARBITRUM_TESTNET]: "Arbitrum Testnet",
   [ARBITRUM]: "Arbitrum",
   [AVALANCHE]: "Avalanche",
+  [AVALANCHE_TESTNET]: "Avalanche Testnet",
 };
 
 const GAS_PRICE_ADJUSTMENT_MAP = {
@@ -58,6 +60,7 @@ const MAX_GAS_PRICE_MAP = {
 
 const ARBITRUM_RPC_PROVIDERS = ["https://arb1.arbitrum.io/rpc"];
 const AVALANCHE_RPC_PROVIDERS = ["https://api.avax.network/ext/bc/C/rpc"];
+const AVALANCHE_TESTNET_RPC_PROVIDERS = ["https://api.avax-test.network/ext/bc/C/rpc"];
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
 export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
 export const SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY = "eagerconnect";
@@ -115,9 +118,10 @@ export const DEFAULT_HIGHER_SLIPPAGE_AMOUNT = 100;
 export const SLIPPAGE_BPS_KEY = "Exchange-swap-slippage-basis-points-v3";
 export const IS_PNL_IN_LEVERAGE_KEY = "Exchange-swap-is-pnl-in-leverage";
 export const SHOW_PNL_AFTER_FEES_KEY = "Exchange-swap-show-pnl-after-fees";
+export const DISABLE_ORDER_VALIDATION_KEY = "disable-order-validation";
 export const SHOULD_SHOW_POSITION_LINES_KEY = "Exchange-swap-should-show-position-lines";
 export const REFERRAL_CODE_KEY = "GMX-referralCode";
-export const REFERRAL_CODE_QUERY_PARAMS = "ref";
+export const REFERRAL_CODE_QUERY_PARAM = "ref";
 export const REFERRALS_SELECTED_TAB_KEY = "Referrals-selected-tab";
 export const MAX_REFERRAL_CODE_LENGTH = 20;
 
@@ -217,6 +221,38 @@ export const ICONLINKS = {
       avalanche: "https://snowtrace.io/address/0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
     },
   },
+  43113: {
+    GMX: {
+      coingecko: "https://www.coingecko.com/en/coins/gmx",
+      avalanche: "https://snowtrace.io/address/0x62edc0692bd897d2295872a9ffcac5425011c661",
+    },
+    GLP: {
+      avalanche: "https://snowtrace.io/address/0x9e295B5B976a184B14aD8cd72413aD846C299660",
+    },
+    AVAX: {
+      coingecko: "https://www.coingecko.com/en/coins/avalanche",
+    },
+    ETH: {
+      coingecko: "https://www.coingecko.com/en/coins/weth",
+      avalanche: "https://snowtrace.io/address/0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+    },
+    BTC: {
+      coingecko: "https://www.coingecko.com/en/coins/wrapped-bitcoin",
+      avalanche: "https://snowtrace.io/address/0x50b7545627a5162f82a992c33b87adc75187b218",
+    },
+    MIM: {
+      coingecko: "https://www.coingecko.com/en/coins/magic-internet-money",
+      avalanche: "https://snowtrace.io/address/0x130966628846bfd36ff31a822705796e8cb8c18d",
+    },
+    "USDC.e": {
+      coingecko: "https://www.coingecko.com/en/coins/usd-coin-avalanche-bridged-usdc-e",
+      avalanche: "https://snowtrace.io/address/0xa7d7079b0fead91f3e65f86e8915cb59c1a4c664",
+    },
+    USDC: {
+      coingecko: "https://www.coingecko.com/en/coins/usd-coin",
+      avalanche: "https://snowtrace.io/address/0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+    },
+  },
 };
 
 export const platformTokens = {
@@ -267,6 +303,7 @@ const getWalletConnectConnector = () => {
     rpc: {
       [AVALANCHE]: AVALANCHE_RPC_PROVIDERS[0],
       [ARBITRUM]: ARBITRUM_RPC_PROVIDERS[0],
+      [AVALANCHE_TESTNET]: AVALANCHE_TESTNET_RPC_PROVIDERS[0],
     },
     qrcode: true,
     chainId,
@@ -1267,6 +1304,7 @@ const RPC_PROVIDERS = {
   [MAINNET]: BSC_RPC_PROVIDERS,
   [ARBITRUM]: ARBITRUM_RPC_PROVIDERS,
   [AVALANCHE]: AVALANCHE_RPC_PROVIDERS,
+  [AVALANCHE_TESTNET]: AVALANCHE_TESTNET_RPC_PROVIDERS,
 };
 
 const FALLBACK_PROVIDERS = {
@@ -1799,7 +1837,7 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
             const json = await res.json();
             const ret = {};
             for (const key of Object.keys(json)) {
-              ret[key.toLowerCase()] = json[key].map((val) => parseInt(val.value));
+              ret[key.toLowerCase()] = json[key].map((val) => parseInt(val.value)).sort((a, b) => a - b);
             }
 
             return ret;
@@ -1931,7 +1969,10 @@ export function getExplorerUrl(chainId) {
     return "https://arbiscan.io/";
   } else if (chainId === AVALANCHE) {
     return "https://snowtrace.io/";
+  } else if (chainId === AVALANCHE_TESTNET) {
+    return "https://testnet.snowtrace.io/";
   }
+
   return "https://etherscan.io/";
 }
 
@@ -2052,9 +2093,9 @@ export function approveTokens({
           </div>
         );
       } else if (e.message?.includes("User denied transaction signature")) {
-        failMsg = "Approval was cancelled.";
+        failMsg = "Approval was cancelled";
       } else {
-        failMsg = "Approval failed.";
+        failMsg = "Approval failed";
       }
       helperToast.error(failMsg);
     })
@@ -2144,6 +2185,17 @@ const NETWORK_METADATA = {
     },
     rpcUrls: AVALANCHE_RPC_PROVIDERS,
     blockExplorerUrls: [getExplorerUrl(AVALANCHE)],
+  },
+  [AVALANCHE_TESTNET]: {
+    chainId: "0x" + AVALANCHE_TESTNET.toString(16),
+    chainName: "Avalanche",
+    nativeCurrency: {
+      name: "AVAX",
+      symbol: "AVAX",
+      decimals: 18,
+    },
+    rpcUrls: AVALANCHE_TESTNET_RPC_PROVIDERS,
+    blockExplorerUrls: [getExplorerUrl(AVALANCHE_TESTNET)],
   },
 };
 
@@ -2323,7 +2375,9 @@ export function getInfoTokens(
       token.contractMaxPrice = token.maxPrice;
 
       token.maxAvailableShort = bigNumberify(0);
+      token.hasMaxAvailableShort = false;
       if (token.maxGlobalShortSize.gt(0)) {
+        token.hasMaxAvailableShort = true;
         if (token.maxGlobalShortSize.gt(token.globalShortSize)) {
           token.maxAvailableShort = token.maxGlobalShortSize.sub(token.globalShortSize);
         }
@@ -2338,7 +2392,10 @@ export function getInfoTokens(
         : token.availableAmount.mul(token.minPrice).div(expandDecimals(1, token.decimals));
 
       token.maxAvailableLong = bigNumberify(0);
+      token.hasMaxAvailableLong = false;
       if (token.maxGlobalLongSize.gt(0)) {
+        token.hasMaxAvailableLong = true;
+
         if (token.maxGlobalLongSize.gt(token.guaranteedUsd)) {
           const remainingLongSize = token.maxGlobalLongSize.sub(token.guaranteedUsd);
           token.maxAvailableLong = remainingLongSize.lt(token.availableUsd) ? remainingLongSize : token.availableUsd;
@@ -2666,7 +2723,7 @@ export function sleep(ms) {
 
 export function getPageTitle(data) {
   return `${data} | Decentralized
-  Perpetual Exchange | Opulence`;
+  Perpetual Exchange | GMX`;
 }
 
 export function isHashZero(value) {
@@ -2695,4 +2752,8 @@ export function useDebounce(value, delay) {
     [value, delay] // Only re-call effect if value or delay changes
   );
   return debouncedValue;
+}
+
+export function isDevelopment() {
+  return !window.location.origin?.includes("gmx.io");
 }

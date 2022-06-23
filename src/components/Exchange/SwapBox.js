@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import Tooltip from "../Tooltip/Tooltip";
 import Modal from "../Modal/Modal";
@@ -59,8 +59,6 @@ import {
   calculatePositionDelta,
   replaceNativeTokenAddress,
   adjustForDecimals,
-  REFERRAL_CODE_KEY,
-  isHashZero,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import * as Api from "../../Api";
@@ -82,6 +80,7 @@ import WETH from "../../abis/WETH.json";
 import longImg from "../../img/long.svg";
 import shortImg from "../../img/short.svg";
 import swapImg from "../../img/swap.svg";
+import { useUserReferralCode } from "../../Api/referrals";
 
 const SWAP_ICONS = {
   [LONG]: longImg,
@@ -164,6 +163,7 @@ export default function SwapBox(props) {
     setIsWaitingForPositionRouterApproval,
     isPluginApproving,
     isPositionRouterApproving,
+    savedShouldDisableOrderValidation,
   } = props;
 
   const [fromValue, setFromValue] = useState("");
@@ -174,8 +174,7 @@ export default function SwapBox(props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalError, setModalError] = useState(false);
   const [isHigherSlippageAllowed, setIsHigherSlippageAllowed] = useState(false);
-  const { userReferralCode } = Api.useUserReferralCode(library, chainId, account);
-  const userReferralCodeInLocalStorage = window.localStorage.getItem(REFERRAL_CODE_KEY);
+  const { attachedOnChain, userReferralCode } = useUserReferralCode(library, chainId, account);
 
   let allowedSlippage = savedSlippageAmount;
   if (isHigherSlippageAllowed) {
@@ -367,8 +366,6 @@ export default function SwapBox(props) {
       </div>
     );
   };
-
-  const hasMaxAvailableShort = isShort && toTokenInfo.maxAvailableShort && toTokenInfo.maxAvailableShort.gt(0);
 
   const fromBalance = fromTokenInfo ? fromTokenInfo.balance : bigNumberify(0);
   const toBalance = toTokenInfo ? toTokenInfo.balance : bigNumberify(0);
@@ -799,7 +796,7 @@ export default function SwapBox(props) {
     return [false];
   };
 
-  const getLeverageError = useCallback(() => {
+  const getLeverageError = () => {
     if (hasOutdatedUi) {
       return ["Page outdated, please refresh"];
     }
@@ -837,7 +834,7 @@ export default function SwapBox(props) {
       return ["Max leverage: 30.5x"];
     }
 
-    if (!isMarketOrder && entryMarkPrice && triggerPriceUsd) {
+    if (!isMarketOrder && entryMarkPrice && triggerPriceUsd && !savedShouldDisableOrderValidation) {
       if (isLong && entryMarkPrice.lt(triggerPriceUsd)) {
         return ["Price above Mark Price"];
       }
@@ -981,30 +978,7 @@ export default function SwapBox(props) {
     }
 
     return [false];
-  }, [
-    chainId,
-    fromAmount,
-    fromTokenAddress,
-    fromUsdMin,
-    hasExistingPosition,
-    infoTokens,
-    isLong,
-    isMarketOrder,
-    isShort,
-    leverage,
-    shortCollateralAddress,
-    shortCollateralToken,
-    swapOption,
-    toAmount,
-    toToken,
-    toTokenAddress,
-    totalTokenWeights,
-    triggerPriceUsd,
-    triggerPriceValue,
-    usdgSupply,
-    entryMarkPrice,
-    hasOutdatedUi,
-  ]);
+  };
 
   const getToLabel = () => {
     if (isSwap) {
@@ -1023,7 +997,7 @@ export default function SwapBox(props) {
     return getLeverageError();
   };
 
-  const renderOrdersToa = useCallback(() => {
+  const renderOrdersToa = () => {
     if (!ordersToaOpen) {
       return null;
     }
@@ -1035,9 +1009,9 @@ export default function SwapBox(props) {
         isPluginApproving={isPluginApproving}
       />
     );
-  }, [ordersToaOpen, setOrdersToaOpen, isPluginApproving, approveOrderBook]);
+  };
 
-  const renderErrorModal = useCallback(() => {
+  const renderErrorModal = () => {
     const inputCurrency = fromToken.address === AddressZero ? "ETH" : fromToken.address;
     let outputCurrency;
     if (isLong) {
@@ -1056,7 +1030,7 @@ export default function SwapBox(props) {
       modalError === "BUFFER" ? `${shortCollateralToken.symbol} Required` : `${fromToken.symbol} Capacity Reached`;
     const swapTokenSymbol = isLong ? toToken.symbol : shortCollateralToken.symbol;
     return (
-      <Modal isVisible={!!modalError} setIsVisible={setModalError} label={label} className="Error-modal">
+      <Modal isVisible={!!modalError} setIsVisible={setModalError} label={label} className="Error-modal font-base">
         <div>You need to select {swapTokenSymbol} as the "Pay" token to initiate this trade.</div>
         <br />
         {isShort && (
@@ -1071,19 +1045,7 @@ export default function SwapBox(props) {
         </a>
       </Modal>
     );
-  }, [
-    chainId,
-    modalError,
-    isShort,
-    setModalError,
-    fromToken?.address,
-    toToken?.address,
-    shortCollateralToken?.address,
-    isLong,
-    shortCollateralToken?.symbol,
-    toToken?.symbol,
-    fromToken?.symbol,
-  ]);
+  };
 
   const isPrimaryEnabled = () => {
     if (!active) {
@@ -1439,8 +1401,8 @@ export default function SwapBox(props) {
   };
 
   let referralCode = ethers.constants.HashZero;
-  if (isHashZero(userReferralCode) && userReferralCodeInLocalStorage) {
-    referralCode = userReferralCodeInLocalStorage;
+  if (!attachedOnChain && userReferralCode) {
+    referralCode = userReferralCode;
   }
 
   const increasePosition = async () => {
@@ -2296,7 +2258,7 @@ export default function SwapBox(props) {
             </div>
           </div>
           {renderAvailableLongLiquidity()}
-          {hasMaxAvailableShort && (
+          {isShort && toTokenInfo.hasMaxAvailableShort && (
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Available Liquidity</div>
               <div className="align-right">
@@ -2322,11 +2284,36 @@ export default function SwapBox(props) {
           )}
         </div>
       )}
-
+      <div className="Exchange-swap-market-box App-box App-box-border">
+        <div className="Exchange-swap-market-box-title">Useful Links</div>
+        <div className="App-card-divider"></div>
+        <div className="Exchange-info-row">
+          <div className="Exchange-info-label-button">
+            <a href="https://gmxio.gitbook.io/gmx/trading" target="_blank" rel="noopener noreferrer">
+              Trading guide
+            </a>
+          </div>
+        </div>
+        <div className="Exchange-info-row">
+          <div className="Exchange-info-label-button">
+            <a href={getLeaderboardLink()} target="_blank" rel="noopener noreferrer">
+              Leaderboard
+            </a>
+          </div>
+        </div>
+        <div className="Exchange-info-row">
+          <div className="Exchange-info-label-button">
+            <a href="https://gmxio.gitbook.io/gmx/trading#backup-rpc-urls" target="_blank" rel="noopener noreferrer">
+              Speed up page loading
+            </a>
+          </div>
+        </div>
+      </div>
       {renderErrorModal()}
       {renderOrdersToa()}
       {isConfirming && (
         <ConfirmationBox
+          library={library}
           isHigherSlippageAllowed={isHigherSlippageAllowed}
           setIsHigherSlippageAllowed={setIsHigherSlippageAllowed}
           orders={orders}
@@ -2363,6 +2350,8 @@ export default function SwapBox(props) {
           collateralTokenAddress={collateralTokenAddress}
           infoTokens={infoTokens}
           chainId={chainId}
+          setPendingTxns={setPendingTxns}
+          pendingTxns={pendingTxns}
         />
       )}
     </div>

@@ -315,7 +315,7 @@ export default function DashboardV2() {
               )}
               <br />
               <div>
-                <a href="https://opulence.gitbook.io/" target="_blank" rel="noopener noreferrer">
+                <a href="https://gmxio.gitbook.io/gmx/glp" target="_blank" rel="noopener noreferrer">
                   More Info
                 </a>
               </div>
@@ -358,7 +358,7 @@ export default function DashboardV2() {
     },
   ];
 
-  const totalStatsStartDate = chainId === AVALANCHE ? "01 Jun 2022" : "01 Sep 2021";
+  const totalStatsStartDate = chainId === AVALANCHE ? "06 Jan 2022" : "01 Sep 2021";
 
   let stableGlp = 0;
   let totalGlp = 0;
@@ -442,13 +442,13 @@ export default function DashboardV2() {
             <div className="Page-description">
               {chainName} Total Stats start from {totalStatsStartDate}.<br /> For detailed stats:{" "}
               {chainId === ARBITRUM && (
-                <a href="https://stats.opulence.network" target="_blank" rel="noopener noreferrer">
-                  https://stats.opulence.network
+                <a href="https://stats.gmx.io" target="_blank" rel="noopener noreferrer">
+                  https://stats.gmx.io
                 </a>
               )}
               {chainId === AVALANCHE && (
-                <a href="https://stats.opulence.network/avalanche" target="_blank" rel="noopener noreferrer">
-                  https://stats.opulence.network/avalanche
+                <a href="https://stats.gmx.io/avalanche" target="_blank" rel="noopener noreferrer">
+                  https://stats.gmx.io/avalanche
                 </a>
               )}
               .
@@ -467,17 +467,17 @@ export default function DashboardV2() {
                     <TooltipComponent
                       handle={`$${formatAmount(tvl, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
-                      renderContent={() => `Assets Under Management: OPEC staked (All chains) + pOPEC pool (${chainName})`}
+                      renderContent={() => `Assets Under Management: GMX staked (All chains) + GLP pool (${chainName})`}
                     />
                   </div>
                 </div>
                 <div className="App-card-row">
-                  <div className="label">pOPEC Pool</div>
+                  <div className="label">GLP Pool</div>
                   <div>
                     <TooltipComponent
                       handle={`$${formatAmount(aum, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
-                      renderContent={() => `Total value of tokens in pOPEC pool (${chainName})`}
+                      renderContent={() => `Total value of tokens in GLP pool (${chainName})`}
                     />
                   </div>
                 </div>
@@ -525,7 +525,7 @@ export default function DashboardV2() {
               Tokens {chainId === AVALANCHE && <img src={avalanche24Icon} alt="avalanche24Icon" />}
               {chainId === ARBITRUM && <img src={arbitrum24Icon} alt="arbitrum24Icon" />}
             </div>
-            <div className="Page-description">Platform and pOPEC index tokens.</div>
+            <div className="Page-description">Platform and GLP index tokens.</div>
           </div>
           <div className="DashboardV2-token-cards">
             <div className="stats-wrapper stats-wrapper--gmx">
@@ -537,8 +537,8 @@ export default function DashboardV2() {
                         <img src={gmx40Icon} alt="gmx40Icon" />
                       </div>
                       <div className="App-card-title-mark-info">
-                        <div className="App-card-title-mark-title">OPEC</div>
-                        <div className="App-card-title-mark-subtitle">OPEC</div>
+                        <div className="App-card-title-mark-title">GMX</div>
+                        <div className="App-card-title-mark-subtitle">GMX</div>
                       </div>
                       <div>
                         <AssetDropdown assetSymbol="GMX" />
@@ -569,7 +569,7 @@ export default function DashboardV2() {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Supply</div>
-                      <div>{formatAmount(totalGmxSupply, GMX_DECIMALS, 0, true)} OPEC</div>
+                      <div>{formatAmount(totalGmxSupply, GMX_DECIMALS, 0, true)} GMX</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Total Staked</div>
@@ -581,9 +581,9 @@ export default function DashboardV2() {
                             handle={`$${formatAmount(stakedGmxSupplyUsd, USD_DECIMALS, 0, true)}`}
                             renderContent={() => (
                               <>
-                                Staked on Arbitrum: {formatAmount(arbitrumStakedGmx, GMX_DECIMALS, 0, true)} OPEC
+                                Staked on Arbitrum: {formatAmount(arbitrumStakedGmx, GMX_DECIMALS, 0, true)} GMX
                                 <br />
-                                Staked on Avalanche: {formatAmount(avaxStakedGmx, GMX_DECIMALS, 0, true)} OPEC
+                                Staked on Avalanche: {formatAmount(avaxStakedGmx, GMX_DECIMALS, 0, true)} GMX
                               </>
                             )}
                           />
@@ -651,8 +651,8 @@ export default function DashboardV2() {
                         )}
                       </div>
                       <div className="App-card-title-mark-info">
-                        <div className="App-card-title-mark-title">pOPEC</div>
-                        <div className="App-card-title-mark-subtitle">pOPEC</div>
+                        <div className="App-card-title-mark-title">GLP</div>
+                        <div className="App-card-title-mark-subtitle">GLP</div>
                       </div>
                       <div>
                         <AssetDropdown assetSymbol="GLP" />
@@ -667,7 +667,7 @@ export default function DashboardV2() {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Supply</div>
-                      <div>{formatAmount(glpSupply, GLP_DECIMALS, 0, true)} pOPEC</div>
+                      <div>{formatAmount(glpSupply, GLP_DECIMALS, 0, true)} GLP</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Total Staked</div>
@@ -718,7 +718,7 @@ export default function DashboardV2() {
                         ))}
                       </Pie>
                       <text x={"50%"} y={"50%"} fill="white" textAnchor="middle" dominantBaseline="middle">
-                        pOPEC Pool
+                        GLP Pool
                       </text>
                       <Tooltip content={<CustomTooltip />} />
                     </PieChart>
@@ -728,7 +728,7 @@ export default function DashboardV2() {
             </div>
             <div className="token-table-wrapper App-card">
               <div className="App-card-title">
-                pOPEC Index Composition {chainId === AVALANCHE && <img src={avalanche16Icon} alt="avalanche16Icon" />}
+                GLP Index Composition {chainId === AVALANCHE && <img src={avalanche16Icon} alt="avalanche16Icon" />}
                 {chainId === ARBITRUM && <img src={arbitrum16Icon} alt="arbitrum16Icon" />}
               </div>
               <div className="App-card-divider"></div>

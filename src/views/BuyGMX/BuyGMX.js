@@ -38,8 +38,8 @@ export default function BuyGMX() {
   }, []);
 
   return (
-    <div className="BuyGMXGLP page-layout">
-      <div className="BuyGMXGLP-container default-container">
+    <div className="BuyGMXGLP default-container page-layout">
+      <div className="BuyGMXGLP-container">
         {chainId === ARBITRUM && (
           <div className="section-title-block">
             <div className="section-title-content">
@@ -84,7 +84,7 @@ export default function BuyGMX() {
               <div className="App-card-divider"></div>
               <div className="App-card-content">
                 <div className="BuyGMXGLP-description">
-                  You can transfer ETH from other networks to Arbitrum using any of the below options:
+                  You can also transfer ETH from other networks to Arbitrum using any of the below options:
                 </div>
                 <div className="bridge-options">
                   <Button
@@ -118,7 +118,12 @@ export default function BuyGMX() {
               <div className="Page-title">Buy / Transfer AVAX</div>
               <div className="Page-description">
                 Avax is needed on Avalanche to purchase GMX.
-               
+                <br />
+                To purchase GMX on{" "}
+                <span onClick={() => onNetworkSelect(ARBITRUM)}>
+                  Arbitrum <img src={arbitrum16Icon} alt="arbitrum16Icon" />
+                </span>
+                , please change your network.
               </div>
             </div>
           </div>
@@ -138,7 +143,7 @@ export default function BuyGMX() {
                 </div>
                 <div className="direct-purchase-options">
                   <Button
-                    href="https://banxa.com?coinType=AVAX&fiatType=USD&fiatAmount=500&blockchain=avalanche"
+                    href="https://gmx.banxa.com?coinType=AVAX&fiatType=USD&fiatAmount=500&blockchain=avalanche"
                     imgSrc={Banxa}
                   >
                     Banxa
@@ -151,7 +156,10 @@ export default function BuyGMX() {
               <div className="App-card-divider"></div>
               <div className="App-card-content">
                 <div className="BuyGMXGLP-description">
-                  You can transfer AVAX to Avalanche using any of the below options. <br />
+                  You can also transfer AVAX to Avalanche using any of the below options. <br />
+                  <br />
+                  If you use the Avalanche or Synapse bridges, you can transfer any other supported cryptocurrency, and
+                  receive AVAX to pay for the network fees.
                 </div>
                 <div className="bridge-options">
                   <Button align="left" href="https://bridge.avax.network/" imgSrc={avax30Icon}>
@@ -175,24 +183,28 @@ export default function BuyGMX() {
           <div className="BuyGMXGLP-panel">
             <div className="buy-card">
               <div className="section-title-content">
-                <div className="card-title">Buy OPEC</div>
+                <div className="card-title">Buy GMX</div>
               </div>
               <div className="App-card no-height">
                 <div className="App-card-content no-title">
                   <div className="BuyGMXGLP-description better-rates-description">
                     After you have AVAX, set your network to{" "}
-                    <a href="https://arbitrum.io/bridge-tutorial/" target="_blank" rel="noopener noreferrer">
-                      AVAX
-                    </a>{" "}
-                    then click the button below:
+                    <a
+                      href="https://support.avax.network/en/articles/4626956-how-do-i-set-up-metamask-on-avalanche"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Avalanche
+                    </a>
+                    , then click the button below:
                   </div>
                   <div className="direct-purchase-options">
                     <Button
                       size="xl"
                       imgSrc={gmxAvax}
-                      href="https://traderjoexyz.com/trade?#/"
+                      href="https://traderjoexyz.com/trade?outputCurrency=0x62edc0692BD897D2295872a9FFCac5425011c661#/"
                     >
-                      Purchase OPEC
+                      Purchase GMX
                     </Button>
                   </div>
                 </div>

@@ -38,12 +38,15 @@ import {
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
-  REFERRAL_CODE_QUERY_PARAMS,
+  REFERRAL_CODE_QUERY_PARAM,
+  isDevelopment,
+  DISABLE_ORDER_VALIDATION_KEY,
 } from "./Helpers";
 
 import Home from "./views/Home/Home";
 import Presale from "./views/Presale/Presale";
-import Stats from "./views/Dashboard/Dashboard";
+import Dashboard from "./views/Dashboard/Dashboard";
+import Ecosystem from "./views/Ecosystem/Ecosystem";
 import Stake from "./views/Stake/Stake";
 import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
@@ -77,8 +80,8 @@ import "./App.css";
 import "./Input.css";
 import "./AppOrder.css";
 
-import logoImg from "./img/logo.svg";
-import logoSmallImg from "./img/logo.svg";
+import logoImg from "./img/logo_GMX.svg";
+import logoSmallImg from "./img/logo_GMX_small.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
 // import logoImg from './img/gmx-logo-final-white-small.png'
@@ -123,7 +126,9 @@ function inPreviewMode() {
   return false;
 }
 
-const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
+const arbWsProvider = new ethers.providers.WebSocketProvider(
+  "wss://arb-mainnet.g.alchemy.com/v2/ha7CFsr1bx5ZItuR6VZBbhKozcKDY4LZ"
+);
 
 const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");
 
@@ -145,7 +150,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
     return (
       <div className="App-header-links preview">
         <div className="App-header-link-container App-header-link-home">
-          <NavLink activeClassName="active" exact to="/trade">
+          <NavLink activeClassName="active" exact to="/">
             HOME
           </NavLink>
         </div>
@@ -155,8 +160,8 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           </NavLink>
         </div>
         <div className="App-header-link-container">
-          <a href="https://opulence.dev/documentation" target="_blank" rel="noopener noreferrer">
-            DOCS
+          <a href="https://gmxio.gitbook.io/gmx/" target="_blank" rel="noopener noreferrer">
+            ABOUT
           </a>
         </div>
       </div>
@@ -169,11 +174,16 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           <div className="App-header-menu-icon-block" onClick={() => clickCloseIcon()}>
             <FiX className="App-header-menu-icon" />
           </div>
-          <Link className="App-header-link-main" to="/trade">
-            <img src={logoImg} alt="Logo" />
+          <Link className="App-header-link-main" to="/">
+            <img src={logoImg} alt="GMX Logo" />
           </Link>
         </div>
       )}
+      <div className="App-header-link-container App-header-link-home">
+        <NavLink activeClassName="active" exact to="/">
+          Home
+        </NavLink>
+      </div>
       {small && (
         <div className="App-header-link-container">
           <NavLink activeClassName="active" to="/trade">
@@ -182,8 +192,8 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </div>
       )}
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/stats">
-          Stats
+        <NavLink activeClassName="active" to="/dashboard">
+          Dashboard
         </NavLink>
       </div>
       <div className="App-header-link-container">
@@ -202,8 +212,13 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <a href="https://opulence.dev/documentation" target="_blank" rel="noopener noreferrer">
-          Docs
+        <NavLink activeClassName="active" to="/ecosystem">
+          Ecosystem
+        </NavLink>
+      </div>
+      <div className="App-header-link-container">
+        <a href="https://gmxio.gitbook.io/gmx/" target="_blank" rel="noopener noreferrer">
+          About
         </a>
       </div>
       {small && (
@@ -229,6 +244,12 @@ function AppHeaderUser({
   const { active, account } = useWeb3React();
   const showSelector = true;
   const networkOptions = [
+    {
+      label: "Arbitrum",
+      value: ARBITRUM,
+      icon: "ic_arbitrum_24.svg",
+      color: "#264f79",
+    },
     {
       label: "Avalanche",
       value: AVALANCHE,
@@ -258,6 +279,11 @@ function AppHeaderUser({
   if (!active) {
     return (
       <div className="App-header-user">
+        <div className="App-header-user-link">
+          <NavLink activeClassName="active" className="default-btn" to="/trade">
+            Trade
+          </NavLink>
+        </div>
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -281,6 +307,11 @@ function AppHeaderUser({
 
   return (
     <div className="App-header-user">
+      <div className="App-header-user-link">
+        <NavLink activeClassName="active" className="default-btn" to="/trade">
+          Trade
+        </NavLink>
+      </div>
       {showSelector && (
         <NetworkSelector
           options={networkOptions}
@@ -323,7 +354,7 @@ function FullApp() {
   const query = useRouteQuery();
 
   useEffect(() => {
-    let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);
+    let referralCode = query.get(REFERRAL_CODE_QUERY_PARAM);
     if (referralCode && referralCode.length <= 20) {
       const encodedReferralCode = encodeReferralCode(referralCode);
       if (encodeReferralCode !== ethers.constants.HashZero) {
@@ -376,7 +407,7 @@ function FullApp() {
           <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">
             Install MetaMask
           </a>
-          {userOnMobileDevice ? ", and use Opulence with its built-in browser" : " to start using Opulence"}.
+          {userOnMobileDevice ? ", and use GMX with its built-in browser" : " to start using GMX"}.
         </div>
       );
       return false;
@@ -393,7 +424,7 @@ function FullApp() {
           <a href="https://www.coinbase.com/wallet" target="_blank" rel="noopener noreferrer">
             Install Coinbase Wallet
           </a>
-          {userOnMobileDevice ? ", and use Opulence with its built-in browser" : " to start using Opulence"}.
+          {userOnMobileDevice ? ", and use GMX with its built-in browser" : " to start using GMX"}.
         </div>
       );
       return false;
@@ -429,6 +460,7 @@ function FullApp() {
   );
   const [slippageAmount, setSlippageAmount] = useState(0);
   const [isPnlInLeverage, setIsPnlInLeverage] = useState(false);
+  const [shouldDisableOrderValidation, setShouldDisableOrderValidation] = useState(false);
   const [showPnlAfterFees, setShowPnlAfterFees] = useState(false);
 
   const [savedIsPnlInLeverage, setSavedIsPnlInLeverage] = useLocalStorageSerializeKey(
@@ -438,6 +470,10 @@ function FullApp() {
 
   const [savedShowPnlAfterFees, setSavedShowPnlAfterFees] = useLocalStorageSerializeKey(
     [chainId, SHOW_PNL_AFTER_FEES_KEY],
+    false
+  );
+  const [savedShouldDisableOrderValidation, setSavedShouldDisableOrderValidation] = useLocalStorageSerializeKey(
+    [chainId, DISABLE_ORDER_VALIDATION_KEY],
     false
   );
 
@@ -451,6 +487,7 @@ function FullApp() {
     setSlippageAmount((slippage / BASIS_POINTS_DIVISOR) * 100);
     setIsPnlInLeverage(savedIsPnlInLeverage);
     setShowPnlAfterFees(savedShowPnlAfterFees);
+    setShouldDisableOrderValidation(savedShouldDisableOrderValidation);
     setIsSettingsVisible(true);
   };
 
@@ -477,6 +514,7 @@ function FullApp() {
 
     setSavedIsPnlInLeverage(isPnlInLeverage);
     setSavedShowPnlAfterFees(showPnlAfterFees);
+    setSavedShouldDisableOrderValidation(shouldDisableOrderValidation);
     setSavedSlippageAmount(basisPoints);
     setIsSettingsVisible(false);
   };
@@ -628,9 +666,9 @@ function FullApp() {
           <header>
             <div className="App-header large">
               <div className="App-header-container-left">
-                <Link className="App-header-link-main" to="/trade">
-                  <img src={logoImg} className="big" alt="Logo" />
-                  <img src={logoSmallImg} className="small" alt="Logo" />
+                <Link className="App-header-link-main" to="/">
+                  <img src={logoImg} className="big" alt="GMX Logo" />
+                  <img src={logoSmallImg} className="small" alt="GMX Logo" />
                 </Link>
                 <AppHeaderLinks />
               </div>
@@ -657,8 +695,8 @@ function FullApp() {
                     {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
                   </div>
                   <div className="App-header-link-main clickable" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                    <img src={logoImg} className="big" alt="Logo" />
-                    <img src={logoSmallImg} className="small" alt="Logo" />
+                    <img src={logoImg} className="big" alt="GMX Logo" />
+                    <img src={logoSmallImg} className="small" alt="GMX Logo" />
                   </div>
                 </div>
                 <div className="App-header-container-right">
@@ -692,7 +730,7 @@ function FullApp() {
           </AnimatePresence>
           <Switch>
             <Route exact path="/">
-              <Exchange />
+              <Home />
             </Route>
             <Route exact path="/trade">
               <Exchange
@@ -706,13 +744,14 @@ function FullApp() {
                 savedShouldShowPositionLines={savedShouldShowPositionLines}
                 setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
                 connectWallet={connectWallet}
+                savedShouldDisableOrderValidation={savedShouldDisableOrderValidation}
               />
             </Route>
             <Route exact path="/presale">
               <Presale />
             </Route>
-            <Route exact path="/stats">
-              <Stats />
+            <Route exact path="/dashboard">
+              <Dashboard />
             </Route>
             <Route exact path="/earn">
               <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
@@ -740,6 +779,9 @@ function FullApp() {
             </Route>
             <Route exact path="/buy_gmx">
               <BuyGMX />
+            </Route>
+            <Route exact path="/ecosystem">
+              <Ecosystem />
             </Route>
             <Route exact path="/referrals">
               <Referrals pendingTxns={pendingTxns} connectWallet={connectWallet} setPendingTxns={setPendingTxns} />
@@ -843,6 +885,14 @@ function FullApp() {
             Include PnL in leverage display
           </Checkbox>
         </div>
+        {isDevelopment() && (
+          <div className="Exchange-settings-row">
+            <Checkbox isChecked={shouldDisableOrderValidation} setIsChecked={setShouldDisableOrderValidation}>
+              Disable order validations
+            </Checkbox>
+          </div>
+        )}
+
         <button className="App-cta Exchange-swap-button" onClick={saveAndCloseSettings}>
           Save
         </button>
@@ -890,9 +940,9 @@ function PreviewApp() {
           <header>
             <div className="App-header large preview">
               <div className="App-header-container-left">
-                <NavLink exact activeClassName="active" className="App-header-link-main" to="/trade">
-                  <img src={logoImg} alt="Opulence Logo" />
-                  Opulence
+                <NavLink exact activeClassName="active" className="App-header-link-main" to="/">
+                  <img src={logoImg} alt="GMX Logo" />
+                  GMX
                 </NavLink>
               </div>
               <div className="App-header-container-right">
@@ -907,7 +957,7 @@ function PreviewApp() {
               >
                 <div className="App-header-container-left">
                   <div className="App-header-link-main">
-                    <img src={logoImg} alt="Opulence Logo" />
+                    <img src={logoImg} alt="GMX Logo" />
                   </div>
                 </div>
                 <div className="App-header-container-right">

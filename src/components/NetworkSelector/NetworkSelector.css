@@ -9,19 +9,19 @@
 .Selector .Modal-backdrop {
   height: 100vh;
   backdrop-filter: blur(4px);
-  background: #1d2128;
+  background: #101124aa;
 }
 
 .Selector-box {
-  width: 72px;
-  height: 36px;
+  width: 7.2rem;
+  height: 3.6rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: 4px;
+  border-radius: 0.4rem;
   cursor: pointer;
-  font-size: 14px;
-  padding: 7px 8px;
+  font-size: 1.4rem;
+  padding: 0.7rem 0.8rem;
 }
 
 .Selector-box.Arbitrum {
@@ -37,54 +37,56 @@
 .Selector-caret {
   vertical-align: middle;
   display: inline-block;
-  font-size: 1.5rem;
-  margin-top: -0.2rem;
+  font-size: 2.325rem;
+  margin-top: -0.31rem;
 }
 
 .Selector-option {
   cursor: pointer;
-  background: #1d2128;
-  border: 1px solid #1d2128;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
+  background: var(--dark-blue);
+  border: 1px solid var(--dark-blue-border);
+  border-radius: 0.4rem;
+  padding: 0.8rem 1.55rem;
   display: flex;
   align-items: center;
   position: relative;
 }
 .Selector-option:hover {
-  background: #1d2128;
+  background: var(--dark-blue-hover);
 }
 
 .Selector-option + .Selector-option {
-  margin-top: 0.5rem;
+  margin-top: 0.8rem;
 }
 
 .Selector-option .Selector-option_icon {
-  width: 32px;
-  margin-right: 1rem;
+  width: 3.2rem;
+  margin-right: 1.55rem;
 }
 
 .Selector-option .Selector-option_label {
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 1.6rem;
+  line-height: 2rem;
   letter-spacing: 0.29px;
   color: #ffffff;
 }
 
 .Selector-option.Arbitrum:hover {
   background: #808aff14 !important;
+  border: 1px solid #4275a8;
 }
 
 .Selector-option.Avalanche:hover {
-  background: #1d2127 !important;
+  background: #1f213e !important;
+  border: 1px solid #e84142;
 }
 
 .Selector-option .selected-icon {
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 0.8rem;
+  height: 0.8rem;
   border-radius: 50%;
-  right: 1rem;
+  right: 1.55rem;
 }
 
 .Selector-option.Arbitrum .selected-icon {
@@ -97,10 +99,10 @@
 
 .selected-icon {
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 0.8rem;
+  height: 0.8rem;
   border-radius: 50%;
-  right: 1rem;
+  right: 1.55rem;
 }
 
 .Selector .Modal {
@@ -116,27 +118,28 @@
 
 .Selector .Modal-title {
   color: white;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 1.4rem;
+  line-height: 2rem;
   letter-spacing: 0.25px;
   opacity: 1;
 }
 
 .Selector .Modal-content {
   width: 100%;
-  max-width: 19.1rem;
+  max-width: 29.6rem;
   margin: auto;
-  background: #1d2128 padding-box !important;
+  background: #16182e 0% 0% no-repeat padding-box;
   border: 1px solid #262638;
-  border-radius: 4px;
+  border-radius: 0.4rem;
 }
 
 .react-select__option {
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: 0.4rem;
 }
 .react-select__option.arbitrum:hover {
-  border-radius: 4px;
+  border: 1px solid #4275a8;
+  border-radius: 0.4rem;
   color: #eee;
 }
 .react-select__option.arbitrum:active {
@@ -146,23 +149,24 @@
   background: #818cef33 !important;
 }
 .react-select__option.avalanche:hover {
-  border-radius: 4px;
+  border: 1px solid #e84142;
+  border-radius: 0.4rem;
   color: #eee;
 }
 .react-select__indicator {
-  border-radius: 4px;
+  border-radius: 0.4rem;
 }
 .network-select {
   background: transparent;
 }
 .network-select:hover {
-  background: #1d2127;
+  background: #808aff14;
 }
 .network-select:active {
-  background: #1d2128;
+  background: var(--dark-blue-active);
 }
 .App-header-user-settings:hover {
-  background: #1d2128;
+  background: #2c2d45;
 }
 
 @media (max-width: 900px) {
