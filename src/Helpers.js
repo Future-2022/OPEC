@@ -292,7 +292,7 @@ export const platformTokens = {
   },
 };
 
-const supportedChainIds = [ARBITRUM, AVALANCHE];
+const supportedChainIds = [ARBITRUM, AVALANCHE, AVALANCHE_TESTNET];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,
 });
