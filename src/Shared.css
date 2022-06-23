@@ -1,0 +1,389 @@
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  color: white;
+  font-family: "Relative";
+  letter-spacing: 0.5px;
+  font-size: 15.5px;
+  background-color: #1d2128;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Relative";
+}
+
+::-webkit-scrollbar {
+  /* width: 10px; */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #1c1c1c;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #383838;
+  border-radius: 1rem;
+  border: 1px solid #212121;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}
+
+:root {
+  --dark-blue: #232931;
+  --dark-blue-bg: #232931;
+  --dark-blue-accent: #a0a3c4;
+  --dark-blue-hover: #808aff14;
+  --dark-blue-border: #232931;
+  --dark-blue-active: #232931;
+  --avax-red: #e84143;
+  --arbitrum-blue: #28a0f0;
+  --border-radius-sm: 4px;
+}
+
+a {
+  color: white;
+}
+
+.Card-title {
+  font-size: 2rem;
+}
+
+.color-white {
+  color:#fff !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input {
+  font-size: 1.3rem;
+  color: white;
+  outline: none;
+  background: none;
+  border: none;
+  padding: 0.8rem;
+  font-family: "Relative";
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+button {
+  outline: none;
+  cursor: pointer;
+  font-family: "Relative";
+}
+
+button:disabled,
+button.App-cta:disabled {
+  cursor: not-allowed;
+  opacity: 0.9;
+  box-shadow: none;
+}
+
+table {
+  margin: 0;
+  padding: 0;
+}
+
+tr {
+  margin: 0;
+  padding: 0;
+}
+
+td {
+  margin: 0;
+  padding: 0;
+  padding-right: 0.3rem;
+}
+
+.border {
+  border: 1px solid rgba(163, 165, 196, 0.2);
+}
+
+.align-right {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.muted {
+  opacity: 0.7;
+}
+
+.strong {
+  font-weight: bold;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.text-none {
+  text-transform: none;
+}
+
+.margin-bottom {
+  margin-bottom: 0.3rem;
+}
+
+.transition-arrow {
+  vertical-align: middle;
+  margin-top: -0.2rem;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.label,
+.label a {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+ul {
+  padding-left: 1.5rem;
+  margin-bottom: 0;
+}
+
+ul li {
+  padding-bottom: 1rem;
+}
+
+a.plain {
+  text-decoration: none;
+}
+
+.checkbox:checked:before {
+  background-color: green;
+}
+
+.default-btn {
+  background: #3abab4;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 20px;
+  font-family: Relative;
+  font-weight: normal;
+  letter-spacing: 0px;
+  color: #ffffff !important;
+  padding-left: 16px;
+  padding-right: 16px;
+  /* padding: 9px 16px!important; */
+  text-decoration: none;
+  box-sizing: border-box;
+  position: relative;
+  min-height: 36px;
+  display: inline-flex !important;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  appearance: none;
+}
+
+.default-btn:hover {
+  background: #4cd4ce;
+}
+
+/* .default-btn:focus {
+  background: #515ed8;
+  border: 1px solid #3D4FFE;
+  box-sizing: border-box;
+  padding-left: 15px;
+  padding-right: 15px;
+} */
+
+.default-btn:active {
+  background: #3abab4;
+  border: none;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.default-btn:active::after {
+  opacity: 0.239;
+  content: " ";
+  width: 52px;
+  height: 52px;
+  position: absolute;
+  left: calc(50% - 26px);
+  top: -8px;
+  background: white;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 600ms linear;
+}
+
+.default-btn:disabled {
+  background: #2d2e3f 0% 0% no-repeat padding-box;
+  color: #ffffff61;
+}
+
+.default-container {
+  max-width: 80rem;
+  padding-left: 32px;
+  padding-right: 32px;
+  margin: 0 auto;
+}
+
+.secondary-btn {
+  background: #03d1cf;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 20px;
+  font-family: Relative;
+  font-weight: normal;
+  letter-spacing: 0px;
+  color: black;
+  padding-left: 16px;
+  padding-right: 16px;
+  /* padding: 9px 16px!important; */
+  text-decoration: none;
+  box-sizing: border-box;
+  position: relative;
+  min-height: 36px;
+  border: none;
+  display: inline-flex !important;
+  align-items: center;
+  text-align: center;
+}
+
+.secondary-btn:hover {
+  background: #3fdad9;
+}
+
+.secondary-btn:focus {
+  background: #54dedd;
+  border: 1px solid #1cb5b4fc;
+  box-sizing: border-box;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.secondary-btn:active {
+  background: #54dedd;
+  border: none;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
+  /* padding: 9px 16px; */
+}
+
+.secondary-btn:active::after {
+  opacity: 0.239;
+  content: " ";
+  width: 52px;
+  height: 52px;
+  position: absolute;
+  left: calc(50% - 26px);
+  top: -8px;
+  background: white;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 500ms linear;
+}
+
+.secondary-btn:disabled {
+  background: #2d2e3f 0% 0% no-repeat padding-box;
+  color: #ffffff61;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(2);
+    opacity: 0.4;
+  }
+}
+
+button.btn-link {
+  margin-top: 1rem;
+  background: none;
+  color: white;
+  border: none;
+  padding: 0;
+  font-size: 1rem;
+  display: block;
+  text-align: left;
+}
+
+.logout-icon {
+  vertical-align: middle;
+  font-size: 1.1rem;
+  margin-top: -0.2rem;
+  margin-right: 0.35rem;
+  margin-left: -0.3rem;
+  opacity: 0.8;
+}
+
+button.btn-link:hover {
+  text-decoration: underline;
+}
+
+button.btn-link:hover .logout-icon {
+  opacity: 1;
+}
+
+.page-container {
+  padding-top: 4rem;
+}
+
+.mt-0 {
+  margin-top: 0 !important;
+}
+
+.page-layout {
+  min-height: calc(100vh - 62px);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: calc(3rem + 200px);
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-space-between {
+  justify-content: space-between;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.default-cursor.App-cta {
+  cursor: default;
+}
