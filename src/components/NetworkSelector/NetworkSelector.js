@@ -196,6 +196,7 @@ export default function NetworkSelector(props) {
           className={"network-select"}
           styles={customStyles}
           getOptionLabel={(e) => {
+            console.log('*****************', e.label);
             var optionIcon = require("../../img/" + e.icon);
             return (
               <div style={{ display: "flex", alignItems: "center" }}>
