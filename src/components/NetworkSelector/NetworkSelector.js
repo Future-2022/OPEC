@@ -17,6 +17,8 @@ function getDotColor(network) {
       return "#4275a8";
     case "Avalanche":
       return "#E84142";
+    case "Avalanche Test":
+      return "#EC0142";
     default:
       return "";
   }
