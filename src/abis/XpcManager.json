@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "GlpManager",
-  "sourceName": "contracts/core/GlpManager.sol",
+  "contractName": "XpcManager",
+  "sourceName": "contracts/core/XpcManager.sol",
   "abi": [
     {
       "inputs": [
@@ -17,7 +17,7 @@
         },
         {
           "internalType": "address",
-          "name": "_glp",
+          "name": "_xpc",
           "type": "address"
         },
         {
@@ -59,7 +59,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "glpSupply",
+          "name": "xpcSupply",
           "type": "uint256"
         },
         {
@@ -96,7 +96,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "glpAmount",
+          "name": "xpcAmount",
           "type": "uint256"
         },
         {
@@ -108,7 +108,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "glpSupply",
+          "name": "xpcSupply",
           "type": "uint256"
         },
         {
@@ -185,7 +185,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_minGlp",
+          "name": "_minXpc",
           "type": "uint256"
         }
       ],
@@ -229,7 +229,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_minGlp",
+          "name": "_minXpc",
           "type": "uint256"
         }
       ],
@@ -336,7 +336,7 @@
     },
     {
       "inputs": [],
-      "name": "glp",
+      "name": "xpc",
       "outputs": [
         {
           "internalType": "address",
@@ -420,7 +420,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_glpAmount",
+          "name": "_xpcAmount",
           "type": "uint256"
         },
         {
@@ -459,7 +459,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_glpAmount",
+          "name": "_xpcAmount",
           "type": "uint256"
         },
         {

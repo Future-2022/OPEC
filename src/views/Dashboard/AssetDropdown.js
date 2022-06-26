@@ -15,6 +15,7 @@ function AssetDropdown({ assetSymbol, assetInfo }) {
   const unavailableTokenSymbols = {
     42161: ["ETH"],
     43114: ["AVAX"],
+    43113: ["AVAX"],
   };
 
   return (

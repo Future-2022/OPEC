@@ -29,13 +29,13 @@ import { getContract } from "./Addresses";
 
 import Reader from "./abis/Reader.json";
 import Token from "./abis/Token.json";
-import GmxMigrator from "./abis/GmxMigrator.json";
+import OpecMigrator from "./abis/OpecMigrator.json";
 
 const { MaxUint256, AddressZero } = ethers.constants;
 
 const precision = 1000000;
 const decimals = 6;
-const gmxPrice = bigNumberify(2 * precision);
+const opecPrice = bigNumberify(2 * precision);
 const tokens = [
   {
     name: "GMT",
@@ -76,7 +76,7 @@ const tokens = [
 ];
 
 const readerAddress = getContract(CHAIN_ID, "Reader");
-const gmxMigratorAddress = getContract(CHAIN_ID, "GmxMigrator");
+const opecMigratorAddress = getContract(CHAIN_ID, "OpecMigrator");
 
 function MigrationModal(props) {
   const {
@@ -97,7 +97,7 @@ function MigrationModal(props) {
   const [isApproving, setIsApproving] = useState(false);
 
   const { data: tokenAllowance, mutate: updateTokenAllowance } = useSWR(
-    [active, CHAIN_ID, token.address, "allowance", account, gmxMigratorAddress],
+    [active, CHAIN_ID, token.address, "allowance", account, opecMigratorAddress],
     {
       fetcher: fetcher(library, Token),
     }
@@ -131,13 +131,13 @@ function MigrationModal(props) {
   let totalAmountUsd;
 
   if (amount) {
-    baseAmount = amount.mul(token.price).div(gmxPrice);
+    baseAmount = amount.mul(token.price).div(opecPrice);
     bonusAmount = baseAmount.mul(token.bonus).div(100);
     totalAmount = baseAmount.add(bonusAmount);
 
-    baseAmountUsd = baseAmount.mul(gmxPrice);
-    bonusAmountUsd = bonusAmount.mul(gmxPrice);
-    totalAmountUsd = totalAmount.mul(gmxPrice);
+    baseAmountUsd = baseAmount.mul(opecPrice);
+    bonusAmountUsd = bonusAmount.mul(opecPrice);
+    totalAmountUsd = totalAmount.mul(opecPrice);
   }
 
   const getError = () => {
@@ -155,7 +155,7 @@ function MigrationModal(props) {
         setIsApproving,
         library,
         tokenAddress: token.address,
-        spender: gmxMigratorAddress,
+        spender: opecMigratorAddress,
         chainId: CHAIN_ID,
         onApproveSubmitted: () => {
           setIsPendingApproval(true);
@@ -165,7 +165,7 @@ function MigrationModal(props) {
     }
 
     setIsMigrating(true);
-    const contract = new ethers.Contract(gmxMigratorAddress, GmxMigrator.abi, library.getSigner());
+    const contract = new ethers.Contract(opecMigratorAddress, OpecMigrator.abi, library.getSigner());
     contract
       .migrate(token.address, amount)
       .then(async (res) => {
@@ -257,7 +257,7 @@ function MigrationModal(props) {
             <div className="App-info-label">{token.bonus > 0 ? "Base Tokens" : "To Receive"}</div>
             <div className="align-right">
               {baseAmount &&
-                `${formatAmount(baseAmount, 18, 4, true)} GMX ($${formatAmount(
+                `${formatAmount(baseAmount, 18, 4, true)} OPEC ($${formatAmount(
                   baseAmountUsd,
                   18 + decimals,
                   2,
@@ -271,7 +271,7 @@ function MigrationModal(props) {
               <div className="App-info-label">Bonus Tokens</div>
               <div className="align-right">
                 {bonusAmount &&
-                  `${formatAmount(bonusAmount, 18, 4, true)} GMX ($${formatAmount(
+                  `${formatAmount(bonusAmount, 18, 4, true)} OPEC ($${formatAmount(
                     bonusAmountUsd,
                     18 + decimals,
                     2,
@@ -286,7 +286,7 @@ function MigrationModal(props) {
               <div className="App-info-label">To Receive</div>
               <div className="align-right">
                 {totalAmount &&
-                  `${formatAmount(totalAmount, 18, 4, true)} GMX ($${formatAmount(
+                  `${formatAmount(totalAmount, 18, 4, true)} OPEC ($${formatAmount(
                     totalAmountUsd,
                     18 + decimals,
                     2,
@@ -342,26 +342,26 @@ export default function Migration() {
   );
 
   const { data: migratedAmounts, mutate: updateMigratedAmounts } = useSWR(
-    ["Migration:migratedAmounts", CHAIN_ID, gmxMigratorAddress, "getTokenAmounts"],
+    ["Migration:migratedAmounts", CHAIN_ID, opecMigratorAddress, "getTokenAmounts"],
     {
-      fetcher: fetcher(library, GmxMigrator, [tokenAddresses]),
+      fetcher: fetcher(library, OpecMigrator, [tokenAddresses]),
     }
   );
 
-  let gmxBalance;
-  let totalMigratedGmx;
+  let opecBalance;
+  let totalMigratedOpec;
   let totalMigratedUsd;
 
   if (iouBalances) {
-    gmxBalance = bigNumberify(0);
-    totalMigratedGmx = bigNumberify(0);
+    opecBalance = bigNumberify(0);
+    totalMigratedOpec = bigNumberify(0);
 
     for (let i = 0; i < iouBalances.length / 2; i++) {
-      gmxBalance = gmxBalance.add(iouBalances[i * 2]);
-      totalMigratedGmx = totalMigratedGmx.add(iouBalances[i * 2 + 1]);
+      opecBalance = opecBalance.add(iouBalances[i * 2]);
+      totalMigratedOpec = totalMigratedOpec.add(iouBalances[i * 2 + 1]);
     }
 
-    totalMigratedUsd = totalMigratedGmx.mul(gmxPrice);
+    totalMigratedUsd = totalMigratedOpec.mul(opecPrice);
   }
 
   useEffect(() => {
@@ -407,11 +407,11 @@ export default function Migration() {
           <div className="Stake-title-secondary">Total Assets Migrated</div>
         </div>
       </div>
-      <div className="Migration-note">Your wallet: {formatAmount(gmxBalance, 18, 4, true)} GMX</div>
+      <div className="Migration-note">Your wallet: {formatAmount(opecBalance, 18, 4, true)} OPEC</div>
       <div className="Migration-note">
         Please read the&nbsp;
         <a
-          href="https://gambitprotocol.medium.com/gambit-gmx-migration-now-live-2ba999d208dd"
+          href="https://gambitprotocol.medium.com/gambit-opec-migration-now-live-2ba999d208dd"
           target="_blank"
           rel="noopener noreferrer"
         >

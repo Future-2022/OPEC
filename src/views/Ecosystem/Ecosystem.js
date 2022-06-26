@@ -22,67 +22,67 @@ const NETWORK_ICON_ALTS = {
 export default function Ecosystem() {
   const officialPages = [
     {
-      title: "GMX Governance",
-      link: "https://gov.gmx.io/",
-      about: "GMX Governance Page",
+      title: "OPEC Governance",
+      link: "https://gov.opec.io/",
+      about: "OPEC Governance Page",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
-      title: "GMX Stats",
-      link: "https://stats.gmx.io/",
-      about: "GMX Stats Page",
+      title: "OPEC Stats",
+      link: "https://stats.opec.io/",
+      about: "OPEC Stats Page",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
-      title: "GMX Proposals",
-      link: "https://snapshot.org/#/gmx.eth",
-      about: "GMX Proposals Voting page",
+      title: "OPEC Proposals",
+      link: "https://snapshot.org/#/opec.eth",
+      about: "OPEC Proposals Voting page",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
-      title: "GMX Announcements",
+      title: "OPEC Announcements",
       link: "https://t.me/GMX_Announcements",
-      about: "GMX Announcements and Updates",
+      about: "OPEC Announcements and Updates",
       chainIds: [ARBITRUM, AVALANCHE],
     },
   ];
 
   const communityProjects = [
     {
-      title: "GMX Blueberry Club",
+      title: "OPEC Blueberry Club",
       link: "https://www.blueberry.club/",
-      about: "GMX Blueberry NFTs",
+      about: "OPEC Blueberry NFTs",
       creatorLabel: "@xm92boi",
       creatorLink: "https://t.me/xm92boi",
       chainIds: [ARBITRUM],
     },
     {
-      title: "GMX Leaderboard",
-      link: "https://www.gmx.house/",
-      about: "Leaderboard for GMX traders",
+      title: "OPEC Leaderboard",
+      link: "https://www.opec.house/",
+      about: "Leaderboard for OPEC traders",
       creatorLabel: "@Itburnz",
       creatorLink: "https://t.me/Itburnz",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
-      title: "GMX Positions Bot",
+      title: "OPEC Positions Bot",
       link: "https://t.me/GMXPositions",
-      about: "Telegram bot for GMX position updates",
+      about: "Telegram bot for OPEC position updates",
       creatorLabel: "@zhongfu",
       creatorLink: "https://t.me/zhongfu",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
-      title: "GMX Terminal",
-      link: "https://gmxterminal.com",
-      about: "GMX explorer for stats and traders",
+      title: "OPEC Terminal",
+      link: "https://opecterminal.com",
+      about: "OPEC explorer for stats and traders",
       creatorLabel: "@vipineth",
       creatorLink: "https://t.me/vipineth",
       chainIds: [ARBITRUM],
     },
     {
-      title: "GMX Analytics",
-      link: "https://www.gmxstats.com/",
+      title: "OPEC Analytics",
+      link: "https://www.opecstats.com/",
       about: "Financial reports and protocol analytics",
       creatorLabel: "@CryptoMessiah",
       creatorLink: "https://t.me/LarpCapital",
@@ -91,38 +91,38 @@ export default function Ecosystem() {
     {
       title: "Blueberry Pulse",
       link: "https://blueberrypulse.substack.com/",
-      about: "GMX Weekly Updates",
+      about: "OPEC Weekly Updates",
       creatorLabel: "@puroscohiba",
       creatorLink: "https://t.me/puroscohiba",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
       title: "DegenClip",
-      link: "https://degenclip.com/gmx",
+      link: "https://degenclip.com/opec",
       about: "Community curated tweet collection",
       creatorLabel: "@ox21l",
       creatorLink: "https://t.me/ox21l",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
-      title: "GMX Yield Simulator",
-      link: "https://gmx.defisims.com/",
-      about: "Yield simulator for GMX",
+      title: "OPEC Yield Simulator",
+      link: "https://opec.defisims.com/",
+      about: "Yield simulator for OPEC",
       creatorLabel: "@s0berknight",
       creatorLink: "https://twitter.com/s0berknight",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
-      title: "GMX Returns Calculator",
+      title: "OPEC Returns Calculator",
       link: "https://docs.google.com/spreadsheets/u/4/d/1mQZlztz_NpTg5qQiYIzc_Ls1OTLfMOUtmEQN-WW8jj4/copy",
       linkLabel: "Google Spreadsheet",
-      about: "Returns calculator for GMX and GLP",
+      about: "Returns calculator for OPEC and XPC",
       creatorLabel: "@AStoicTrader1",
       creatorLink: "https://twitter.com/AStoicTrader1",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
-      title: "GMX Compound Calculator",
+      title: "OPEC Compound Calculator",
       link: "https://docs.google.com/spreadsheets/d/14DiIE1wZkK9-Y5xSx1PzIgmpcj4ccz1YVw5nwzIWLgI/edit#gid=0",
       linkLabel: "Google Spreadsheet",
       about: "Optimal compound interval calculator",
@@ -217,24 +217,24 @@ export default function Ecosystem() {
 
   const telegramGroups = [
     {
-      title: "GMX",
+      title: "OPEC",
       link: "https://t.me/GMX_IO",
       about: "Telegram Group",
     },
     {
-      title: "GMX (Chinese)",
-      link: "https://t.me/gmxch",
+      title: "OPEC (Chinese)",
+      link: "https://t.me/opecch",
       about: "Telegram Group (Chinese)",
     },
     {
-      title: "GMX (Portuguese)",
+      title: "OPEC (Portuguese)",
       link: "https://t.me/GMX_Portuguese",
       about: "Telegram Group (Portuguese)",
     },
     {
-      title: "GMX Trading Chat",
+      title: "OPEC Trading Chat",
       link: "https://t.me/gambittradingchat",
-      about: "GMX community discussion",
+      about: "OPEC community discussion",
     },
   ];
 
@@ -246,7 +246,7 @@ export default function Ecosystem() {
             <div className="section-title-icon"></div>
             <div className="section-title-content">
               <div className="Page-title">Official Pages</div>
-              <div className="Page-description">Official GMX ecosystem pages.</div>
+              <div className="Page-description">Official OPEC ecosystem pages.</div>
             </div>
           </div>
           <div className="DashboardV2-projects">
@@ -283,7 +283,7 @@ export default function Ecosystem() {
           </div>
           <div className="Tab-title-section">
             <div className="Page-title">Community Projects</div>
-            <div className="Page-description">Projects developed by the GMX community.</div>
+            <div className="Page-description">Projects developed by the OPEC community.</div>
           </div>
           <div className="DashboardV2-projects">
             {communityProjects.map((item) => {
@@ -327,7 +327,7 @@ export default function Ecosystem() {
           </div>
           <div className="Tab-title-section">
             <div className="Page-title">Partnerships and Integrations</div>
-            <div className="Page-description">Projects integrated with GMX.</div>
+            <div className="Page-description">Projects integrated with OPEC.</div>
           </div>
           <div className="DashboardV2-projects">
             {integrations.map((item) => {

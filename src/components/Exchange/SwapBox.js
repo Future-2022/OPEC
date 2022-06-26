@@ -194,12 +194,12 @@ export default function SwapBox(props) {
 
   const getLeaderboardLink = () => {
     if (chainId === ARBITRUM) {
-      return "https://www.gmx.house/arbitrum/leaderboard";
+      return "https://www.opec.house/arbitrum/leaderboard";
     }
     if (chainId === AVALANCHE) {
-      return "https://www.gmx.house/avalanche/leaderboard";
+      return "https://www.opec.house/avalanche/leaderboard";
     }
-    return "https://www.gmx.house";
+    return "https://www.opec.house";
   };
 
   function getTokenLabel() {

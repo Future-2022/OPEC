@@ -1,4 +1,4 @@
-.GlpSwap-content {
+.XpcSwap-content {
   display: flex;
   justify-content: space-between;
   border-bottom-left-radius: 0.8rem;
@@ -23,16 +23,16 @@
   color: #f89191;
 }
 
-.GlpSwap-from-token .Modal {
+.XpcSwap-from-token .Modal {
   align-items: flex-start;
   justify-content: flex-end;
 }
 
-.GlpSwap-from-token .Modal .Modal-content {
+.XpcSwap-from-token .Modal .Modal-content {
   width: 41.85rem;
 }
 
-.GlpSwap-from-token .Modal-content {
+.XpcSwap-from-token .Modal-content {
   position: absolute;
   width: 38.75rem;
   max-height: 100vh;
@@ -41,7 +41,7 @@
   top: 0;
   bottom: 0;
 }
-.GlpSwap-from-token .Modal-content .Modal-body {
+.XpcSwap-from-token .Modal-content .Modal-body {
   padding-right: 0.5rem;
   max-height: calc(100vh - 7.75rem);
   overflow-y: auto;
@@ -49,29 +49,29 @@
   -webkit-overflow-scrolling: auto;
 }
 
-.GlpSwap-content .GlpSwap-stats-card,
-.GlpSwap-content .GlpSwap-box {
+.XpcSwap-content .XpcSwap-stats-card,
+.XpcSwap-content .XpcSwap-box {
   width: 100%;
 }
 
-.GlpSwap-content .GlpSwap-stats-card {
+.XpcSwap-content .XpcSwap-stats-card {
   max-width: 71.2rem;
   margin-right: 1.55rem;
 }
 
-.GlpSwap-stats-card .App-card-row .label {
+.XpcSwap-stats-card .App-card-row .label {
   color: #a9a9b0;
   opacity: 1;
 }
 
-.GlpSwap-content .GlpSwap-box {
+.XpcSwap-content .XpcSwap-box {
   max-width: 47.95rem;
   border-radius: 0.4rem;
   padding: 1.55rem;
   padding-top: 0;
 }
 
-.GlpSwap-box .Exchange-swap-option-tabs {
+.XpcSwap-box .Exchange-swap-option-tabs {
   margin: 1.55rem 0;
 }
 
@@ -107,7 +107,7 @@
   color: #a9a9b0;
 }
 
-.GlpSwap-token-list {
+.XpcSwap-token-list {
   border: 1px solid #1e2136;
   border-radius: 4px;
   background: #16182e;
@@ -116,18 +116,18 @@
   text-align: left;
 }
 
-.GlpSwap-token-list-content {
+.XpcSwap-token-list-content {
   display: grid;
   padding: 1.55rem;
   padding-top: 0;
   text-align: left;
 }
 
-.GlpSwap-box .App-card-title {
+.XpcSwap-box .App-card-title {
   margin-bottom: 0.8rem;
 }
 
-.GlpSwap-box .Exchange-info-row {
+.XpcSwap-box .Exchange-info-row {
   height: 1.55rem;
   margin-bottom: 0.8rem;
   display: flex;
@@ -135,19 +135,19 @@
   align-items: center;
 }
 
-.GlpSwap-box .Exchange-info-row .Exchange-info-label {
+.XpcSwap-box .Exchange-info-row .Exchange-info-label {
   margin-right: 0.8rem;
   color: #a9a9b0;
   opacity: 1;
 }
 
-.GlpSwap-cta {
+.XpcSwap-cta {
   margin: 0 auto;
   text-align: center;
   padding-top: 0;
 }
 
-.GlpSwap-cta .Exchange-swap-button {
+.XpcSwap-cta .Exchange-swap-button {
   margin: 0 auto;
   justify-content: center;
   min-height: 4.8rem;
@@ -226,28 +226,28 @@
 }
 
 @media (max-width: 900px) {
-  .GlpSwap-content {
+  .XpcSwap-content {
     flex-wrap: wrap;
   }
 
-  .GlpSwap-content .GlpSwap-stats-card {
+  .XpcSwap-content .XpcSwap-stats-card {
     margin: 0;
     margin-bottom: 3.1rem;
     max-width: 100%;
   }
 
-  .GlpSwap-content .GlpSwap-box {
+  .XpcSwap-content .XpcSwap-box {
     margin: 0;
     max-width: 100%;
   }
 }
 
 @media (max-width: 1100px) {
-  .GlpSwap-from-token .Modal {
+  .XpcSwap-from-token .Modal {
     align-items: center;
     justify-content: center;
   }
-  .GlpSwap-from-token .Modal .Modal-content {
+  .XpcSwap-from-token .Modal .Modal-content {
     width: 41.85rem;
     position: absolute;
     max-height: 80vh;
@@ -256,20 +256,20 @@
     top: auto;
     bottom: auto;
   }
-  .GlpSwap-from-token .Modal .Modal-content .Modal-body {
+  .XpcSwap-from-token .Modal .Modal-content .Modal-body {
     overflow-y: auto;
     max-height: calc(80vh - 8.525rem);
     padding-right: 5px;
     margin: 1.55rem calc(1rem - 0.5rem) 1.55rem 1.55rem;
   }
 
-  .GlpSwap-token-list {
+  .XpcSwap-token-list {
     border: none;
     background-color: transparent;
     padding: 0;
   }
 
-  .GlpSwap-token-list-content {
+  .XpcSwap-token-list-content {
     padding: 0;
   }
 

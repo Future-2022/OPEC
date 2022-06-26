@@ -47,45 +47,45 @@ export default function BeginAccountTransfer(props) {
     parsedReceiver = receiver;
   }
 
-  const gmxAddress = getContract(chainId, "GMX");
-  const gmxVesterAddress = getContract(chainId, "GmxVester");
-  const glpVesterAddress = getContract(chainId, "GlpVester");
+  const opecAddress = getContract(chainId, "OPEC");
+  const opecVesterAddress = getContract(chainId, "OpecVester");
+  const xpcVesterAddress = getContract(chainId, "XpcVester");
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
 
-  const { data: gmxVesterBalance } = useSWR([active, chainId, gmxVesterAddress, "balanceOf", account], {
+  const { data: opecVesterBalance } = useSWR([active, chainId, opecVesterAddress, "balanceOf", account], {
     fetcher: fetcher(library, Token),
   });
 
-  const { data: glpVesterBalance } = useSWR([active, chainId, glpVesterAddress, "balanceOf", account], {
+  const { data: xpcVesterBalance } = useSWR([active, chainId, xpcVesterAddress, "balanceOf", account], {
     fetcher: fetcher(library, Token),
   });
 
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
-  const { data: cumulativeGmxRewards } = useSWR(
-    [active, chainId, stakedGmxTrackerAddress, "cumulativeRewards", parsedReceiver],
+  const stakedOpecTrackerAddress = getContract(chainId, "StakedOpecTracker");
+  const { data: cumulativeOpecRewards } = useSWR(
+    [active, chainId, stakedOpecTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
       fetcher: fetcher(library, RewardTracker),
     }
   );
 
-  const stakedGlpTrackerAddress = getContract(chainId, "StakedGlpTracker");
-  const { data: cumulativeGlpRewards } = useSWR(
-    [active, chainId, stakedGlpTrackerAddress, "cumulativeRewards", parsedReceiver],
+  const stakedXpcTrackerAddress = getContract(chainId, "StakedXpcTracker");
+  const { data: cumulativeXpcRewards } = useSWR(
+    [active, chainId, stakedXpcTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
       fetcher: fetcher(library, RewardTracker),
     }
   );
 
-  const { data: transferredCumulativeGmxRewards } = useSWR(
-    [active, chainId, gmxVesterAddress, "transferredCumulativeRewards", parsedReceiver],
+  const { data: transferredCumulativeOpecRewards } = useSWR(
+    [active, chainId, opecVesterAddress, "transferredCumulativeRewards", parsedReceiver],
     {
       fetcher: fetcher(library, Vester),
     }
   );
 
-  const { data: transferredCumulativeGlpRewards } = useSWR(
-    [active, chainId, glpVesterAddress, "transferredCumulativeRewards", parsedReceiver],
+  const { data: transferredCumulativeXpcRewards } = useSWR(
+    [active, chainId, xpcVesterAddress, "transferredCumulativeRewards", parsedReceiver],
     {
       fetcher: fetcher(library, Vester),
     }
@@ -95,38 +95,38 @@ export default function BeginAccountTransfer(props) {
     fetcher: fetcher(library, RewardRouter),
   });
 
-  const { data: gmxAllowance } = useSWR([active, chainId, gmxAddress, "allowance", account, stakedGmxTrackerAddress], {
+  const { data: opecAllowance } = useSWR([active, chainId, opecAddress, "allowance", account, stakedOpecTrackerAddress], {
     fetcher: fetcher(library, Token),
   });
 
-  const { data: gmxStaked } = useSWR(
-    [active, chainId, stakedGmxTrackerAddress, "depositBalances", account, gmxAddress],
+  const { data: opecStaked } = useSWR(
+    [active, chainId, stakedOpecTrackerAddress, "depositBalances", account, opecAddress],
     {
       fetcher: fetcher(library, RewardTracker),
     }
   );
 
-  const needApproval = gmxAllowance && gmxStaked && gmxStaked.gt(gmxAllowance);
+  const needApproval = opecAllowance && opecStaked && opecStaked.gt(opecAllowance);
 
-  const hasVestedGmx = gmxVesterBalance && gmxVesterBalance.gt(0);
-  const hasVestedGlp = glpVesterBalance && glpVesterBalance.gt(0);
-  const hasStakedGmx =
-    (cumulativeGmxRewards && cumulativeGmxRewards.gt(0)) ||
-    (transferredCumulativeGmxRewards && transferredCumulativeGmxRewards.gt(0));
-  const hasStakedGlp =
-    (cumulativeGlpRewards && cumulativeGlpRewards.gt(0)) ||
-    (transferredCumulativeGlpRewards && transferredCumulativeGlpRewards.gt(0));
+  const hasVestedOpec = opecVesterBalance && opecVesterBalance.gt(0);
+  const hasVestedXpc = xpcVesterBalance && xpcVesterBalance.gt(0);
+  const hasStakedOpec =
+    (cumulativeOpecRewards && cumulativeOpecRewards.gt(0)) ||
+    (transferredCumulativeOpecRewards && transferredCumulativeOpecRewards.gt(0));
+  const hasStakedXpc =
+    (cumulativeXpcRewards && cumulativeXpcRewards.gt(0)) ||
+    (transferredCumulativeXpcRewards && transferredCumulativeXpcRewards.gt(0));
   const hasPendingReceiver = pendingReceiver && pendingReceiver !== ethers.constants.AddressZero;
 
   const getError = () => {
     if (!account) {
       return "Wallet is not connected";
     }
-    if (hasVestedGmx) {
-      return "Vested GMX not withdrawn";
+    if (hasVestedOpec) {
+      return "Vested OPEC not withdrawn";
     }
-    if (hasVestedGlp) {
-      return "Vested GLP not withdrawn";
+    if (hasVestedXpc) {
+      return "Vested XPC not withdrawn";
     }
     if (!receiver || receiver.length === 0) {
       return "Enter Receiver Address";
@@ -134,7 +134,7 @@ export default function BeginAccountTransfer(props) {
     if (!ethers.utils.isAddress(receiver)) {
       return "Invalid Receiver Address";
     }
-    if (hasStakedGmx || hasStakedGlp) {
+    if (hasStakedOpec || hasStakedXpc) {
       return "Invalid Receiver";
     }
     if ((parsedReceiver || "").toString().toLowerCase() === (account || "").toString().toLowerCase()) {
@@ -169,7 +169,7 @@ export default function BeginAccountTransfer(props) {
       return error;
     }
     if (needApproval) {
-      return "Approve GMX";
+      return "Approve OPEC";
     }
     if (isApproving) {
       return "Approving...";
@@ -186,8 +186,8 @@ export default function BeginAccountTransfer(props) {
       approveTokens({
         setIsApproving,
         library,
-        tokenAddress: gmxAddress,
-        spender: stakedGmxTrackerAddress,
+        tokenAddress: opecAddress,
+        spender: stakedOpecTrackerAddress,
         chainId,
       });
       return;
@@ -231,9 +231,9 @@ export default function BeginAccountTransfer(props) {
         <div className="Page-description">
           Please only use this for full account transfers.
           <br />
-          This will transfer all your GMX, esGMX, GLP and Multiplier Points to your new account.
+          This will transfer all your OPEC, esGMX, XPC and Multiplier Points to your new account.
           <br />
-          Transfers are only supported if the receiving account has not staked GMX or GLP tokens before.
+          Transfers are only supported if the receiving account has not staked OPEC or XPC tokens before.
           <br />
           Transfers are one-way, you will not be able to transfer staked tokens back to the sending account.
         </div>
@@ -257,14 +257,14 @@ export default function BeginAccountTransfer(props) {
             </div>
           </div>
           <div className="BeginAccountTransfer-validations">
-            <ValidationRow isValid={!hasVestedGmx}>
-              Sender has withdrawn all tokens from GMX Vesting Vault
+            <ValidationRow isValid={!hasVestedOpec}>
+              Sender has withdrawn all tokens from OPEC Vesting Vault
             </ValidationRow>
-            <ValidationRow isValid={!hasVestedGlp}>
-              Sender has withdrawn all tokens from GLP Vesting Vault
+            <ValidationRow isValid={!hasVestedXpc}>
+              Sender has withdrawn all tokens from XPC Vesting Vault
             </ValidationRow>
-            <ValidationRow isValid={!hasStakedGmx}>Receiver has not staked GMX tokens before</ValidationRow>
-            <ValidationRow isValid={!hasStakedGlp}>Receiver has not staked GLP tokens before</ValidationRow>
+            <ValidationRow isValid={!hasStakedOpec}>Receiver has not staked OPEC tokens before</ValidationRow>
+            <ValidationRow isValid={!hasStakedXpc}>Receiver has not staked XPC tokens before</ValidationRow>
           </div>
           <div className="input-row">
             <button

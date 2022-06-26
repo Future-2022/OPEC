@@ -53,12 +53,12 @@ import Actions from "./views/Actions/Actions";
 import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
 import Referrals from "./views/Referrals/Referrals";
-import BuyGlp from "./views/BuyGlp/BuyGlp";
-import BuyGMX from "./views/BuyGMX/BuyGMX";
-import SellGlp from "./views/SellGlp/SellGlp";
+import BuyXpc from "./views/BuyXpc/BuyXpc";
+import BuyOPEC from "./views/BuyOPEC/BuyOPEC";
+import SellXpc from "./views/SellXpc/SellXpc";
 import Buy from "./views/Buy/Buy";
 import NftWallet from "./views/NftWallet/NftWallet";
-import ClaimEsGmx from "./views/ClaimEsGmx/ClaimEsGmx";
+import ClaimEsOpec from "./views/ClaimEsOpec/ClaimEsOpec";
 import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
 import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
 import Debug from "./views/Debug/Debug";
@@ -84,7 +84,7 @@ import logoImg from "./img/logo_GMX.svg";
 import logoSmallImg from "./img/logo_GMX_small.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
-// import logoImg from './img/gmx-logo-final-white-small.png'
+// import logoImg from './img/opec-logo-final-white-small.png'
 import metamaskImg from "./img/metamask.png";
 import coinbaseImg from "./img/coinbaseWallet.png";
 import walletConnectImg from "./img/walletconnect-circle-blue.svg";
@@ -175,7 +175,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
             <FiX className="App-header-menu-icon" />
           </div>
           <Link className="App-header-link-main" to="/">
-            <img src={logoImg} alt="GMX Logo" />
+            <img src={logoImg} alt="OPEC Logo" />
           </Link>
         </div>
       )}
@@ -407,7 +407,7 @@ function FullApp() {
           <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">
             Install MetaMask
           </a>
-          {userOnMobileDevice ? ", and use GMX with its built-in browser" : " to start using GMX"}.
+          {userOnMobileDevice ? ", and use OPEC with its built-in browser" : " to start using OPEC"}.
         </div>
       );
       return false;
@@ -424,7 +424,7 @@ function FullApp() {
           <a href="https://www.coinbase.com/wallet" target="_blank" rel="noopener noreferrer">
             Install Coinbase Wallet
           </a>
-          {userOnMobileDevice ? ", and use GMX with its built-in browser" : " to start using GMX"}.
+          {userOnMobileDevice ? ", and use OPEC with its built-in browser" : " to start using OPEC"}.
         </div>
       );
       return false;
@@ -667,8 +667,8 @@ function FullApp() {
             <div className="App-header large">
               <div className="App-header-container-left">
                 <Link className="App-header-link-main" to="/">
-                  <img src={logoImg} className="big" alt="GMX Logo" />
-                  <img src={logoSmallImg} className="small" alt="GMX Logo" />
+                  <img src={logoImg} className="big" alt="OPEC Logo" />
+                  <img src={logoSmallImg} className="small" alt="OPEC Logo" />
                 </Link>
                 <AppHeaderLinks />
               </div>
@@ -695,8 +695,8 @@ function FullApp() {
                     {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
                   </div>
                   <div className="App-header-link-main clickable" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                    <img src={logoImg} className="big" alt="GMX Logo" />
-                    <img src={logoSmallImg} className="small" alt="GMX Logo" />
+                    <img src={logoImg} className="big" alt="OPEC Logo" />
+                    <img src={logoSmallImg} className="small" alt="OPEC Logo" />
                   </div>
                 </div>
                 <div className="App-header-container-right">
@@ -763,22 +763,22 @@ function FullApp() {
                 connectWallet={connectWallet}
               />
             </Route>
-            <Route exact path="/buy_glp">
-              <BuyGlp
+            <Route exact path="/buy_xpc">
+              <BuyXpc
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
               />
             </Route>
-            <Route exact path="/sell_glp">
-              <SellGlp
+            <Route exact path="/sell_xpc">
+              <SellXpc
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
               />
             </Route>
-            <Route exact path="/buy_gmx">
-              <BuyGMX />
+            <Route exact path="/buy_opec">
+              <BuyOPEC />
             </Route>
             <Route exact path="/ecosystem">
               <Ecosystem />
@@ -792,8 +792,8 @@ function FullApp() {
             <Route exact path="/nft_wallet">
               <NftWallet />
             </Route>
-            <Route exact path="/claim_es_gmx">
-              <ClaimEsGmx setPendingTxns={setPendingTxns} />
+            <Route exact path="/claim_es_opec">
+              <ClaimEsOpec setPendingTxns={setPendingTxns} />
             </Route>
             <Route exact path="/actions/:account">
               <Actions />
@@ -941,8 +941,8 @@ function PreviewApp() {
             <div className="App-header large preview">
               <div className="App-header-container-left">
                 <NavLink exact activeClassName="active" className="App-header-link-main" to="/">
-                  <img src={logoImg} alt="GMX Logo" />
-                  GMX
+                  <img src={logoImg} alt="OPEC Logo" />
+                  OPEC
                 </NavLink>
               </div>
               <div className="App-header-container-right">
@@ -957,7 +957,7 @@ function PreviewApp() {
               >
                 <div className="App-header-container-left">
                   <div className="App-header-link-main">
-                    <img src={logoImg} alt="GMX Logo" />
+                    <img src={logoImg} alt="OPEC Logo" />
                   </div>
                 </div>
                 <div className="App-header-container-right">

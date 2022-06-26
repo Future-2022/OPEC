@@ -13,7 +13,7 @@ import Vester from "../../abis/Vester.json";
 import RewardRouter from "../../abis/RewardRouter.json";
 import RewardReader from "../../abis/RewardReader.json";
 import Token from "../../abis/Token.json";
-import GlpManager from "../../abis/GlpManager.json";
+import XpcManager from "../../abis/XpcManager.json";
 
 import { ethers } from "ethers";
 import {
@@ -30,7 +30,7 @@ import {
   getServerUrl,
   useLocalStorageSerializeKey,
   useChainId,
-  GLP_DECIMALS,
+  XPC_DECIMALS,
   USD_DECIMALS,
   BASIS_POINTS_DIVISOR,
   ARBITRUM,
@@ -42,7 +42,7 @@ import {
   getProcessedData,
   getPageTitle,
 } from "../../Helpers";
-import { callContract, useGmxPrice, useTotalGmxStaked, useTotalGmxSupply } from "../../Api";
+import { callContract, useOpecPrice, useTotalOpecStaked, useTotalOpecSupply } from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -204,7 +204,7 @@ function UnstakeModal(props) {
     unstakeMethodName,
     multiplierPointsAmount,
     reservedAmount,
-    bonusGmxInFeeGmx,
+    bonusOpecInFeeOpec,
     setPendingTxns,
   } = props;
   const [isUnstaking, setIsUnstaking] = useState(false);
@@ -217,16 +217,16 @@ function UnstakeModal(props) {
     multiplierPointsAmount.gt(0) &&
     amount &&
     amount.gt(0) &&
-    bonusGmxInFeeGmx &&
-    bonusGmxInFeeGmx.gt(0)
+    bonusOpecInFeeOpec &&
+    bonusOpecInFeeOpec.gt(0)
   ) {
-    burnAmount = multiplierPointsAmount.mul(amount).div(bonusGmxInFeeGmx);
+    burnAmount = multiplierPointsAmount.mul(amount).div(bonusOpecInFeeOpec);
   }
 
   const shouldShowReductionAmount = true;
   let rewardReductionBasisPoints;
-  if (burnAmount && bonusGmxInFeeGmx) {
-    rewardReductionBasisPoints = burnAmount.mul(BASIS_POINTS_DIVISOR).div(bonusGmxInFeeGmx);
+  if (burnAmount && bonusOpecInFeeOpec) {
+    rewardReductionBasisPoints = burnAmount.mul(BASIS_POINTS_DIVISOR).div(bonusOpecInFeeOpec);
   }
 
   const getError = () => {
@@ -555,10 +555,10 @@ function VesterWithdrawModal(props) {
           This will withdraw and unreserve all tokens as well as pause vesting.
           <br />
           <br />
-          esGMX tokens that have been converted to GMX will remain as GMX tokens.
+          esGMX tokens that have been converted to OPEC will remain as OPEC tokens.
           <br />
           <br />
-          To claim GMX tokens without withdrawing, use the "Claim" button under the Total Rewards section.
+          To claim OPEC tokens without withdrawing, use the "Claim" button under the Total Rewards section.
           <br />
           <br />
         </div>
@@ -588,20 +588,20 @@ function CompoundModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isCompounding, setIsCompounding] = useState(false);
-  const [shouldClaimGmx, setShouldClaimGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-gmx"],
+  const [shouldClaimOpec, setShouldClaimOpec] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-claim-opec"],
     true
   );
-  const [shouldStakeGmx, setShouldStakeGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-stake-gmx"],
+  const [shouldStakeOpec, setShouldStakeOpec] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-stake-opec"],
     true
   );
-  const [shouldClaimEsGmx, setShouldClaimEsGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-es-gmx"],
+  const [shouldClaimEsOpec, setShouldClaimEsOpec] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-claim-es-opec"],
     true
   );
-  const [shouldStakeEsGmx, setShouldStakeEsGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-stake-es-gmx"],
+  const [shouldStakeEsOpec, setShouldStakeEsOpec] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-stake-es-opec"],
     true
   );
   const [shouldStakeMultiplierPoints, setShouldStakeMultiplierPoints] = useLocalStorageSerializeKey(
@@ -617,19 +617,19 @@ function CompoundModal(props) {
     true
   );
 
-  const gmxAddress = getContract(chainId, "GMX");
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
+  const opecAddress = getContract(chainId, "OPEC");
+  const stakedOpecTrackerAddress = getContract(chainId, "StakedOpecTracker");
 
   const [isApproving, setIsApproving] = useState(false);
 
   const { data: tokenAllowance } = useSWR(
-    active && [active, chainId, gmxAddress, "allowance", account, stakedGmxTrackerAddress],
+    active && [active, chainId, opecAddress, "allowance", account, stakedOpecTrackerAddress],
     {
       fetcher: fetcher(library, Token),
     }
   );
 
-  const needApproval = shouldStakeGmx && tokenAllowance && totalVesterRewards && totalVesterRewards.gt(tokenAllowance);
+  const needApproval = shouldStakeOpec && tokenAllowance && totalVesterRewards && totalVesterRewards.gt(tokenAllowance);
 
   const isPrimaryEnabled = () => {
     return !isCompounding && !isApproving && !isCompounding;
@@ -637,10 +637,10 @@ function CompoundModal(props) {
 
   const getPrimaryText = () => {
     if (isApproving) {
-      return `Approving GMX...`;
+      return `Approving OPEC...`;
     }
     if (needApproval) {
-      return `Approve GMX`;
+      return `Approve OPEC`;
     }
     if (isCompounding) {
       return "Compounding...";
@@ -653,8 +653,8 @@ function CompoundModal(props) {
       approveTokens({
         setIsApproving,
         library,
-        tokenAddress: gmxAddress,
-        spender: stakedGmxTrackerAddress,
+        tokenAddress: opecAddress,
+        spender: stakedOpecTrackerAddress,
         chainId,
       });
       return;
@@ -668,10 +668,10 @@ function CompoundModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimGmx || shouldStakeGmx,
-        shouldStakeGmx,
-        shouldClaimEsGmx || shouldStakeEsGmx,
-        shouldStakeEsGmx,
+        shouldClaimOpec || shouldStakeOpec,
+        shouldStakeOpec,
+        shouldClaimEsOpec || shouldStakeEsOpec,
+        shouldStakeEsOpec,
         shouldStakeMultiplierPoints,
         shouldClaimWeth || shouldConvertWeth,
         shouldConvertWeth,
@@ -691,18 +691,18 @@ function CompoundModal(props) {
       });
   };
 
-  const toggleShouldStakeGmx = (value) => {
+  const toggleShouldStakeOpec = (value) => {
     if (value) {
-      setShouldClaimGmx(true);
+      setShouldClaimOpec(true);
     }
-    setShouldStakeGmx(value);
+    setShouldStakeOpec(value);
   };
 
-  const toggleShouldStakeEsGmx = (value) => {
+  const toggleShouldStakeEsOpec = (value) => {
     if (value) {
-      setShouldClaimEsGmx(true);
+      setShouldClaimEsOpec(true);
     }
-    setShouldStakeEsGmx(value);
+    setShouldStakeEsOpec(value);
   };
 
   const toggleConvertWeth = (value) => {
@@ -722,22 +722,22 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimGmx} setIsChecked={setShouldClaimGmx} disabled={shouldStakeGmx}>
-              Claim GMX Rewards
+            <Checkbox isChecked={shouldClaimOpec} setIsChecked={setShouldClaimOpec} disabled={shouldStakeOpec}>
+              Claim OPEC Rewards
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldStakeGmx} setIsChecked={toggleShouldStakeGmx}>
-              Stake GMX Rewards
+            <Checkbox isChecked={shouldStakeOpec} setIsChecked={toggleShouldStakeOpec}>
+              Stake OPEC Rewards
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimEsGmx} setIsChecked={setShouldClaimEsGmx} disabled={shouldStakeEsGmx}>
+            <Checkbox isChecked={shouldClaimEsOpec} setIsChecked={setShouldClaimEsOpec} disabled={shouldStakeEsOpec}>
               Claim esGMX Rewards
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldStakeEsGmx} setIsChecked={toggleShouldStakeEsGmx}>
+            <Checkbox isChecked={shouldStakeEsOpec} setIsChecked={toggleShouldStakeEsOpec}>
               Stake esGMX Rewards
             </Checkbox>
           </div>
@@ -774,12 +774,12 @@ function ClaimModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isClaiming, setIsClaiming] = useState(false);
-  const [shouldClaimGmx, setShouldClaimGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-gmx"],
+  const [shouldClaimOpec, setShouldClaimOpec] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-claim-should-claim-opec"],
     true
   );
-  const [shouldClaimEsGmx, setShouldClaimEsGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-es-gmx"],
+  const [shouldClaimEsOpec, setShouldClaimEsOpec] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-claim-should-claim-es-opec"],
     true
   );
   const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
@@ -811,10 +811,10 @@ function ClaimModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimGmx,
-        false, // shouldStakeGmx
-        shouldClaimEsGmx,
-        false, // shouldStakeEsGmx
+        shouldClaimOpec,
+        false, // shouldStakeOpec
+        shouldClaimEsOpec,
+        false, // shouldStakeEsOpec
         false, // shouldStakeMultiplierPoints
         shouldClaimWeth,
         shouldConvertWeth,
@@ -846,12 +846,12 @@ function ClaimModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Claim Rewards">
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={shouldClaimGmx} setIsChecked={setShouldClaimGmx}>
-              Claim GMX Rewards
+            <Checkbox isChecked={shouldClaimOpec} setIsChecked={setShouldClaimOpec}>
+              Claim OPEC Rewards
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimEsGmx} setIsChecked={setShouldClaimEsGmx}>
+            <Checkbox isChecked={shouldClaimEsOpec} setIsChecked={setShouldClaimEsOpec}>
               Claim esGMX Rewards
             </Checkbox>
           </div>
@@ -928,56 +928,56 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
 
   const vaultAddress = getContract(chainId, "Vault");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-  const gmxAddress = getContract(chainId, "GMX");
-  const esGmxAddress = getContract(chainId, "ES_GMX");
-  const bnGmxAddress = getContract(chainId, "BN_GMX");
-  const glpAddress = getContract(chainId, "GLP");
+  const opecAddress = getContract(chainId, "OPEC");
+  const esOpecAddress = getContract(chainId, "ES_GMX");
+  const bnOpecAddress = getContract(chainId, "BN_GMX");
+  const xpcAddress = getContract(chainId, "XPC");
 
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
-  const bonusGmxTrackerAddress = getContract(chainId, "BonusGmxTracker");
-  const feeGmxTrackerAddress = getContract(chainId, "FeeGmxTracker");
+  const stakedOpecTrackerAddress = getContract(chainId, "StakedOpecTracker");
+  const bonusOpecTrackerAddress = getContract(chainId, "BonusOpecTracker");
+  const feeOpecTrackerAddress = getContract(chainId, "FeeOpecTracker");
 
-  const stakedGlpTrackerAddress = getContract(chainId, "StakedGlpTracker");
-  const feeGlpTrackerAddress = getContract(chainId, "FeeGlpTracker");
+  const stakedXpcTrackerAddress = getContract(chainId, "StakedXpcTracker");
+  const feeXpcTrackerAddress = getContract(chainId, "FeeXpcTracker");
 
-  const glpManagerAddress = getContract(chainId, "GlpManager");
+  const xpcManagerAddress = getContract(chainId, "XpcManager");
 
-  const stakedGmxDistributorAddress = getContract(chainId, "StakedGmxDistributor");
-  const stakedGlpDistributorAddress = getContract(chainId, "StakedGlpDistributor");
+  const stakedOpecDistributorAddress = getContract(chainId, "StakedOpecDistributor");
+  const stakedXpcDistributorAddress = getContract(chainId, "StakedXpcDistributor");
 
-  const gmxVesterAddress = getContract(chainId, "GmxVester");
-  const glpVesterAddress = getContract(chainId, "GlpVester");
+  const opecVesterAddress = getContract(chainId, "OpecVester");
+  const xpcVesterAddress = getContract(chainId, "XpcVester");
 
-  const vesterAddresses = [gmxVesterAddress, glpVesterAddress];
+  const vesterAddresses = [opecVesterAddress, xpcVesterAddress];
 
-  const excludedEsGmxAccounts = [stakedGmxDistributorAddress, stakedGlpDistributorAddress];
+  const excludedEsOpecAccounts = [stakedOpecDistributorAddress, stakedXpcDistributorAddress];
 
   const nativeTokenSymbol = getConstant(chainId, "nativeTokenSymbol");
   const wrappedTokenSymbol = getConstant(chainId, "wrappedTokenSymbol");
 
-  const walletTokens = [gmxAddress, esGmxAddress, glpAddress, stakedGmxTrackerAddress];
+  const walletTokens = [opecAddress, esOpecAddress, xpcAddress, stakedOpecTrackerAddress];
   const depositTokens = [
-    gmxAddress,
-    esGmxAddress,
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    bnGmxAddress,
-    glpAddress,
+    opecAddress,
+    esOpecAddress,
+    stakedOpecTrackerAddress,
+    bonusOpecTrackerAddress,
+    bnOpecAddress,
+    xpcAddress,
   ];
   const rewardTrackersForDepositBalances = [
-    stakedGmxTrackerAddress,
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    feeGmxTrackerAddress,
-    feeGmxTrackerAddress,
-    feeGlpTrackerAddress,
+    stakedOpecTrackerAddress,
+    stakedOpecTrackerAddress,
+    bonusOpecTrackerAddress,
+    feeOpecTrackerAddress,
+    feeOpecTrackerAddress,
+    feeXpcTrackerAddress,
   ];
   const rewardTrackersForStakingInfo = [
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    feeGmxTrackerAddress,
-    stakedGlpTrackerAddress,
-    feeGlpTrackerAddress,
+    stakedOpecTrackerAddress,
+    bonusOpecTrackerAddress,
+    feeOpecTrackerAddress,
+    stakedXpcTrackerAddress,
+    feeXpcTrackerAddress,
   ];
 
   const { data: walletBalances } = useSWR(
@@ -1013,15 +1013,15 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     }
   );
 
-  const { data: stakedGmxSupply } = useSWR(
-    [`StakeV2:stakedGmxSupply:${active}`, chainId, gmxAddress, "balanceOf", stakedGmxTrackerAddress],
+  const { data: stakedOpecSupply } = useSWR(
+    [`StakeV2:stakedOpecSupply:${active}`, chainId, opecAddress, "balanceOf", stakedOpecTrackerAddress],
     {
       fetcher: fetcher(library, Token),
     }
   );
 
-  const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, glpManagerAddress, "getAums"], {
-    fetcher: fetcher(library, GlpManager),
+  const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, xpcManagerAddress, "getAums"], {
+    fetcher: fetcher(library, XpcManager),
   });
 
   const { data: nativeTokenPrice } = useSWR(
@@ -1031,10 +1031,10 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     }
   );
 
-  const { data: esGmxSupply } = useSWR(
-    [`StakeV2:esGmxSupply:${active}`, chainId, readerAddress, "getTokenSupply", esGmxAddress],
+  const { data: esOpecSupply } = useSWR(
+    [`StakeV2:esOpecSupply:${active}`, chainId, readerAddress, "getTokenSupply", esOpecAddress],
     {
-      fetcher: fetcher(library, ReaderV2, [excludedEsGmxAccounts]),
+      fetcher: fetcher(library, ReaderV2, [excludedEsOpecAccounts]),
     }
   );
 
@@ -1045,26 +1045,26 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     }
   );
 
-  const { gmxPrice, gmxPriceFromArbitrum, gmxPriceFromAvalanche } = useGmxPrice(
+  const { opecPrice, opecPriceFromArbitrum, opecPriceFromAvalanche } = useOpecPrice(
     chainId,
     { arbitrum: chainId === ARBITRUM ? library : undefined },
     active
   );
 
-  let { total: totalGmxSupply } = useTotalGmxSupply();
+  let { total: totalOpecSupply } = useTotalOpecSupply();
 
-  let { avax: avaxGmxStaked, arbitrum: arbitrumGmxStaked, total: totalGmxStaked } = useTotalGmxStaked();
+  let { avax: avaxOpecStaked, arbitrum: arbitrumOpecStaked, total: totalOpecStaked } = useTotalOpecStaked();
 
-  const gmxSupplyUrl = getServerUrl(chainId, "/gmx_supply");
-  const { data: gmxSupply } = useSWR([gmxSupplyUrl], {
+  const opecSupplyUrl = getServerUrl(chainId, "/gmx_supply");
+  const { data: opecSupply } = useSWR([opecSupplyUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.text()),
   });
 
-  const isGmxTransferEnabled = true;
+  const isOpecTransferEnabled = true;
 
-  let esGmxSupplyUsd;
-  if (esGmxSupply && gmxPrice) {
-    esGmxSupplyUsd = esGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
+  let esOpecSupplyUsd;
+  if (esOpecSupply && opecPrice) {
+    esOpecSupplyUsd = esOpecSupply.mul(opecPrice).div(expandDecimals(1, 18));
   }
 
   let aum;
@@ -1085,54 +1085,54 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     vestingData,
     aum,
     nativeTokenPrice,
-    stakedGmxSupply,
-    gmxPrice,
-    gmxSupply
+    stakedOpecSupply,
+    opecPrice,
+    opecSupply
   );
 
   let hasMultiplierPoints = false;
   let multiplierPointsAmount;
-  if (processedData && processedData.bonusGmxTrackerRewards && processedData.bnGmxInFeeGmx) {
-    multiplierPointsAmount = processedData.bonusGmxTrackerRewards.add(processedData.bnGmxInFeeGmx);
+  if (processedData && processedData.bonusOpecTrackerRewards && processedData.bnOpecInFeeOpec) {
+    multiplierPointsAmount = processedData.bonusOpecTrackerRewards.add(processedData.bnOpecInFeeOpec);
     if (multiplierPointsAmount.gt(0)) {
       hasMultiplierPoints = true;
     }
   }
   let totalRewardTokens;
-  if (processedData && processedData.bnGmxInFeeGmx && processedData.bonusGmxInFeeGmx) {
-    totalRewardTokens = processedData.bnGmxInFeeGmx.add(processedData.bonusGmxInFeeGmx);
+  if (processedData && processedData.bnOpecInFeeOpec && processedData.bonusOpecInFeeOpec) {
+    totalRewardTokens = processedData.bnOpecInFeeOpec.add(processedData.bonusOpecInFeeOpec);
   }
 
-  let totalRewardTokensAndGlp;
-  if (totalRewardTokens && processedData && processedData.glpBalance) {
-    totalRewardTokensAndGlp = totalRewardTokens.add(processedData.glpBalance);
+  let totalRewardTokensAndXpc;
+  if (totalRewardTokens && processedData && processedData.xpcBalance) {
+    totalRewardTokensAndXpc = totalRewardTokens.add(processedData.xpcBalance);
   }
 
-  const bonusGmxInFeeGmx = processedData ? processedData.bonusGmxInFeeGmx : undefined;
+  const bonusOpecInFeeOpec = processedData ? processedData.bonusOpecInFeeOpec : undefined;
 
-  let stakedGmxSupplyUsd;
-  if (!totalGmxStaked.isZero() && gmxPrice) {
-    stakedGmxSupplyUsd = totalGmxStaked.mul(gmxPrice).div(expandDecimals(1, 18));
+  let stakedOpecSupplyUsd;
+  if (!totalOpecStaked.isZero() && opecPrice) {
+    stakedOpecSupplyUsd = totalOpecStaked.mul(opecPrice).div(expandDecimals(1, 18));
   }
 
   let totalSupplyUsd;
-  if (totalGmxSupply && !totalGmxSupply.isZero() && gmxPrice) {
-    totalSupplyUsd = totalGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
+  if (totalOpecSupply && !totalOpecSupply.isZero() && opecPrice) {
+    totalSupplyUsd = totalOpecSupply.mul(opecPrice).div(expandDecimals(1, 18));
   }
 
-  let maxUnstakeableGmx = bigNumberify(0);
+  let maxUnstakeableOpec = bigNumberify(0);
   if (
     totalRewardTokens &&
     vestingData &&
-    vestingData.gmxVesterPairAmount &&
+    vestingData.opecVesterPairAmount &&
     multiplierPointsAmount &&
-    processedData.bonusGmxInFeeGmx
+    processedData.bonusOpecInFeeOpec
   ) {
-    const availableTokens = totalRewardTokens.sub(vestingData.gmxVesterPairAmount);
-    const stakedTokens = processedData.bonusGmxInFeeGmx;
+    const availableTokens = totalRewardTokens.sub(vestingData.opecVesterPairAmount);
+    const stakedTokens = processedData.bonusOpecInFeeOpec;
     const divisor = multiplierPointsAmount.add(stakedTokens);
     if (divisor.gt(0)) {
-      maxUnstakeableGmx = availableTokens.mul(stakedTokens).div(divisor);
+      maxUnstakeableOpec = availableTokens.mul(stakedTokens).div(divisor);
     }
   }
 
@@ -1140,139 +1140,139 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     window.scrollTo(0, 0);
   }, []);
 
-  const showStakeGmxModal = () => {
-    if (!isGmxTransferEnabled) {
-      helperToast.error("GMX transfers not yet enabled");
+  const showStakeOpecModal = () => {
+    if (!isOpecTransferEnabled) {
+      helperToast.error("OPEC transfers not yet enabled");
       return;
     }
 
     setIsStakeModalVisible(true);
-    setStakeModalTitle("Stake GMX");
-    setStakeModalMaxAmount(processedData.gmxBalance);
+    setStakeModalTitle("Stake OPEC");
+    setStakeModalMaxAmount(processedData.opecBalance);
     setStakeValue("");
-    setStakingTokenSymbol("GMX");
-    setStakingTokenAddress(gmxAddress);
-    setStakingFarmAddress(stakedGmxTrackerAddress);
-    setStakeMethodName("stakeGmx");
+    setStakingTokenSymbol("OPEC");
+    setStakingTokenAddress(opecAddress);
+    setStakingFarmAddress(stakedOpecTrackerAddress);
+    setStakeMethodName("stakeOpec");
   };
 
-  const showStakeEsGmxModal = () => {
+  const showStakeEsOpecModal = () => {
     setIsStakeModalVisible(true);
     setStakeModalTitle("Stake esGMX");
-    setStakeModalMaxAmount(processedData.esGmxBalance);
+    setStakeModalMaxAmount(processedData.esOpecBalance);
     setStakeValue("");
     setStakingTokenSymbol("esGMX");
-    setStakingTokenAddress(esGmxAddress);
+    setStakingTokenAddress(esOpecAddress);
     setStakingFarmAddress(AddressZero);
-    setStakeMethodName("stakeEsGmx");
+    setStakeMethodName("stakeEsOpec");
   };
 
-  const showGmxVesterDepositModal = () => {
-    let remainingVestableAmount = vestingData.gmxVester.maxVestableAmount.sub(vestingData.gmxVester.vestedAmount);
-    if (processedData.esGmxBalance.lt(remainingVestableAmount)) {
-      remainingVestableAmount = processedData.esGmxBalance;
+  const showOpecVesterDepositModal = () => {
+    let remainingVestableAmount = vestingData.opecVester.maxVestableAmount.sub(vestingData.opecVester.vestedAmount);
+    if (processedData.esOpecBalance.lt(remainingVestableAmount)) {
+      remainingVestableAmount = processedData.esOpecBalance;
     }
 
     setIsVesterDepositModalVisible(true);
-    setVesterDepositTitle("GMX Vault");
-    setVesterDepositStakeTokenLabel("staked GMX + esGMX + Multiplier Points");
+    setVesterDepositTitle("OPEC Vault");
+    setVesterDepositStakeTokenLabel("staked OPEC + esGMX + Multiplier Points");
     setVesterDepositMaxAmount(remainingVestableAmount);
-    setVesterDepositBalance(processedData.esGmxBalance);
-    setVesterDepositEscrowedBalance(vestingData.gmxVester.escrowedBalance);
-    setVesterDepositVestedAmount(vestingData.gmxVester.vestedAmount);
-    setVesterDepositMaxVestableAmount(vestingData.gmxVester.maxVestableAmount);
-    setVesterDepositAverageStakedAmount(vestingData.gmxVester.averageStakedAmount);
-    setVesterDepositReserveAmount(vestingData.gmxVester.pairAmount);
+    setVesterDepositBalance(processedData.esOpecBalance);
+    setVesterDepositEscrowedBalance(vestingData.opecVester.escrowedBalance);
+    setVesterDepositVestedAmount(vestingData.opecVester.vestedAmount);
+    setVesterDepositMaxVestableAmount(vestingData.opecVester.maxVestableAmount);
+    setVesterDepositAverageStakedAmount(vestingData.opecVester.averageStakedAmount);
+    setVesterDepositReserveAmount(vestingData.opecVester.pairAmount);
     setVesterDepositMaxReserveAmount(totalRewardTokens);
     setVesterDepositValue("");
-    setVesterDepositAddress(gmxVesterAddress);
+    setVesterDepositAddress(opecVesterAddress);
   };
 
-  const showGlpVesterDepositModal = () => {
-    let remainingVestableAmount = vestingData.glpVester.maxVestableAmount.sub(vestingData.glpVester.vestedAmount);
-    if (processedData.esGmxBalance.lt(remainingVestableAmount)) {
-      remainingVestableAmount = processedData.esGmxBalance;
+  const showXpcVesterDepositModal = () => {
+    let remainingVestableAmount = vestingData.xpcVester.maxVestableAmount.sub(vestingData.xpcVester.vestedAmount);
+    if (processedData.esOpecBalance.lt(remainingVestableAmount)) {
+      remainingVestableAmount = processedData.esOpecBalance;
     }
 
     setIsVesterDepositModalVisible(true);
-    setVesterDepositTitle("GLP Vault");
-    setVesterDepositStakeTokenLabel("staked GLP");
+    setVesterDepositTitle("XPC Vault");
+    setVesterDepositStakeTokenLabel("staked XPC");
     setVesterDepositMaxAmount(remainingVestableAmount);
-    setVesterDepositBalance(processedData.esGmxBalance);
-    setVesterDepositEscrowedBalance(vestingData.glpVester.escrowedBalance);
-    setVesterDepositVestedAmount(vestingData.glpVester.vestedAmount);
-    setVesterDepositMaxVestableAmount(vestingData.glpVester.maxVestableAmount);
-    setVesterDepositAverageStakedAmount(vestingData.glpVester.averageStakedAmount);
-    setVesterDepositReserveAmount(vestingData.glpVester.pairAmount);
-    setVesterDepositMaxReserveAmount(processedData.glpBalance);
+    setVesterDepositBalance(processedData.esOpecBalance);
+    setVesterDepositEscrowedBalance(vestingData.xpcVester.escrowedBalance);
+    setVesterDepositVestedAmount(vestingData.xpcVester.vestedAmount);
+    setVesterDepositMaxVestableAmount(vestingData.xpcVester.maxVestableAmount);
+    setVesterDepositAverageStakedAmount(vestingData.xpcVester.averageStakedAmount);
+    setVesterDepositReserveAmount(vestingData.xpcVester.pairAmount);
+    setVesterDepositMaxReserveAmount(processedData.xpcBalance);
     setVesterDepositValue("");
-    setVesterDepositAddress(glpVesterAddress);
+    setVesterDepositAddress(xpcVesterAddress);
   };
 
-  const showGmxVesterWithdrawModal = () => {
-    if (!vestingData || !vestingData.gmxVesterVestedAmount || vestingData.gmxVesterVestedAmount.eq(0)) {
+  const showOpecVesterWithdrawModal = () => {
+    if (!vestingData || !vestingData.opecVesterVestedAmount || vestingData.opecVesterVestedAmount.eq(0)) {
       helperToast.error("You have not deposited any tokens for vesting.");
       return;
     }
 
     setIsVesterWithdrawModalVisible(true);
-    setVesterWithdrawTitle("Withdraw from GMX Vault");
-    setVesterWithdrawAddress(gmxVesterAddress);
+    setVesterWithdrawTitle("Withdraw from OPEC Vault");
+    setVesterWithdrawAddress(opecVesterAddress);
   };
 
-  const showGlpVesterWithdrawModal = () => {
-    if (!vestingData || !vestingData.glpVesterVestedAmount || vestingData.glpVesterVestedAmount.eq(0)) {
+  const showXpcVesterWithdrawModal = () => {
+    if (!vestingData || !vestingData.xpcVesterVestedAmount || vestingData.xpcVesterVestedAmount.eq(0)) {
       helperToast.error("You have not deposited any tokens for vesting.");
       return;
     }
 
     setIsVesterWithdrawModalVisible(true);
-    setVesterWithdrawTitle("Withdraw from GLP Vault");
-    setVesterWithdrawAddress(glpVesterAddress);
+    setVesterWithdrawTitle("Withdraw from XPC Vault");
+    setVesterWithdrawAddress(xpcVesterAddress);
   };
 
-  const showUnstakeGmxModal = () => {
-    if (!isGmxTransferEnabled) {
-      helperToast.error("GMX transfers not yet enabled");
+  const showUnstakeOpecModal = () => {
+    if (!isOpecTransferEnabled) {
+      helperToast.error("OPEC transfers not yet enabled");
       return;
     }
     setIsUnstakeModalVisible(true);
-    setUnstakeModalTitle("Unstake GMX");
-    let maxAmount = processedData.gmxInStakedGmx;
+    setUnstakeModalTitle("Unstake OPEC");
+    let maxAmount = processedData.opecInStakedOpec;
     if (
-      processedData.gmxInStakedGmx &&
+      processedData.opecInStakedOpec &&
       vestingData &&
-      vestingData.gmxVesterPairAmount.gt(0) &&
-      maxUnstakeableGmx &&
-      maxUnstakeableGmx.lt(processedData.gmxInStakedGmx)
+      vestingData.opecVesterPairAmount.gt(0) &&
+      maxUnstakeableOpec &&
+      maxUnstakeableOpec.lt(processedData.opecInStakedOpec)
     ) {
-      maxAmount = maxUnstakeableGmx;
+      maxAmount = maxUnstakeableOpec;
     }
     setUnstakeModalMaxAmount(maxAmount);
-    setUnstakeModalReservedAmount(vestingData.gmxVesterPairAmount);
+    setUnstakeModalReservedAmount(vestingData.opecVesterPairAmount);
     setUnstakeValue("");
-    setUnstakingTokenSymbol("GMX");
-    setUnstakeMethodName("unstakeGmx");
+    setUnstakingTokenSymbol("OPEC");
+    setUnstakeMethodName("unstakeOpec");
   };
 
-  const showUnstakeEsGmxModal = () => {
+  const showUnstakeEsOpecModal = () => {
     setIsUnstakeModalVisible(true);
     setUnstakeModalTitle("Unstake esGMX");
-    let maxAmount = processedData.esGmxInStakedGmx;
+    let maxAmount = processedData.esOpecInStakedOpec;
     if (
-      processedData.esGmxInStakedGmx &&
+      processedData.esOpecInStakedOpec &&
       vestingData &&
-      vestingData.gmxVesterPairAmount.gt(0) &&
-      maxUnstakeableGmx &&
-      maxUnstakeableGmx.lt(processedData.esGmxInStakedGmx)
+      vestingData.opecVesterPairAmount.gt(0) &&
+      maxUnstakeableOpec &&
+      maxUnstakeableOpec.lt(processedData.esOpecInStakedOpec)
     ) {
-      maxAmount = maxUnstakeableGmx;
+      maxAmount = maxUnstakeableOpec;
     }
     setUnstakeModalMaxAmount(maxAmount);
-    setUnstakeModalReservedAmount(vestingData.gmxVesterPairAmount);
+    setUnstakeModalReservedAmount(vestingData.opecVesterPairAmount);
     setUnstakeValue("");
     setUnstakingTokenSymbol("esGMX");
-    setUnstakeMethodName("unstakeEsGmx");
+    setUnstakeMethodName("unstakeEsOpec");
   };
 
   const renderMultiplierPointsLabel = useCallback(() => {
@@ -1300,27 +1300,27 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
   }, []);
 
   let earnMsg;
-  if (totalRewardTokensAndGlp && totalRewardTokensAndGlp.gt(0)) {
-    let gmxAmountStr;
-    if (processedData.gmxInStakedGmx && processedData.gmxInStakedGmx.gt(0)) {
-      gmxAmountStr = formatAmount(processedData.gmxInStakedGmx, 18, 2, true) + " GMX";
+  if (totalRewardTokensAndXpc && totalRewardTokensAndXpc.gt(0)) {
+    let opecAmountStr;
+    if (processedData.opecInStakedOpec && processedData.opecInStakedOpec.gt(0)) {
+      opecAmountStr = formatAmount(processedData.opecInStakedOpec, 18, 2, true) + " OPEC";
     }
-    let esGmxAmountStr;
-    if (processedData.esGmxInStakedGmx && processedData.esGmxInStakedGmx.gt(0)) {
-      esGmxAmountStr = formatAmount(processedData.esGmxInStakedGmx, 18, 2, true) + " esGMX";
+    let esOpecAmountStr;
+    if (processedData.esOpecInStakedOpec && processedData.esOpecInStakedOpec.gt(0)) {
+      esOpecAmountStr = formatAmount(processedData.esOpecInStakedOpec, 18, 2, true) + " esGMX";
     }
     let mpAmountStr;
-    if (processedData.bonusGmxInFeeGmx && processedData.bnGmxInFeeGmx.gt(0)) {
-      mpAmountStr = formatAmount(processedData.bnGmxInFeeGmx, 18, 2, true) + " MP";
+    if (processedData.bonusOpecInFeeOpec && processedData.bnOpecInFeeOpec.gt(0)) {
+      mpAmountStr = formatAmount(processedData.bnOpecInFeeOpec, 18, 2, true) + " MP";
     }
-    let glpStr;
-    if (processedData.glpBalance && processedData.glpBalance.gt(0)) {
-      glpStr = formatAmount(processedData.glpBalance, 18, 2, true) + " GLP";
+    let xpcStr;
+    if (processedData.xpcBalance && processedData.xpcBalance.gt(0)) {
+      xpcStr = formatAmount(processedData.xpcBalance, 18, 2, true) + " XPC";
     }
-    const amountStr = [gmxAmountStr, esGmxAmountStr, mpAmountStr, glpStr].filter((s) => s).join(", ");
+    const amountStr = [opecAmountStr, esOpecAmountStr, mpAmountStr, xpcStr].filter((s) => s).join(", ");
     earnMsg = (
       <div>
-        You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndGlp, 18, 2, true)} tokens.
+        You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndXpc, 18, 2, true)} tokens.
         <br />
         Tokens: {amountStr}.
       </div>
@@ -1365,7 +1365,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
         rewardRouterAddress={rewardRouterAddress}
         unstakeMethodName={unstakeMethodName}
         multiplierPointsAmount={multiplierPointsAmount}
-        bonusGmxInFeeGmx={bonusGmxInFeeGmx}
+        bonusOpecInFeeOpec={bonusOpecInFeeOpec}
       />
       <VesterDepositModal
         isVisible={isVesterDepositModalVisible}
@@ -1429,11 +1429,11 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
           <div className="Page-description">
             Stake{" "}
             <a href="https://gmxio.gitbook.io/gmx/tokenomics" target="_blank" rel="noopener noreferrer">
-              GMX
+              OPEC
             </a>{" "}
             and{" "}
-            <a href="https://gmxio.gitbook.io/gmx/glp" target="_blank" rel="noopener noreferrer">
-              GLP
+            <a href="https://gmxio.gitbook.io/gmx/xpc" target="_blank" rel="noopener noreferrer">
+              XPC
             </a>{" "}
             to earn rewards.
           </div>
@@ -1442,24 +1442,24 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
       </div>
       <div className="StakeV2-content">
         <div className="StakeV2-cards">
-          <div className="App-card StakeV2-gmx-card">
-            <div className="App-card-title">GMX</div>
+          <div className="App-card StakeV2-opec-card">
+            <div className="App-card-title">OPEC</div>
             <div className="App-card-divider"></div>
             <div className="App-card-content">
               <div className="App-card-row">
                 <div className="label">Price</div>
                 <div>
-                  {!gmxPrice && "..."}
-                  {gmxPrice && (
+                  {!opecPrice && "..."}
+                  {opecPrice && (
                     <Tooltip
                       position="right-bottom"
                       className="nowrap"
-                      handle={"$" + formatAmount(gmxPrice, USD_DECIMALS, 2, true)}
+                      handle={"$" + formatAmount(opecPrice, USD_DECIMALS, 2, true)}
                       renderContent={() => (
                         <>
-                          Price on Arbitrum: ${formatAmount(gmxPriceFromArbitrum, USD_DECIMALS, 2, true)}
+                          Price on Arbitrum: ${formatAmount(opecPriceFromArbitrum, USD_DECIMALS, 2, true)}
                           <br />
-                          Price on Avalanche: ${formatAmount(gmxPriceFromAvalanche, USD_DECIMALS, 2, true)}
+                          Price on Avalanche: ${formatAmount(opecPriceFromAvalanche, USD_DECIMALS, 2, true)}
                         </>
                       )}
                     />
@@ -1469,15 +1469,15 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
               <div className="App-card-row">
                 <div className="label">Wallet</div>
                 <div>
-                  {formatKeyAmount(processedData, "gmxBalance", 18, 2, true)} GMX ($
-                  {formatKeyAmount(processedData, "gmxBalanceUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "opecBalance", 18, 2, true)} OPEC ($
+                  {formatKeyAmount(processedData, "opecBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "gmxInStakedGmx", 18, 2, true)} GMX ($
-                  {formatKeyAmount(processedData, "gmxInStakedGmxUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "opecInStakedOpec", 18, 2, true)} OPEC ($
+                  {formatKeyAmount(processedData, "opecInStakedOpecUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>
@@ -1485,37 +1485,37 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 <div className="label">APR</div>
                 <div>
                   <Tooltip
-                    handle={`${formatKeyAmount(processedData, "gmxAprTotalWithBoost", 2, 2, true)}%`}
+                    handle={`${formatKeyAmount(processedData, "opecAprTotalWithBoost", 2, 2, true)}%`}
                     position="right-bottom"
                     renderContent={() => {
                       return (
                         <>
                           <div className="Tooltip-row">
-                            <span className="label">Escrowed GMX APR</span>
-                            <span>{formatKeyAmount(processedData, "gmxAprForEsGmx", 2, 2, true)}%</span>
+                            <span className="label">Escrowed OPEC APR</span>
+                            <span>{formatKeyAmount(processedData, "opecAprForEsOpec", 2, 2, true)}%</span>
                           </div>
-                          {(!processedData.gmxBoostAprForNativeToken ||
-                            processedData.gmxBoostAprForNativeToken.eq(0)) && (
+                          {(!processedData.opecBoostAprForNativeToken ||
+                            processedData.opecBoostAprForNativeToken.eq(0)) && (
                             <div className="Tooltip-row">
                               <span className="label">{nativeTokenSymbol} APR</span>
-                              <span>{formatKeyAmount(processedData, "gmxAprForNativeToken", 2, 2, true)}%</span>
+                              <span>{formatKeyAmount(processedData, "opecAprForNativeToken", 2, 2, true)}%</span>
                             </div>
                           )}
-                          {processedData.gmxBoostAprForNativeToken && processedData.gmxBoostAprForNativeToken.gt(0) && (
+                          {processedData.opecBoostAprForNativeToken && processedData.opecBoostAprForNativeToken.gt(0) && (
                             <div>
                               <br />
                               <div className="Tooltip-row">
                                 <span className="label">{nativeTokenSymbol} Base APR</span>
-                                <span>{formatKeyAmount(processedData, "gmxAprForNativeToken", 2, 2, true)}%</span>
+                                <span>{formatKeyAmount(processedData, "opecAprForNativeToken", 2, 2, true)}%</span>
                               </div>
                               <div className="Tooltip-row">
                                 <span className="label">{nativeTokenSymbol} Boosted APR</span>
-                                <span>{formatKeyAmount(processedData, "gmxBoostAprForNativeToken", 2, 2, true)}%</span>
+                                <span>{formatKeyAmount(processedData, "opecBoostAprForNativeToken", 2, 2, true)}%</span>
                               </div>
                               <div className="Tooltip-row">
                                 <span className="label">{nativeTokenSymbol} Total APR</span>
                                 <span>
-                                  {formatKeyAmount(processedData, "gmxAprForNativeTokenWithBoost", 2, 2, true)}%
+                                  {formatKeyAmount(processedData, "opecAprForNativeTokenWithBoost", 2, 2, true)}%
                                 </span>
                               </div>
                               <br />
@@ -1532,7 +1532,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 <div className="label">Rewards</div>
                 <div>
                   <Tooltip
-                    handle={`$${formatKeyAmount(processedData, "totalGmxRewardsUsd", USD_DECIMALS, 2, true)}`}
+                    handle={`$${formatKeyAmount(processedData, "totalOpecRewardsUsd", USD_DECIMALS, 2, true)}`}
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -1542,15 +1542,15 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                               {nativeTokenSymbol} ({wrappedTokenSymbol})
                             </span>
                             <span>
-                              {formatKeyAmount(processedData, "feeGmxTrackerRewards", 18, 4)} ($
-                              {formatKeyAmount(processedData, "feeGmxTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                              {formatKeyAmount(processedData, "feeOpecTrackerRewards", 18, 4)} ($
+                              {formatKeyAmount(processedData, "feeOpecTrackerRewardsUsd", USD_DECIMALS, 2, true)})
                             </span>
                           </div>
                           <div className="Tooltip-row">
-                            <span className="label">Escrowed GMX</span>
+                            <span className="label">Escrowed OPEC</span>
                             <span>
-                              {formatKeyAmount(processedData, "stakedGmxTrackerRewards", 18, 4)} ($
-                              {formatKeyAmount(processedData, "stakedGmxTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                              {formatKeyAmount(processedData, "stakedOpecTrackerRewards", 18, 4)} ($
+                              {formatKeyAmount(processedData, "stakedOpecTrackerRewardsUsd", USD_DECIMALS, 2, true)})
                             </span>
                           </div>
                         </>
@@ -1573,7 +1573,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                       return (
                         <>
                           You are earning {formatAmount(processedData.boostBasisPoints, 2, 2, false)}% more{" "}
-                          {nativeTokenSymbol} rewards using {formatAmount(processedData.bnGmxInFeeGmx, 18, 4, 2, true)}{" "}
+                          {nativeTokenSymbol} rewards using {formatAmount(processedData.bnOpecInFeeOpec, 18, 4, 2, true)}{" "}
                           Staked Multiplier Points.
                           <br />
                           <br />
@@ -1588,21 +1588,21 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
               <div className="App-card-row">
                 <div className="label">Total Staked</div>
                 <div>
-                  {!totalGmxStaked && "..."}
-                  {totalGmxStaked && (
+                  {!totalOpecStaked && "..."}
+                  {totalOpecStaked && (
                     <Tooltip
                       position="right-bottom"
                       className="nowrap"
                       handle={
-                        formatAmount(totalGmxStaked, 18, 0, true) +
-                        " GMX" +
-                        ` ($${formatAmount(stakedGmxSupplyUsd, USD_DECIMALS, 0, true)})`
+                        formatAmount(totalOpecStaked, 18, 0, true) +
+                        " OPEC" +
+                        ` ($${formatAmount(stakedOpecSupplyUsd, USD_DECIMALS, 0, true)})`
                       }
                       renderContent={() => (
                         <>
-                          Arbitrum: {formatAmount(arbitrumGmxStaked, 18, 0, true)} GMX
+                          Arbitrum: {formatAmount(arbitrumOpecStaked, 18, 0, true)} OPEC
                           <br />
-                          Avalanche: {formatAmount(avaxGmxStaked, 18, 0, true)} GMX
+                          Avalanche: {formatAmount(avaxOpecStaked, 18, 0, true)} OPEC
                         </>
                       )}
                     />
@@ -1611,26 +1611,26 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
               </div>
               <div className="App-card-row">
                 <div className="label">Total Supply</div>
-                {!totalGmxSupply && "..."}
-                {totalGmxSupply && (
+                {!totalOpecSupply && "..."}
+                {totalOpecSupply && (
                   <div>
-                    {formatAmount(totalGmxSupply, 18, 0, true)} GMX ($
+                    {formatAmount(totalOpecSupply, 18, 0, true)} OPEC ($
                     {formatAmount(totalSupplyUsd, USD_DECIMALS, 0, true)})
                   </div>
                 )}
               </div>
               <div className="App-card-divider"></div>
               <div className="App-card-options">
-                <Link className="App-button-option App-card-option" to="/buy_gmx">
-                  Buy GMX
+                <Link className="App-button-option App-card-option" to="/buy_opec">
+                  Buy OPEC
                 </Link>
                 {active && (
-                  <button className="App-button-option App-card-option" onClick={() => showStakeGmxModal()}>
+                  <button className="App-button-option App-card-option" onClick={() => showStakeOpecModal()}>
                     Stake
                   </button>
                 )}
                 {active && (
-                  <button className="App-button-option App-card-option" onClick={() => showUnstakeGmxModal()}>
+                  <button className="App-button-option App-card-option" onClick={() => showUnstakeOpecModal()}>
                     Unstake
                   </button>
                 )}
@@ -1656,26 +1656,26 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 </div>
               </div>
               <div className="App-card-row">
-                <div className="label">GMX</div>
+                <div className="label">OPEC</div>
                 <div>
                   {formatKeyAmount(processedData, "totalVesterRewards", 18, 4, true)} ($
                   {formatKeyAmount(processedData, "totalVesterRewardsUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
-                <div className="label">Escrowed GMX</div>
+                <div className="label">Escrowed OPEC</div>
                 <div>
-                  {formatKeyAmount(processedData, "totalEsGmxRewards", 18, 4, true)} ($
-                  {formatKeyAmount(processedData, "totalEsGmxRewardsUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "totalEsOpecRewards", 18, 4, true)} ($
+                  {formatKeyAmount(processedData, "totalEsOpecRewardsUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Multiplier Points</div>
-                <div>{formatKeyAmount(processedData, "bonusGmxTrackerRewards", 18, 4, true)}</div>
+                <div>{formatKeyAmount(processedData, "bonusOpecTrackerRewards", 18, 4, true)}</div>
               </div>
               <div className="App-card-row">
                 <div className="label">Staked Multiplier Points</div>
-                <div>{formatKeyAmount(processedData, "bnGmxInFeeGmx", 18, 4, true)}</div>
+                <div>{formatKeyAmount(processedData, "bnOpecInFeeOpec", 18, 4, true)}</div>
               </div>
               <div className="App-card-row">
                 <div className="label">Total</div>
@@ -1719,25 +1719,25 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
             </div>
           </div>
           <div className="App-card">
-            <div className="App-card-title">GLP ({chainName})</div>
+            <div className="App-card-title">XPC ({chainName})</div>
             <div className="App-card-divider"></div>
             <div className="App-card-content">
               <div className="App-card-row">
                 <div className="label">Price</div>
-                <div>${formatKeyAmount(processedData, "glpPrice", USD_DECIMALS, 3, true)}</div>
+                <div>${formatKeyAmount(processedData, "xpcPrice", USD_DECIMALS, 3, true)}</div>
               </div>
               <div className="App-card-row">
                 <div className="label">Wallet</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} GLP ($
-                  {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "xpcBalance", XPC_DECIMALS, 2, true)} XPC ($
+                  {formatKeyAmount(processedData, "xpcBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} GLP ($
-                  {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "xpcBalance", XPC_DECIMALS, 2, true)} XPC ($
+                  {formatKeyAmount(processedData, "xpcBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>
@@ -1745,7 +1745,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 <div className="label">APR</div>
                 <div>
                   <Tooltip
-                    handle={`${formatKeyAmount(processedData, "glpAprTotal", 2, 2, true)}%`}
+                    handle={`${formatKeyAmount(processedData, "xpcAprTotal", 2, 2, true)}%`}
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -1754,11 +1754,11 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                             <span className="label">
                               {nativeTokenSymbol} ({wrappedTokenSymbol}) APR
                             </span>
-                            <span>{formatKeyAmount(processedData, "glpAprForNativeToken", 2, 2, true)}%</span>
+                            <span>{formatKeyAmount(processedData, "xpcAprForNativeToken", 2, 2, true)}%</span>
                           </div>
                           <div className="Tooltip-row">
-                            <span className="label">Escrowed GMX APR</span>
-                            <span>{formatKeyAmount(processedData, "glpAprForEsGmx", 2, 2, true)}%</span>
+                            <span className="label">Escrowed OPEC APR</span>
+                            <span>{formatKeyAmount(processedData, "xpcAprForEsOpec", 2, 2, true)}%</span>
                           </div>
                         </>
                       );
@@ -1770,7 +1770,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 <div className="label">Rewards</div>
                 <div>
                   <Tooltip
-                    handle={`$${formatKeyAmount(processedData, "totalGlpRewardsUsd", USD_DECIMALS, 2, true)}`}
+                    handle={`$${formatKeyAmount(processedData, "totalXpcRewardsUsd", USD_DECIMALS, 2, true)}`}
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -1780,15 +1780,15 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                               {nativeTokenSymbol} ({wrappedTokenSymbol})
                             </span>
                             <span>
-                              {formatKeyAmount(processedData, "feeGlpTrackerRewards", 18, 4)} ($
-                              {formatKeyAmount(processedData, "feeGlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                              {formatKeyAmount(processedData, "feeXpcTrackerRewards", 18, 4)} ($
+                              {formatKeyAmount(processedData, "feeXpcTrackerRewardsUsd", USD_DECIMALS, 2, true)})
                             </span>
                           </div>
                           <div className="Tooltip-row">
-                            <span className="label">Escrowed GMX</span>
+                            <span className="label">Escrowed OPEC</span>
                             <span>
-                              {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} ($
-                              {formatKeyAmount(processedData, "stakedGlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                              {formatKeyAmount(processedData, "stakedXpcTrackerRewards", 18, 4)} ($
+                              {formatKeyAmount(processedData, "stakedXpcTrackerRewardsUsd", USD_DECIMALS, 2, true)})
                             </span>
                           </div>
                         </>
@@ -1801,24 +1801,24 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
               <div className="App-card-row">
                 <div className="label">Total Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpSupply", 18, 2, true)} GLP ($
-                  {formatKeyAmount(processedData, "glpSupplyUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "xpcSupply", 18, 2, true)} XPC ($
+                  {formatKeyAmount(processedData, "xpcSupplyUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Total Supply</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpSupply", 18, 2, true)} GLP ($
-                  {formatKeyAmount(processedData, "glpSupplyUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "xpcSupply", 18, 2, true)} XPC ($
+                  {formatKeyAmount(processedData, "xpcSupplyUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>
               <div className="App-card-options">
-                <Link className="App-button-option App-card-option" to="/buy_glp">
-                  Buy GLP
+                <Link className="App-button-option App-card-option" to="/buy_xpc">
+                  Buy XPC
                 </Link>
-                <Link className="App-button-option App-card-option" to="/buy_glp#redeem">
-                  Sell GLP
+                <Link className="App-button-option App-card-option" to="/buy_xpc#redeem">
+                  Sell XPC
                 </Link>
                 {hasInsurance && (
                   <a
@@ -1834,25 +1834,25 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
             </div>
           </div>
           <div className="App-card">
-            <div className="App-card-title">Escrowed GMX</div>
+            <div className="App-card-title">Escrowed OPEC</div>
             <div className="App-card-divider"></div>
             <div className="App-card-content">
               <div className="App-card-row">
                 <div className="label">Price</div>
-                <div>${formatAmount(gmxPrice, USD_DECIMALS, 2, true)}</div>
+                <div>${formatAmount(opecPrice, USD_DECIMALS, 2, true)}</div>
               </div>
               <div className="App-card-row">
                 <div className="label">Wallet</div>
                 <div>
-                  {formatKeyAmount(processedData, "esGmxBalance", 18, 2, true)} esGMX ($
-                  {formatKeyAmount(processedData, "esGmxBalanceUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "esOpecBalance", 18, 2, true)} esGMX ($
+                  {formatKeyAmount(processedData, "esOpecBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "esGmxInStakedGmx", 18, 2, true)} esGMX ($
-                  {formatKeyAmount(processedData, "esGmxInStakedGmxUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "esOpecInStakedOpec", 18, 2, true)} esGMX ($
+                  {formatKeyAmount(processedData, "esOpecInStakedOpecUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>
@@ -1861,7 +1861,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 <div>
                   <div>
                     <Tooltip
-                      handle={`${formatKeyAmount(processedData, "gmxAprTotalWithBoost", 2, 2, true)}%`}
+                      handle={`${formatKeyAmount(processedData, "opecAprTotalWithBoost", 2, 2, true)}%`}
                       position="right-bottom"
                       renderContent={() => {
                         return (
@@ -1870,19 +1870,19 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                               <span className="label">
                                 {nativeTokenSymbol} ({wrappedTokenSymbol}) Base APR
                               </span>
-                              <span>{formatKeyAmount(processedData, "gmxAprForNativeToken", 2, 2, true)}%</span>
+                              <span>{formatKeyAmount(processedData, "opecAprForNativeToken", 2, 2, true)}%</span>
                             </div>
-                            {processedData.bnGmxInFeeGmx && processedData.bnGmxInFeeGmx.gt(0) && (
+                            {processedData.bnOpecInFeeOpec && processedData.bnOpecInFeeOpec.gt(0) && (
                               <div className="Tooltip-row">
                                 <span className="label">
                                   {nativeTokenSymbol} ({wrappedTokenSymbol}) Boosted APR
                                 </span>
-                                <span>{formatKeyAmount(processedData, "gmxBoostAprForNativeToken", 2, 2, true)}%</span>
+                                <span>{formatKeyAmount(processedData, "opecBoostAprForNativeToken", 2, 2, true)}%</span>
                               </div>
                             )}
                             <div className="Tooltip-row">
-                              <span className="label">Escrowed GMX APR</span>
-                              <span>{formatKeyAmount(processedData, "gmxAprForEsGmx", 2, 2, true)}%</span>
+                              <span className="label">Escrowed OPEC APR</span>
+                              <span>{formatKeyAmount(processedData, "opecAprForEsOpec", 2, 2, true)}%</span>
                             </div>
                           </>
                         );
@@ -1899,26 +1899,26 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
               <div className="App-card-row">
                 <div className="label">Total Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "stakedEsGmxSupply", 18, 0, true)} esGMX ($
-                  {formatKeyAmount(processedData, "stakedEsGmxSupplyUsd", USD_DECIMALS, 0, true)})
+                  {formatKeyAmount(processedData, "stakedEsOpecSupply", 18, 0, true)} esGMX ($
+                  {formatKeyAmount(processedData, "stakedEsOpecSupplyUsd", USD_DECIMALS, 0, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Total Supply</div>
                 <div>
-                  {formatAmount(esGmxSupply, 18, 0, true)} esGMX (${formatAmount(esGmxSupplyUsd, USD_DECIMALS, 0, true)}
+                  {formatAmount(esOpecSupply, 18, 0, true)} esGMX (${formatAmount(esOpecSupplyUsd, USD_DECIMALS, 0, true)}
                   )
                 </div>
               </div>
               <div className="App-card-divider"></div>
               <div className="App-card-options">
                 {active && (
-                  <button className="App-button-option App-card-option" onClick={() => showStakeEsGmxModal()}>
+                  <button className="App-button-option App-card-option" onClick={() => showStakeEsOpecModal()}>
                     Stake
                   </button>
                 )}
                 {active && (
-                  <button className="App-button-option App-card-option" onClick={() => showUnstakeEsGmxModal()}>
+                  <button className="App-button-option App-card-option" onClick={() => showUnstakeEsOpecModal()}>
                     Unstake
                   </button>
                 )}
@@ -1937,7 +1937,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
         <div className="Tab-title-section">
           <div className="Page-title">Vest</div>
           <div className="Page-description">
-            Convert esGMX tokens to GMX tokens.
+            Convert esGMX tokens to OPEC tokens.
             <br />
             Please read the{" "}
             <a href="https://gmxio.gitbook.io/gmx/rewards#vesting" target="_blank" rel="noopener noreferrer">
@@ -1948,8 +1948,8 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
         </div>
         <div>
           <div className="StakeV2-cards">
-            <div className="App-card StakeV2-gmx-card">
-              <div className="App-card-title">GMX Vault</div>
+            <div className="App-card StakeV2-opec-card">
+              <div className="App-card-title">OPEC Vault</div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
                 <div className="App-card-row">
@@ -1961,11 +1961,11 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                       renderContent={() => {
                         return (
                           <>
-                            {formatAmount(processedData.gmxInStakedGmx, 18, 2, true)} GMX
+                            {formatAmount(processedData.opecInStakedOpec, 18, 2, true)} OPEC
                             <br />
-                            {formatAmount(processedData.esGmxInStakedGmx, 18, 2, true)} esGMX
+                            {formatAmount(processedData.esOpecInStakedOpec, 18, 2, true)} esGMX
                             <br />
-                            {formatAmount(processedData.bnGmxInFeeGmx, 18, 2, true)} Multiplier Points
+                            {formatAmount(processedData.bnOpecInFeeOpec, 18, 2, true)} Multiplier Points
                           </>
                         );
                       }}
@@ -1975,7 +1975,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 <div className="App-card-row">
                   <div className="label">Reserved for Vesting</div>
                   <div>
-                    {formatKeyAmount(vestingData, "gmxVesterPairAmount", 18, 2, true)} /{" "}
+                    {formatKeyAmount(vestingData, "opecVesterPairAmount", 18, 2, true)} /{" "}
                     {formatAmount(totalRewardTokens, 18, 2, true)}
                   </div>
                 </div>
@@ -1983,9 +1983,9 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <div className="label">Vesting Status</div>
                   <div>
                     <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "gmxVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
+                      handle={`${formatKeyAmount(vestingData, "opecVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
                         vestingData,
-                        "gmxVesterVestedAmount",
+                        "opecVesterVestedAmount",
                         18,
                         4,
                         true
@@ -1994,9 +1994,9 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                       renderContent={() => {
                         return (
                           <>
-                            {formatKeyAmount(vestingData, "gmxVesterClaimSum", 18, 4, true)} tokens have been converted
-                            to GMX from the&nbsp;
-                            {formatKeyAmount(vestingData, "gmxVesterVestedAmount", 18, 4, true)} esGMX deposited for
+                            {formatKeyAmount(vestingData, "opecVesterClaimSum", 18, 4, true)} tokens have been converted
+                            to OPEC from the&nbsp;
+                            {formatKeyAmount(vestingData, "opecVesterVestedAmount", 18, 4, true)} esGMX deposited for
                             vesting.
                           </>
                         );
@@ -2008,16 +2008,16 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <div className="label">Claimable</div>
                   <div>
                     <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "gmxVesterClaimable", 18, 4, true)} GMX`}
+                      handle={`${formatKeyAmount(vestingData, "opecVesterClaimable", 18, 4, true)} OPEC`}
                       position="right-bottom"
                       renderContent={() =>
                         `${formatKeyAmount(
                           vestingData,
-                          "gmxVesterClaimable",
+                          "opecVesterClaimable",
                           18,
                           4,
                           true
-                        )} GMX tokens can be claimed, use the options under the Total Rewards section to claim them.`
+                        )} OPEC tokens can be claimed, use the options under the Total Rewards section to claim them.`
                       }
                     />
                   </div>
@@ -2030,40 +2030,40 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                     </button>
                   )}
                   {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showGmxVesterDepositModal()}>
+                    <button className="App-button-option App-card-option" onClick={() => showOpecVesterDepositModal()}>
                       Deposit
                     </button>
                   )}
                   {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showGmxVesterWithdrawModal()}>
+                    <button className="App-button-option App-card-option" onClick={() => showOpecVesterWithdrawModal()}>
                       Withdraw
                     </button>
                   )}
                 </div>
               </div>
             </div>
-            <div className="App-card StakeV2-gmx-card">
-              <div className="App-card-title">GLP Vault</div>
+            <div className="App-card StakeV2-opec-card">
+              <div className="App-card-title">XPC Vault</div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
                 <div className="App-card-row">
                   <div className="label">Staked Tokens</div>
-                  <div>{formatAmount(processedData.glpBalance, 18, 2, true)} GLP</div>
+                  <div>{formatAmount(processedData.xpcBalance, 18, 2, true)} XPC</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Reserved for Vesting</div>
                   <div>
-                    {formatKeyAmount(vestingData, "glpVesterPairAmount", 18, 2, true)} /{" "}
-                    {formatAmount(processedData.glpBalance, 18, 2, true)}
+                    {formatKeyAmount(vestingData, "xpcVesterPairAmount", 18, 2, true)} /{" "}
+                    {formatAmount(processedData.xpcBalance, 18, 2, true)}
                   </div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Vesting Status</div>
                   <div>
                     <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "glpVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
+                      handle={`${formatKeyAmount(vestingData, "xpcVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
                         vestingData,
-                        "glpVesterVestedAmount",
+                        "xpcVesterVestedAmount",
                         18,
                         4,
                         true
@@ -2072,9 +2072,9 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                       renderContent={() => {
                         return (
                           <>
-                            {formatKeyAmount(vestingData, "glpVesterClaimSum", 18, 4, true)} tokens have been converted
-                            to GMX from the&nbsp;
-                            {formatKeyAmount(vestingData, "glpVesterVestedAmount", 18, 4, true)} esGMX deposited for
+                            {formatKeyAmount(vestingData, "xpcVesterClaimSum", 18, 4, true)} tokens have been converted
+                            to OPEC from the&nbsp;
+                            {formatKeyAmount(vestingData, "xpcVesterVestedAmount", 18, 4, true)} esGMX deposited for
                             vesting.
                           </>
                         );
@@ -2086,16 +2086,16 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <div className="label">Claimable</div>
                   <div>
                     <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "glpVesterClaimable", 18, 4, true)} GMX`}
+                      handle={`${formatKeyAmount(vestingData, "xpcVesterClaimable", 18, 4, true)} OPEC`}
                       position="right-bottom"
                       renderContent={() =>
                         `${formatKeyAmount(
                           vestingData,
-                          "glpVesterClaimable",
+                          "xpcVesterClaimable",
                           18,
                           4,
                           true
-                        )} GMX tokens can be claimed, use the options under the Total Rewards section to claim them.`
+                        )} OPEC tokens can be claimed, use the options under the Total Rewards section to claim them.`
                       }
                     ></Tooltip>
                   </div>
@@ -2108,12 +2108,12 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                     </button>
                   )}
                   {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showGlpVesterDepositModal()}>
+                    <button className="App-button-option App-card-option" onClick={() => showXpcVesterDepositModal()}>
                       Deposit
                     </button>
                   )}
                   {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showGlpVesterWithdrawModal()}>
+                    <button className="App-button-option App-card-option" onClick={() => showXpcVesterWithdrawModal()}>
                       Withdraw
                     </button>
                   )}

@@ -21,10 +21,10 @@ export default function Footer() {
           <a className="App-social-link" href="https://twitter.com/GMX_IO" target="_blank" rel="noopener noreferrer">
             <img src={twitterIcon} alt="Twitter" />
           </a>
-          <a className="App-social-link" href="https://medium.com/@gmx.io" target="_blank" rel="noopener noreferrer">
+          <a className="App-social-link" href="https://medium.com/@opec.io" target="_blank" rel="noopener noreferrer">
             <img src={mediumIcon} alt="Medium" />
           </a>
-          <a className="App-social-link" href="https://github.com/gmx-io" target="_blank" rel="noopener noreferrer">
+          <a className="App-social-link" href="https://github.com/opec-io" target="_blank" rel="noopener noreferrer">
             <img src={githubIcon} alt="Github" />
           </a>
           <a className="App-social-link" href="https://t.me/GMX_IO" target="_blank" rel="noopener noreferrer">

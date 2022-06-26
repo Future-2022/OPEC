@@ -40,20 +40,20 @@ export default function Home() {
   // const [openedFAQIndex, setOpenedFAQIndex] = useState(null)
   // const faqContent = [{
   //   id: 1,
-  //   question: "What is GMX?",
-  //   answer: "GMX is a decentralized spot and perpetual exchange that supports low swap fees and zero price impact trades.<br><br>Trading is supported by a unique multi-asset pool that earns liquidity providers fees from market making, swap fees, leverage trading (spreads, funding fees & liquidations), and asset rebalancing.<br><br>Dynamic pricing is supported by Chainlink Oracles along with TWAP pricing from leading volume DEXs."
+  //   question: "What is OPEC?",
+  //   answer: "OPEC is a decentralized spot and perpetual exchange that supports low swap fees and zero price impact trades.<br><br>Trading is supported by a unique multi-asset pool that earns liquidity providers fees from market making, swap fees, leverage trading (spreads, funding fees & liquidations), and asset rebalancing.<br><br>Dynamic pricing is supported by Chainlink Oracles along with TWAP pricing from leading volume DEXs."
   // }, {
   //   id: 2,
-  //   question: "What is the GMX Governance Token? ",
-  //   answer: "The GMX token is the governance token of the GMX ecosystem, it provides the token owner voting rights on the direction of the GMX platform.<br><br>Additionally, when GMX is staked you will earn 30% of the platform-generated fees, you will also earn Escrowed GMX tokens and Multiplier Points."
+  //   question: "What is the OPEC Governance Token? ",
+  //   answer: "The OPEC token is the governance token of the OPEC ecosystem, it provides the token owner voting rights on the direction of the OPEC platform.<br><br>Additionally, when OPEC is staked you will earn 30% of the platform-generated fees, you will also earn Escrowed OPEC tokens and Multiplier Points."
   // }, {
   //   id: 3,
-  //   question: "What is the GLP Token? ",
-  //   answer: "The GLP token represents the liquidity users provide to the GMX platform for Swaps and Margin Trading.<br><br>To provide liquidity to GLP you <a href='https://gmx.io/buy_glp' target='_blank'>trade</a> your crypto asset BTC, ETH, LINK, UNI, USDC, USDT, MIM, or FRAX to the liquidity pool, in exchange, you gain exposure to a diversified index of tokens while earning 50% of the platform trading fees and esGMX."
+  //   question: "What is the XPC Token? ",
+  //   answer: "The XPC token represents the liquidity users provide to the OPEC platform for Swaps and Margin Trading.<br><br>To provide liquidity to XPC you <a href='https://opec.io/buy_xpc' target='_blank'>trade</a> your crypto asset BTC, ETH, LINK, UNI, USDC, USDT, MIM, or FRAX to the liquidity pool, in exchange, you gain exposure to a diversified index of tokens while earning 50% of the platform trading fees and esGMX."
   // }, {
   //   id: 4,
-  //   question: "What can I trade on GMX? ",
-  //   answer: "On GMX you can swap or margin trade any of the following assets: ETH, BTC, LINK, UNI, USDC, USDT, MIM, FRAX, with others to be added. "
+  //   question: "What can I trade on OPEC? ",
+  //   answer: "On OPEC you can swap or margin trade any of the following assets: ETH, BTC, LINK, UNI, USDC, USDT, MIM, FRAX, with others to be added. "
   // }]
 
   // const toggleFAQContent = function(index) {
@@ -233,7 +233,7 @@ export default function Home() {
         <div className="Home-cta-container default-container">
           <div className="Home-cta-info">
             <div className="Home-cta-info__title">Available on your preferred network</div>
-            <div className="Home-cta-info__description">GMX is currently live on Arbitrum and Avalanche.</div>
+            <div className="Home-cta-info__description">OPEC is currently live on Arbitrum and Avalanche.</div>
           </div>
           <div className="Home-cta-options">
             <div className="Home-cta-option Home-cta-option-arbitrum">
@@ -277,7 +277,7 @@ export default function Home() {
       {/* <div className="Home-video-section">
         <div className="Home-video-container default-container">
           <div className="Home-video-block">
-            <img src={gmxBigIcon} alt="gmxbig" />
+            <img src={opecBigIcon} alt="opecbig" />
           </div>
         </div>
       </div> */}

@@ -23,25 +23,25 @@ import {
   formatAmountFree,
   formatKeyAmount,
   // formatDateTime,
-  getBuyGlpToAmount,
-  getBuyGlpFromAmount,
-  getSellGlpFromAmount,
-  getSellGlpToAmount,
+  getBuyXpcToAmount,
+  getBuyXpcFromAmount,
+  getSellXpcFromAmount,
+  getSellXpcToAmount,
   parseValue,
   approveTokens,
   getUsd,
   adjustForDecimals,
-  GLP_DECIMALS,
+  XPC_DECIMALS,
   USD_DECIMALS,
   BASIS_POINTS_DIVISOR,
-  GLP_COOLDOWN_DURATION,
+  XPC_COOLDOWN_DURATION,
   SECONDS_PER_YEAR,
   USDG_DECIMALS,
   ARBITRUM,
   PLACEHOLDER_ACCOUNT,
 } from "../../Helpers";
 
-import { callContract, useGmxPrice, useInfoTokens } from "../../Api";
+import { callContract, useOpecPrice, useInfoTokens } from "../../Api";
 
 import TokenSelector from "../Exchange/TokenSelector";
 import BuyInputSection from "../BuyInputSection/BuyInputSection";
@@ -50,20 +50,20 @@ import Tooltip from "../Tooltip/Tooltip";
 import ReaderV2 from "../../abis/ReaderV2.json";
 import RewardReader from "../../abis/RewardReader.json";
 import VaultV2 from "../../abis/VaultV2.json";
-import GlpManager from "../../abis/GlpManager.json";
+import XpcManager from "../../abis/XpcManager.json";
 import RewardTracker from "../../abis/RewardTracker.json";
 import Vester from "../../abis/Vester.json";
 import RewardRouter from "../../abis/RewardRouter.json";
 import Token from "../../abis/Token.json";
 
-import glp24Icon from "../../img/ic_glp_24.svg";
-import glp40Icon from "../../img/ic_glp_40.svg";
+import xpc24Icon from "../../img/ic_glp_24.svg";
+import xpc40Icon from "../../img/ic_glp_40.svg";
 import arrowIcon from "../../img/ic_convert_down.svg";
 
 import avalanche16Icon from "../../img/ic_avalanche_16.svg";
 import arbitrum16Icon from "../../img/ic_arbitrum_16.svg";
 
-import "./GlpSwap.css";
+import "./XpcSwap.css";
 import AssetDropdown from "../../views/Dashboard/AssetDropdown";
 
 const { AddressZero } = ethers.constants;
@@ -73,7 +73,7 @@ function getStakingData(stakingInfo) {
     return;
   }
 
-  const keys = ["stakedGlpTracker", "feeGlpTracker"];
+  const keys = ["stakedXpcTracker", "feeXpcTracker"];
   const data = {};
   const propsLength = 5;
 
@@ -91,11 +91,11 @@ function getStakingData(stakingInfo) {
   return data;
 }
 
-export default function GlpSwap(props) {
+export default function XpcSwap(props) {
   const { savedSlippageAmount, isBuying, setPendingTxns, connectWallet, setIsBuying } = props;
   const history = useHistory();
-  const swapLabel = isBuying ? "BuyGlp" : "SellGlp";
-  const tabLabel = isBuying ? "Buy GLP" : "Sell GLP";
+  const swapLabel = isBuying ? "BuyXpc" : "SellXpc";
+  const tabLabel = isBuying ? "Buy XPC" : "Sell XPC";
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
   // const chainName = getChainName(chainId)
@@ -103,7 +103,7 @@ export default function GlpSwap(props) {
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
   const [swapValue, setSwapValue] = useState("");
-  const [glpValue, setGlpValue] = useState("");
+  const [xpcValue, setXpcValue] = useState("");
   const [swapTokenAddress, setSwapTokenAddress] = useLocalStorageByChainId(
     chainId,
     `${swapLabel}-swap-token-address`,
@@ -119,16 +119,16 @@ export default function GlpSwap(props) {
   const rewardReaderAddress = getContract(chainId, "RewardReader");
   const vaultAddress = getContract(chainId, "Vault");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-  const stakedGlpTrackerAddress = getContract(chainId, "StakedGlpTracker");
-  const feeGlpTrackerAddress = getContract(chainId, "FeeGlpTracker");
+  const stakedXpcTrackerAddress = getContract(chainId, "StakedXpcTracker");
+  const feeXpcTrackerAddress = getContract(chainId, "FeeXpcTracker");
   const usdgAddress = getContract(chainId, "USDG");
-  const glpManagerAddress = getContract(chainId, "GlpManager");
+  const xpcManagerAddress = getContract(chainId, "XpcManager");
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
-  const tokensForBalanceAndSupplyQuery = [stakedGlpTrackerAddress, usdgAddress];
+  const tokensForBalanceAndSupplyQuery = [stakedXpcTrackerAddress, usdgAddress];
 
   const tokenAddresses = tokens.map((token) => token.address);
   const { data: tokenBalances } = useSWR(
-    [`GlpSwap:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
+    [`XpcSwap:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
     }
@@ -136,7 +136,7 @@ export default function GlpSwap(props) {
 
   const { data: balancesAndSupplies } = useSWR(
     [
-      `GlpSwap:getTokenBalancesWithSupplies:${active}`,
+      `XpcSwap:getTokenBalancesWithSupplies:${active}`,
       chainId,
       readerAddress,
       "getTokenBalancesWithSupplies",
@@ -147,12 +147,12 @@ export default function GlpSwap(props) {
     }
   );
 
-  const { data: aums } = useSWR([`GlpSwap:getAums:${active}`, chainId, glpManagerAddress, "getAums"], {
-    fetcher: fetcher(library, GlpManager),
+  const { data: aums } = useSWR([`XpcSwap:getAums:${active}`, chainId, xpcManagerAddress, "getAums"], {
+    fetcher: fetcher(library, XpcManager),
   });
 
   const { data: totalTokenWeights } = useSWR(
-    [`GlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
+    [`XpcSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
       fetcher: fetcher(library, VaultV2),
     }
@@ -160,39 +160,39 @@ export default function GlpSwap(props) {
 
   const tokenAllowanceAddress = swapTokenAddress === AddressZero ? nativeTokenAddress : swapTokenAddress;
   const { data: tokenAllowance } = useSWR(
-    [active, chainId, tokenAllowanceAddress, "allowance", account || PLACEHOLDER_ACCOUNT, glpManagerAddress],
+    [active, chainId, tokenAllowanceAddress, "allowance", account || PLACEHOLDER_ACCOUNT, xpcManagerAddress],
     {
       fetcher: fetcher(library, Token),
     }
   );
 
   const { data: lastPurchaseTime } = useSWR(
-    [`GlpSwap:lastPurchaseTime:${active}`, chainId, glpManagerAddress, "lastAddedAt", account || PLACEHOLDER_ACCOUNT],
+    [`XpcSwap:lastPurchaseTime:${active}`, chainId, xpcManagerAddress, "lastAddedAt", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: fetcher(library, GlpManager),
+      fetcher: fetcher(library, XpcManager),
     }
   );
 
-  const { data: glpBalance } = useSWR(
-    [`GlpSwap:glpBalance:${active}`, chainId, feeGlpTrackerAddress, "stakedAmounts", account || PLACEHOLDER_ACCOUNT],
+  const { data: xpcBalance } = useSWR(
+    [`XpcSwap:xpcBalance:${active}`, chainId, feeXpcTrackerAddress, "stakedAmounts", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(library, RewardTracker),
     }
   );
 
-  const glpVesterAddress = getContract(chainId, "GlpVester");
+  const xpcVesterAddress = getContract(chainId, "XpcVester");
   const { data: reservedAmount } = useSWR(
-    [`GlpSwap:reservedAmount:${active}`, chainId, glpVesterAddress, "pairAmounts", account || PLACEHOLDER_ACCOUNT],
+    [`XpcSwap:reservedAmount:${active}`, chainId, xpcVesterAddress, "pairAmounts", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(library, Vester),
     }
   );
 
-  const { gmxPrice } = useGmxPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
+  const { opecPrice } = useOpecPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
-  const rewardTrackersForStakingInfo = [stakedGlpTrackerAddress, feeGlpTrackerAddress];
+  const rewardTrackersForStakingInfo = [stakedXpcTrackerAddress, feeXpcTrackerAddress];
   const { data: stakingInfo } = useSWR(
-    [`GlpSwap:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
+    [`XpcSwap:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
     }
@@ -200,33 +200,33 @@ export default function GlpSwap(props) {
 
   const stakingData = getStakingData(stakingInfo);
 
-  const redemptionTime = lastPurchaseTime ? lastPurchaseTime.add(GLP_COOLDOWN_DURATION) : undefined;
+  const redemptionTime = lastPurchaseTime ? lastPurchaseTime.add(XPC_COOLDOWN_DURATION) : undefined;
   const inCooldownWindow = redemptionTime && parseInt(Date.now() / 1000) < redemptionTime;
 
-  const glpSupply = balancesAndSupplies ? balancesAndSupplies[1] : bigNumberify(0);
+  const xpcSupply = balancesAndSupplies ? balancesAndSupplies[1] : bigNumberify(0);
   const usdgSupply = balancesAndSupplies ? balancesAndSupplies[3] : bigNumberify(0);
   let aum;
   if (aums && aums.length > 0) {
     aum = isBuying ? aums[0] : aums[1];
   }
-  const glpPrice =
-    aum && aum.gt(0) && glpSupply.gt(0)
-      ? aum.mul(expandDecimals(1, GLP_DECIMALS)).div(glpSupply)
+  const xpcPrice =
+    aum && aum.gt(0) && xpcSupply.gt(0)
+      ? aum.mul(expandDecimals(1, XPC_DECIMALS)).div(xpcSupply)
       : expandDecimals(1, USD_DECIMALS);
-  let glpBalanceUsd;
-  if (glpBalance) {
-    glpBalanceUsd = glpBalance.mul(glpPrice).div(expandDecimals(1, GLP_DECIMALS));
+  let xpcBalanceUsd;
+  if (xpcBalance) {
+    xpcBalanceUsd = xpcBalance.mul(xpcPrice).div(expandDecimals(1, XPC_DECIMALS));
   }
-  const glpSupplyUsd = glpSupply.mul(glpPrice).div(expandDecimals(1, GLP_DECIMALS));
+  const xpcSupplyUsd = xpcSupply.mul(xpcPrice).div(expandDecimals(1, XPC_DECIMALS));
 
   let reserveAmountUsd;
   if (reservedAmount) {
-    reserveAmountUsd = reservedAmount.mul(glpPrice).div(expandDecimals(1, GLP_DECIMALS));
+    reserveAmountUsd = reservedAmount.mul(xpcPrice).div(expandDecimals(1, XPC_DECIMALS));
   }
 
-  let maxSellAmount = glpBalance;
-  if (glpBalance && reservedAmount) {
-    maxSellAmount = glpBalance.sub(reservedAmount);
+  let maxSellAmount = xpcBalance;
+  if (xpcBalance && reservedAmount) {
+    maxSellAmount = xpcBalance.sub(reservedAmount);
   }
 
   const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, undefined);
@@ -236,13 +236,13 @@ export default function GlpSwap(props) {
   const swapTokenBalance = swapTokenInfo && swapTokenInfo.balance ? swapTokenInfo.balance : bigNumberify(0);
 
   const swapAmount = parseValue(swapValue, swapToken && swapToken.decimals);
-  const glpAmount = parseValue(glpValue, GLP_DECIMALS);
+  const xpcAmount = parseValue(xpcValue, XPC_DECIMALS);
 
   const needApproval =
     isBuying && swapTokenAddress !== AddressZero && tokenAllowance && swapAmount && swapAmount.gt(tokenAllowance);
 
   const swapUsdMin = getUsd(swapAmount, swapTokenAddress, false, infoTokens);
-  const glpUsdMax = glpAmount && glpPrice ? glpAmount.mul(glpPrice).div(expandDecimals(1, GLP_DECIMALS)) : undefined;
+  const xpcUsdMax = xpcAmount && xpcPrice ? xpcAmount.mul(xpcPrice).div(expandDecimals(1, XPC_DECIMALS)) : undefined;
 
   let isSwapTokenCapReached;
   if (swapTokenInfo.managedUsd && swapTokenInfo.maxUsdgAmount) {
@@ -256,9 +256,9 @@ export default function GlpSwap(props) {
     setSwapValue(e.target.value);
   };
 
-  const onGlpValueChange = (e) => {
+  const onXpcValueChange = (e) => {
     setAnchorOnSwapAmount(false);
-    setGlpValue(e.target.value);
+    setXpcValue(e.target.value);
   };
 
   const onSelectSwapToken = (token) => {
@@ -270,83 +270,83 @@ export default function GlpSwap(props) {
 
   let totalApr = bigNumberify(0);
 
-  let feeGlpTrackerAnnualRewardsUsd;
-  let feeGlpTrackerApr;
+  let feeXpcTrackerAnnualRewardsUsd;
+  let feeXpcTrackerApr;
   if (
     stakingData &&
-    stakingData.feeGlpTracker &&
-    stakingData.feeGlpTracker.tokensPerInterval &&
+    stakingData.feeXpcTracker &&
+    stakingData.feeXpcTracker.tokensPerInterval &&
     nativeToken &&
     nativeToken.minPrice &&
-    glpSupplyUsd &&
-    glpSupplyUsd.gt(0)
+    xpcSupplyUsd &&
+    xpcSupplyUsd.gt(0)
   ) {
-    feeGlpTrackerAnnualRewardsUsd = stakingData.feeGlpTracker.tokensPerInterval
+    feeXpcTrackerAnnualRewardsUsd = stakingData.feeXpcTracker.tokensPerInterval
       .mul(SECONDS_PER_YEAR)
       .mul(nativeToken.minPrice)
       .div(expandDecimals(1, 18));
-    feeGlpTrackerApr = feeGlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(glpSupplyUsd);
-    totalApr = totalApr.add(feeGlpTrackerApr);
+    feeXpcTrackerApr = feeXpcTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(xpcSupplyUsd);
+    totalApr = totalApr.add(feeXpcTrackerApr);
   }
 
-  let stakedGlpTrackerAnnualRewardsUsd;
-  let stakedGlpTrackerApr;
+  let stakedXpcTrackerAnnualRewardsUsd;
+  let stakedXpcTrackerApr;
 
   if (
-    gmxPrice &&
+    opecPrice &&
     stakingData &&
-    stakingData.stakedGlpTracker &&
-    stakingData.stakedGlpTracker.tokensPerInterval &&
-    glpSupplyUsd &&
-    glpSupplyUsd.gt(0)
+    stakingData.stakedXpcTracker &&
+    stakingData.stakedXpcTracker.tokensPerInterval &&
+    xpcSupplyUsd &&
+    xpcSupplyUsd.gt(0)
   ) {
-    stakedGlpTrackerAnnualRewardsUsd = stakingData.stakedGlpTracker.tokensPerInterval
+    stakedXpcTrackerAnnualRewardsUsd = stakingData.stakedXpcTracker.tokensPerInterval
       .mul(SECONDS_PER_YEAR)
-      .mul(gmxPrice)
+      .mul(opecPrice)
       .div(expandDecimals(1, 18));
-    stakedGlpTrackerApr = stakedGlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(glpSupplyUsd);
-    totalApr = totalApr.add(stakedGlpTrackerApr);
+    stakedXpcTrackerApr = stakedXpcTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(xpcSupplyUsd);
+    totalApr = totalApr.add(stakedXpcTrackerApr);
   }
 
   useEffect(() => {
     const updateSwapAmounts = () => {
       if (anchorOnSwapAmount) {
         if (!swapAmount) {
-          setGlpValue("");
+          setXpcValue("");
           setFeeBasisPoints("");
           return;
         }
 
         if (isBuying) {
-          const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyGlpToAmount(
+          const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyXpcToAmount(
             swapAmount,
             swapTokenAddress,
             infoTokens,
-            glpPrice,
+            xpcPrice,
             usdgSupply,
             totalTokenWeights
           );
-          const nextValue = formatAmountFree(nextAmount, GLP_DECIMALS, GLP_DECIMALS);
-          setGlpValue(nextValue);
+          const nextValue = formatAmountFree(nextAmount, XPC_DECIMALS, XPC_DECIMALS);
+          setXpcValue(nextValue);
           setFeeBasisPoints(feeBps);
         } else {
-          const { amount: nextAmount, feeBasisPoints: feeBps } = getSellGlpFromAmount(
+          const { amount: nextAmount, feeBasisPoints: feeBps } = getSellXpcFromAmount(
             swapAmount,
             swapTokenAddress,
             infoTokens,
-            glpPrice,
+            xpcPrice,
             usdgSupply,
             totalTokenWeights
           );
-          const nextValue = formatAmountFree(nextAmount, GLP_DECIMALS, GLP_DECIMALS);
-          setGlpValue(nextValue);
+          const nextValue = formatAmountFree(nextAmount, XPC_DECIMALS, XPC_DECIMALS);
+          setXpcValue(nextValue);
           setFeeBasisPoints(feeBps);
         }
 
         return;
       }
 
-      if (!glpAmount) {
+      if (!xpcAmount) {
         setSwapValue("");
         setFeeBasisPoints("");
         return;
@@ -354,11 +354,11 @@ export default function GlpSwap(props) {
 
       if (swapToken) {
         if (isBuying) {
-          const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyGlpFromAmount(
-            glpAmount,
+          const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyXpcFromAmount(
+            xpcAmount,
             swapTokenAddress,
             infoTokens,
-            glpPrice,
+            xpcPrice,
             usdgSupply,
             totalTokenWeights
           );
@@ -366,11 +366,11 @@ export default function GlpSwap(props) {
           setSwapValue(nextValue);
           setFeeBasisPoints(feeBps);
         } else {
-          const { amount: nextAmount, feeBasisPoints: feeBps } = getSellGlpToAmount(
-            glpAmount,
+          const { amount: nextAmount, feeBasisPoints: feeBps } = getSellXpcToAmount(
+            xpcAmount,
             swapTokenAddress,
             infoTokens,
-            glpPrice,
+            xpcPrice,
             usdgSupply,
             totalTokenWeights,
             true
@@ -388,11 +388,11 @@ export default function GlpSwap(props) {
     isBuying,
     anchorOnSwapAmount,
     swapAmount,
-    glpAmount,
+    xpcAmount,
     swapToken,
     swapTokenAddress,
     infoTokens,
-    glpPrice,
+    xpcPrice,
     usdgSupply,
     totalTokenWeights,
   ]);
@@ -414,7 +414,7 @@ export default function GlpSwap(props) {
     }
 
     setAnchorOnSwapAmount(false);
-    setGlpValue(formatAmountFree(maxSellAmount, GLP_DECIMALS, GLP_DECIMALS));
+    setXpcValue(formatAmountFree(maxSellAmount, XPC_DECIMALS, XPC_DECIMALS));
   };
 
   const getError = () => {
@@ -425,7 +425,7 @@ export default function GlpSwap(props) {
     if (!swapAmount || swapAmount.eq(0)) {
       return ["Enter an amount"];
     }
-    if (!glpAmount || glpAmount.eq(0)) {
+    if (!xpcAmount || xpcAmount.eq(0)) {
       return ["Enter an amount"];
     }
 
@@ -445,8 +445,8 @@ export default function GlpSwap(props) {
     }
 
     if (!isBuying) {
-      if (maxSellAmount && glpAmount && glpAmount.gt(maxSellAmount)) {
-        return [`Insufficient GLP balance`];
+      if (maxSellAmount && xpcAmount && xpcAmount.gt(maxSellAmount)) {
+        return [`Insufficient XPC balance`];
       }
 
       const swapTokenInfo = getTokenInfo(infoTokens, swapTokenAddress);
@@ -513,7 +513,7 @@ export default function GlpSwap(props) {
       return isBuying ? `Buying...` : `Selling...`;
     }
 
-    return isBuying ? "Buy GLP" : "Sell GLP";
+    return isBuying ? "Buy XPC" : "Sell XPC";
   };
 
   const approveFromToken = () => {
@@ -521,7 +521,7 @@ export default function GlpSwap(props) {
       setIsApproving,
       library,
       tokenAddress: swapToken.address,
-      spender: glpManagerAddress,
+      spender: xpcManagerAddress,
       chainId: chainId,
       onApproveSubmitted: () => {
         setIsWaitingForApproval(true);
@@ -531,21 +531,21 @@ export default function GlpSwap(props) {
     });
   };
 
-  const buyGlp = () => {
+  const buyXpc = () => {
     setIsSubmitting(true);
 
-    const minGlp = glpAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR);
+    const minXpc = xpcAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR);
 
     const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());
-    const method = swapTokenAddress === AddressZero ? "mintAndStakeGlpETH" : "mintAndStakeGlp";
-    const params = swapTokenAddress === AddressZero ? [0, minGlp] : [swapTokenAddress, swapAmount, 0, minGlp];
+    const method = swapTokenAddress === AddressZero ? "mintAndStakeXpcETH" : "mintAndStakeXpc";
+    const params = swapTokenAddress === AddressZero ? [0, minXpc] : [swapTokenAddress, swapAmount, 0, minXpc];
     const value = swapTokenAddress === AddressZero ? swapAmount : 0;
 
     callContract(chainId, contract, method, params, {
       value,
       sentMsg: "Buy submitted.",
       failMsg: "Buy failed.",
-      successMsg: `${formatAmount(glpAmount, 18, 4, true)} GLP bought with ${formatAmount(
+      successMsg: `${formatAmount(xpcAmount, 18, 4, true)} XPC bought with ${formatAmount(
         swapAmount,
         swapTokenInfo.decimals,
         4,
@@ -559,20 +559,20 @@ export default function GlpSwap(props) {
       });
   };
 
-  const sellGlp = () => {
+  const sellXpc = () => {
     setIsSubmitting(true);
 
     const minOut = swapAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR);
 
     const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());
-    const method = swapTokenAddress === AddressZero ? "unstakeAndRedeemGlpETH" : "unstakeAndRedeemGlp";
+    const method = swapTokenAddress === AddressZero ? "unstakeAndRedeemXpcETH" : "unstakeAndRedeemXpc";
     const params =
-      swapTokenAddress === AddressZero ? [glpAmount, minOut, account] : [swapTokenAddress, glpAmount, minOut, account];
+      swapTokenAddress === AddressZero ? [xpcAmount, minOut, account] : [swapTokenAddress, xpcAmount, minOut, account];
 
     callContract(chainId, contract, method, params, {
       sentMsg: "Sell submitted!",
       failMsg: "Sell failed.",
-      successMsg: `${formatAmount(glpAmount, 18, 4, true)} GLP sold for ${formatAmount(
+      successMsg: `${formatAmount(xpcAmount, 18, 4, true)} XPC sold for ${formatAmount(
         swapAmount,
         swapTokenInfo.decimals,
         4,
@@ -604,9 +604,9 @@ export default function GlpSwap(props) {
     }
 
     if (isBuying) {
-      buyGlp();
+      buyXpc();
     } else {
-      sellGlp();
+      sellXpc();
     }
   };
 
@@ -618,12 +618,12 @@ export default function GlpSwap(props) {
     if (swapUsdMin) {
       payBalance = `$${formatAmount(swapUsdMin, USD_DECIMALS, 2, true)}`;
     }
-    if (glpUsdMax) {
-      receiveBalance = `$${formatAmount(glpUsdMax, USD_DECIMALS, 2, true)}`;
+    if (xpcUsdMax) {
+      receiveBalance = `$${formatAmount(xpcUsdMax, USD_DECIMALS, 2, true)}`;
     }
   } else {
-    if (glpUsdMax) {
-      payBalance = `$${formatAmount(glpUsdMax, USD_DECIMALS, 2, true)}`;
+    if (xpcUsdMax) {
+      payBalance = `$${formatAmount(xpcUsdMax, USD_DECIMALS, 2, true)}`;
     }
     if (swapUsdMin) {
       receiveBalance = `$${formatAmount(swapUsdMin, USD_DECIMALS, 2, true)}`;
@@ -645,7 +645,7 @@ export default function GlpSwap(props) {
   const nativeTokenSymbol = getNativeToken(chainId).symbol;
 
   const onSwapOptionChange = (opt) => {
-    if (opt === "Sell GLP") {
+    if (opt === "Sell XPC") {
       switchSwapOption("redeem");
     } else {
       switchSwapOption();
@@ -653,29 +653,29 @@ export default function GlpSwap(props) {
   };
 
   return (
-    <div className="GlpSwap">
+    <div className="XpcSwap">
       {/* <div className="Page-title-section">
-        <div className="Page-title">{isBuying ? "Buy GLP" : "Sell GLP"}</div>
+        <div className="Page-title">{isBuying ? "Buy XPC" : "Sell XPC"}</div>
         {isBuying && <div className="Page-description">
-          Purchase <a href="https://gmxio.gitbook.io/gmx/glp" target="_blank" rel="noopener noreferrer">GLP tokens</a> to earn {nativeTokenSymbol} fees from swaps and leverage trading.<br/>
+          Purchase <a href="https://gmxio.gitbook.io/gmx/xpc" target="_blank" rel="noopener noreferrer">XPC tokens</a> to earn {nativeTokenSymbol} fees from swaps and leverage trading.<br/>
           Note that there is a minimum holding time of 15 minutes after a purchase.<br/>
           <div>View <Link to="/earn">staking</Link> page.</div>
         </div>}
         {!isBuying && <div className="Page-description">
-          Redeem your GLP tokens for any supported asset.
+          Redeem your XPC tokens for any supported asset.
           {inCooldownWindow && <div>
-            GLP tokens can only be redeemed 15 minutes after your most recent purchase.<br/>
-            Your last purchase was at {formatDateTime(lastPurchaseTime)}, you can redeem GLP tokens after {formatDateTime(redemptionTime)}.<br/>
+            XPC tokens can only be redeemed 15 minutes after your most recent purchase.<br/>
+            Your last purchase was at {formatDateTime(lastPurchaseTime)}, you can redeem XPC tokens after {formatDateTime(redemptionTime)}.<br/>
           </div>}
           <div>View <Link to="/earn">staking</Link> page.</div>
         </div>}
       </div> */}
-      <div className="GlpSwap-content">
-        <div className="App-card GlpSwap-stats-card">
+      <div className="XpcSwap-content">
+        <div className="App-card XpcSwap-stats-card">
           <div className="App-card-title">
             <div className="App-card-title-mark">
               <div className="App-card-title-mark-icon">
-                <img src={glp40Icon} alt="glp40Icon" />
+                <img src={xpc40Icon} alt="xpc40Icon" />
                 {chainId === ARBITRUM ? (
                   <img src={arbitrum16Icon} alt="arbitrum16Icon" className="selected-network-symbol" />
                 ) : (
@@ -683,8 +683,8 @@ export default function GlpSwap(props) {
                 )}
               </div>
               <div className="App-card-title-mark-info">
-                <div className="App-card-title-mark-title">GLP</div>
-                <div className="App-card-title-mark-subtitle">GLP</div>
+                <div className="App-card-title-mark-title">XPC</div>
+                <div className="App-card-title-mark-subtitle">XPC</div>
               </div>
             </div>
           </div>
@@ -692,20 +692,20 @@ export default function GlpSwap(props) {
           <div className="App-card-content">
             <div className="App-card-row">
               <div className="label">Price</div>
-              <div className="value">${formatAmount(glpPrice, USD_DECIMALS, 3, true)}</div>
+              <div className="value">${formatAmount(xpcPrice, USD_DECIMALS, 3, true)}</div>
             </div>
             <div className="App-card-row">
               <div className="label">Wallet</div>
               <div className="value">
-                {formatAmount(glpBalance, GLP_DECIMALS, 4, true)} GLP ($
-                {formatAmount(glpBalanceUsd, USD_DECIMALS, 2, true)})
+                {formatAmount(xpcBalance, XPC_DECIMALS, 4, true)} XPC ($
+                {formatAmount(xpcBalanceUsd, USD_DECIMALS, 2, true)})
               </div>
             </div>
             <div className="App-card-row">
               <div className="label">Staked</div>
               <div className="value">
-                {formatAmount(glpBalance, GLP_DECIMALS, 4, true)} GLP ($
-                {formatAmount(glpBalanceUsd, USD_DECIMALS, 2, true)})
+                {formatAmount(xpcBalance, XPC_DECIMALS, 4, true)} XPC ($
+                {formatAmount(xpcBalanceUsd, USD_DECIMALS, 2, true)})
               </div>
             </div>
           </div>
@@ -716,7 +716,7 @@ export default function GlpSwap(props) {
                 <div className="label">Reserved</div>
                 <div className="value">
                   <Tooltip
-                    handle={`${formatAmount(reservedAmount, 18, 4, true)} GLP ($${formatAmount(
+                    handle={`${formatAmount(reservedAmount, 18, 4, true)} XPC ($${formatAmount(
                       reserveAmountUsd,
                       USD_DECIMALS,
                       2,
@@ -724,7 +724,7 @@ export default function GlpSwap(props) {
                     )})`}
                     position="right-bottom"
                     renderContent={() =>
-                      `${formatAmount(reservedAmount, 18, 4, true)} GLP have been reserved for vesting.`
+                      `${formatAmount(reservedAmount, 18, 4, true)} XPC have been reserved for vesting.`
                     }
                   />
                 </div>
@@ -743,11 +743,11 @@ export default function GlpSwap(props) {
                           <span className="label">
                             {nativeTokenSymbol} ({wrappedTokenSymbol}) APR
                           </span>
-                          <span>{formatAmount(feeGlpTrackerApr, 2, 2, false)}%</span>
+                          <span>{formatAmount(feeXpcTrackerApr, 2, 2, false)}%</span>
                         </div>
                         <div className="Tooltip-row">
-                          <span className="label">Escrowed GMX APR</span>
-                          <span>{formatAmount(stakedGlpTrackerApr, 2, 2, false)}%</span>
+                          <span className="label">Escrowed OPEC APR</span>
+                          <span>{formatAmount(stakedXpcTrackerApr, 2, 2, false)}%</span>
                         </div>
                       </>
                     );
@@ -758,15 +758,15 @@ export default function GlpSwap(props) {
             <div className="App-card-row">
               <div className="label">Total Supply</div>
               <div className="value">
-                {formatAmount(glpSupply, GLP_DECIMALS, 4, true)} GLP ($
-                {formatAmount(glpSupplyUsd, USD_DECIMALS, 2, true)})
+                {formatAmount(xpcSupply, XPC_DECIMALS, 4, true)} XPC ($
+                {formatAmount(xpcSupplyUsd, USD_DECIMALS, 2, true)})
               </div>
             </div>
           </div>
         </div>
-        <div className="GlpSwap-box App-box">
+        <div className="XpcSwap-box App-box">
           <Tab
-            options={["Buy GLP", "Sell GLP"]}
+            options={["Buy XPC", "Sell XPC"]}
             option={tabLabel}
             onChange={onSwapOptionChange}
             className="Exchange-swap-option-tabs"
@@ -791,7 +791,7 @@ export default function GlpSwap(props) {
                 onSelectToken={onSelectSwapToken}
                 tokens={whitelistedTokens}
                 infoTokens={infoTokens}
-                className="GlpSwap-from-token"
+                className="XpcSwap-from-token"
                 showSymbolImage={true}
                 showTokenImgInDropdown={true}
               />
@@ -802,17 +802,17 @@ export default function GlpSwap(props) {
             <BuyInputSection
               topLeftLabel={payLabel}
               topRightLabel={`Available: `}
-              tokenBalance={`${formatAmount(maxSellAmount, GLP_DECIMALS, 4, true)}`}
-              inputValue={glpValue}
-              onInputValueChange={onGlpValueChange}
-              showMaxButton={glpValue !== formatAmountFree(maxSellAmount, GLP_DECIMALS, GLP_DECIMALS)}
+              tokenBalance={`${formatAmount(maxSellAmount, XPC_DECIMALS, 4, true)}`}
+              inputValue={xpcValue}
+              onInputValueChange={onXpcValueChange}
+              showMaxButton={xpcValue !== formatAmountFree(maxSellAmount, XPC_DECIMALS, XPC_DECIMALS)}
               onClickTopRightLabel={fillMaxAmount}
               onClickMax={fillMaxAmount}
               balance={payBalance}
-              defaultTokenName={"GLP"}
+              defaultTokenName={"XPC"}
             >
               <div className="selected-token">
-                GLP <img src={glp24Icon} alt="glp24Icon" />
+                XPC <img src={xpc24Icon} alt="xpc24Icon" />
               </div>
             </BuyInputSection>
           )}
@@ -834,14 +834,14 @@ export default function GlpSwap(props) {
             <BuyInputSection
               topLeftLabel={receiveLabel}
               topRightLabel={`Balance: `}
-              tokenBalance={`${formatAmount(glpBalance, GLP_DECIMALS, 4, true)}`}
-              inputValue={glpValue}
-              onInputValueChange={onGlpValueChange}
+              tokenBalance={`${formatAmount(xpcBalance, XPC_DECIMALS, 4, true)}`}
+              inputValue={xpcValue}
+              onInputValueChange={onXpcValueChange}
               balance={receiveBalance}
-              defaultTokenName={"GLP"}
+              defaultTokenName={"XPC"}
             >
               <div className="selected-token">
-                GLP <img src={glp24Icon} alt="glp24Icon" />
+                XPC <img src={xpc24Icon} alt="xpc24Icon" />
               </div>
             </BuyInputSection>
           )}
@@ -863,7 +863,7 @@ export default function GlpSwap(props) {
                 onSelectToken={onSelectSwapToken}
                 tokens={whitelistedTokens}
                 infoTokens={infoTokens}
-                className="GlpSwap-from-token"
+                className="XpcSwap-from-token"
                 showSymbolImage={true}
                 showTokenImgInDropdown={true}
               />
@@ -904,7 +904,7 @@ export default function GlpSwap(props) {
               </div>
             </div>
           </div>
-          <div className="GlpSwap-cta Exchange-swap-button-container">
+          <div className="XpcSwap-cta Exchange-swap-button-container">
             <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
               {getPrimaryText()}
             </button>
@@ -915,19 +915,19 @@ export default function GlpSwap(props) {
         <div className="Page-title">Save on Fees</div>
         {isBuying && (
           <div className="Page-description">
-            Fees may vary depending on which asset you use to buy GLP.
-            <br /> Enter the amount of GLP you want to purchase in the order form, then check here to compare fees.
+            Fees may vary depending on which asset you use to buy XPC.
+            <br /> Enter the amount of XPC you want to purchase in the order form, then check here to compare fees.
           </div>
         )}
         {!isBuying && (
           <div className="Page-description">
-            Fees may vary depending on which asset you sell GLP for.
-            <br /> Enter the amount of GLP you want to redeem in the order form, then check here to compare fees.
+            Fees may vary depending on which asset you sell XPC for.
+            <br /> Enter the amount of XPC you want to redeem in the order form, then check here to compare fees.
           </div>
         )}
       </div>
-      <div className="GlpSwap-token-list">
-        {/* <div className="GlpSwap-token-list-content"> */}
+      <div className="XpcSwap-token-list">
+        {/* <div className="XpcSwap-token-list-content"> */}
         <table className="token-table">
           <thead>
             <tr>
@@ -939,7 +939,7 @@ export default function GlpSwap(props) {
                     handle={"AVAILABLE"}
                     tooltipIconPosition="right"
                     position="right-bottom text-none"
-                    renderContent={() => "Available amount to deposit into GLP."}
+                    renderContent={() => "Available amount to deposit into XPC."}
                   />
                 ) : (
                   <Tooltip
@@ -949,7 +949,7 @@ export default function GlpSwap(props) {
                     renderContent={() => {
                       return (
                         <>
-                          <div>Available amount to withdraw from GLP.</div>
+                          <div>Available amount to withdraw from XPC.</div>
                           <div>Funds not utilized by current open positions.</div>
                         </>
                       );
@@ -979,21 +979,21 @@ export default function GlpSwap(props) {
             {tokenList.map((token) => {
               let tokenFeeBps;
               if (isBuying) {
-                const { feeBasisPoints: feeBps } = getBuyGlpFromAmount(
-                  glpAmount,
+                const { feeBasisPoints: feeBps } = getBuyXpcFromAmount(
+                  xpcAmount,
                   token.address,
                   infoTokens,
-                  glpPrice,
+                  xpcPrice,
                   usdgSupply,
                   totalTokenWeights
                 );
                 tokenFeeBps = feeBps;
               } else {
-                const { feeBasisPoints: feeBps } = getSellGlpToAmount(
-                  glpAmount,
+                const { feeBasisPoints: feeBps } = getSellXpcToAmount(
+                  xpcAmount,
                   token.address,
                   infoTokens,
-                  glpPrice,
+                  xpcPrice,
                   usdgSupply,
                   totalTokenWeights
                 );
@@ -1046,7 +1046,7 @@ export default function GlpSwap(props) {
                             Max pool capacity reached for {tokenInfo.symbol}
                             <br />
                             <br />
-                            Please mint GLP using another token
+                            Please mint XPC using another token
                             <br />
                             <p>
                               <a href={swapUrl} target="_blank" rel="noreferrer">
@@ -1137,21 +1137,21 @@ export default function GlpSwap(props) {
           {tokenList.map((token) => {
             let tokenFeeBps;
             if (isBuying) {
-              const { feeBasisPoints: feeBps } = getBuyGlpFromAmount(
-                glpAmount,
+              const { feeBasisPoints: feeBps } = getBuyXpcFromAmount(
+                xpcAmount,
                 token.address,
                 infoTokens,
-                glpPrice,
+                xpcPrice,
                 usdgSupply,
                 totalTokenWeights
               );
               tokenFeeBps = feeBps;
             } else {
-              const { feeBasisPoints: feeBps } = getSellGlpToAmount(
-                glpAmount,
+              const { feeBasisPoints: feeBps } = getSellXpcToAmount(
+                xpcAmount,
                 token.address,
                 infoTokens,
-                glpPrice,
+                xpcPrice,
                 usdgSupply,
                 totalTokenWeights
               );
@@ -1189,7 +1189,7 @@ export default function GlpSwap(props) {
                       handle="NA"
                       position="right-bottom"
                       renderContent={() =>
-                        `Max pool capacity reached for ${tokenInfo.symbol}. Please mint GLP using another token`
+                        `Max pool capacity reached for ${tokenInfo.symbol}. Please mint XPC using another token`
                       }
                     />
                   );
@@ -1217,7 +1217,7 @@ export default function GlpSwap(props) {
                         className="label"
                         handle="Available"
                         position="left-bottom"
-                        renderContent={() => "Available amount to deposit into GLP."}
+                        renderContent={() => "Available amount to deposit into XPC."}
                       />
                       <div>
                         <Tooltip
@@ -1247,7 +1247,7 @@ export default function GlpSwap(props) {
                         renderContent={() => {
                           return (
                             <>
-                              <div>Available amount to withdraw from GLP.</div>
+                              <div>Available amount to withdraw from XPC.</div>
                               <div>Funds not utilized by current open positions.</div>
                             </>
                           );

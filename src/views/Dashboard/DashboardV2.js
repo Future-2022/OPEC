@@ -24,28 +24,28 @@ import {
   useChainId,
   USD_DECIMALS,
   GMX_DECIMALS,
-  GLP_DECIMALS,
+  XPC_DECIMALS,
   BASIS_POINTS_DIVISOR,
   ARBITRUM,
   AVALANCHE,
   getTotalVolumeSum,
-  GLPPOOLCOLORS,
+  XPCPOOLCOLORS,
   DEFAULT_MAX_USDG_AMOUNT,
   getPageTitle,
 } from "../../Helpers";
-import { useTotalGmxInLiquidity, useGmxPrice, useTotalGmxStaked, useTotalGmxSupply, useInfoTokens } from "../../Api";
+import { useTotalOpecInLiquidity, useOpecPrice, useTotalOpecStaked, useTotalOpecSupply, useInfoTokens } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
 import VaultV2 from "../../abis/VaultV2.json";
 import ReaderV2 from "../../abis/ReaderV2.json";
-import GlpManager from "../../abis/GlpManager.json";
+import XpcManager from "../../abis/XpcManager.json";
 import Footer from "../../Footer";
 
 import "./DashboardV2.css";
 
-import gmx40Icon from "../../img/ic_gmx_40.svg";
-import glp40Icon from "../../img/ic_glp_40.svg";
+import opec40Icon from "../../img/ic_gmx_40.svg";
+import xpc40Icon from "../../img/ic_glp_40.svg";
 import avalanche16Icon from "../../img/ic_avalanche_16.svg";
 import arbitrum16Icon from "../../img/ic_arbitrum_16.svg";
 import arbitrum24Icon from "../../img/ic_arbitrum_24.svg";
@@ -126,7 +126,7 @@ export default function DashboardV2() {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
-  let { total: totalGmxSupply } = useTotalGmxSupply();
+  let { total: totalOpecSupply } = useTotalOpecSupply();
 
   let totalLongPositionSizes;
   let totalShortPositionSizes;
@@ -145,16 +145,16 @@ export default function DashboardV2() {
 
   const readerAddress = getContract(chainId, "Reader");
   const vaultAddress = getContract(chainId, "Vault");
-  const glpManagerAddress = getContract(chainId, "GlpManager");
+  const xpcManagerAddress = getContract(chainId, "XpcManager");
 
-  const gmxAddress = getContract(chainId, "GMX");
-  const glpAddress = getContract(chainId, "GLP");
+  const opecAddress = getContract(chainId, "OPEC");
+  const xpcAddress = getContract(chainId, "XPC");
   const usdgAddress = getContract(chainId, "USDG");
 
-  const tokensForSupplyQuery = [gmxAddress, glpAddress, usdgAddress];
+  const tokensForSupplyQuery = [opecAddress, xpcAddress, usdgAddress];
 
-  const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, glpManagerAddress, "getAums"], {
-    fetcher: fetcher(library, GlpManager),
+  const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, xpcManagerAddress, "getAums"], {
+    fetcher: fetcher(library, XpcManager),
   });
 
   const { data: fees } = useSWR([`Dashboard:fees:${active}`, chainId, readerAddress, "getFees", vaultAddress], {
@@ -169,7 +169,7 @@ export default function DashboardV2() {
   );
 
   const { data: totalTokenWeights } = useSWR(
-    [`GlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
+    [`XpcSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
       fetcher: fetcher(library, VaultV2),
     }
@@ -189,24 +189,24 @@ export default function DashboardV2() {
     totalFeesDistributed += parseFloat(feeHistory[i].feeUsd);
   }
 
-  const { gmxPrice, gmxPriceFromArbitrum, gmxPriceFromAvalanche } = useGmxPrice(
+  const { opecPrice, opecPriceFromArbitrum, opecPriceFromAvalanche } = useOpecPrice(
     chainId,
     { arbitrum: chainId === ARBITRUM ? library : undefined },
     active
   );
 
-  let { total: totalGmxInLiquidity } = useTotalGmxInLiquidity(chainId, active);
+  let { total: totalOpecInLiquidity } = useTotalOpecInLiquidity(chainId, active);
 
-  let { avax: avaxStakedGmx, arbitrum: arbitrumStakedGmx, total: totalStakedGmx } = useTotalGmxStaked();
+  let { avax: avaxStakedOpec, arbitrum: arbitrumStakedOpec, total: totalStakedOpec } = useTotalOpecStaked();
 
-  let gmxMarketCap;
-  if (gmxPrice && totalGmxSupply) {
-    gmxMarketCap = gmxPrice.mul(totalGmxSupply).div(expandDecimals(1, GMX_DECIMALS));
+  let opecMarketCap;
+  if (opecPrice && totalOpecSupply) {
+    opecMarketCap = opecPrice.mul(totalOpecSupply).div(expandDecimals(1, GMX_DECIMALS));
   }
 
-  let stakedGmxSupplyUsd;
-  if (gmxPrice && totalStakedGmx) {
-    stakedGmxSupplyUsd = totalStakedGmx.mul(gmxPrice).div(expandDecimals(1, GMX_DECIMALS));
+  let stakedOpecSupplyUsd;
+  if (opecPrice && totalStakedOpec) {
+    stakedOpecSupplyUsd = totalStakedOpec.mul(opecPrice).div(expandDecimals(1, GMX_DECIMALS));
   }
 
   let aum;
@@ -214,34 +214,34 @@ export default function DashboardV2() {
     aum = aums[0].add(aums[1]).div(2);
   }
 
-  let glpPrice;
-  let glpSupply;
-  let glpMarketCap;
+  let xpcPrice;
+  let xpcSupply;
+  let xpcMarketCap;
   if (aum && totalSupplies && totalSupplies[3]) {
-    glpSupply = totalSupplies[3];
-    glpPrice =
-      aum && aum.gt(0) && glpSupply.gt(0)
-        ? aum.mul(expandDecimals(1, GLP_DECIMALS)).div(glpSupply)
+    xpcSupply = totalSupplies[3];
+    xpcPrice =
+      aum && aum.gt(0) && xpcSupply.gt(0)
+        ? aum.mul(expandDecimals(1, XPC_DECIMALS)).div(xpcSupply)
         : expandDecimals(1, USD_DECIMALS);
-    glpMarketCap = glpPrice.mul(glpSupply).div(expandDecimals(1, GLP_DECIMALS));
+    xpcMarketCap = xpcPrice.mul(xpcSupply).div(expandDecimals(1, XPC_DECIMALS));
   }
 
   let tvl;
-  if (glpMarketCap && gmxPrice && totalStakedGmx) {
-    tvl = glpMarketCap.add(gmxPrice.mul(totalStakedGmx).div(expandDecimals(1, GMX_DECIMALS)));
+  if (xpcMarketCap && opecPrice && totalStakedOpec) {
+    tvl = xpcMarketCap.add(opecPrice.mul(totalStakedOpec).div(expandDecimals(1, GMX_DECIMALS)));
   }
 
   const ethFloorPriceFund = expandDecimals(350 + 148 + 384, 18);
-  const glpFloorPriceFund = expandDecimals(660001, 18);
+  const xpcFloorPriceFund = expandDecimals(660001, 18);
   const usdcFloorPriceFund = expandDecimals(784598 + 200000, 30);
 
   let totalFloorPriceFundUsd;
 
-  if (eth && eth.contractMinPrice && glpPrice) {
+  if (eth && eth.contractMinPrice && xpcPrice) {
     const ethFloorPriceFundUsd = ethFloorPriceFund.mul(eth.contractMinPrice).div(expandDecimals(1, eth.decimals));
-    const glpFloorPriceFundUsd = glpFloorPriceFund.mul(glpPrice).div(expandDecimals(1, 18));
+    const xpcFloorPriceFundUsd = xpcFloorPriceFund.mul(xpcPrice).div(expandDecimals(1, 18));
 
-    totalFloorPriceFundUsd = ethFloorPriceFundUsd.add(glpFloorPriceFundUsd).add(usdcFloorPriceFund);
+    totalFloorPriceFundUsd = ethFloorPriceFundUsd.add(xpcFloorPriceFundUsd).add(usdcFloorPriceFund);
   }
 
   let adjustedUsdgSupply = bigNumberify(0);
@@ -291,8 +291,8 @@ export default function DashboardV2() {
                   <br />
                   <br />
                   Get lower fees to{" "}
-                  <Link to="/buy_glp" target="_blank" rel="noopener noreferrer">
-                    buy GLP
+                  <Link to="/buy_xpc" target="_blank" rel="noopener noreferrer">
+                    buy XPC
                   </Link>{" "}
                   with {tokenInfo.symbol},&nbsp; and to{" "}
                   <Link to="/trade" target="_blank" rel="noopener noreferrer">
@@ -315,7 +315,7 @@ export default function DashboardV2() {
               )}
               <br />
               <div>
-                <a href="https://gmxio.gitbook.io/gmx/glp" target="_blank" rel="noopener noreferrer">
+                <a href="https://gmxio.gitbook.io/gmx/xpc" target="_blank" rel="noopener noreferrer">
                   More Info
                 </a>
               </div>
@@ -328,19 +328,19 @@ export default function DashboardV2() {
 
   let stakedPercent = 0;
 
-  if (totalGmxSupply && !totalGmxSupply.isZero() && !totalStakedGmx.isZero()) {
-    stakedPercent = totalStakedGmx.mul(100).div(totalGmxSupply).toNumber();
+  if (totalOpecSupply && !totalOpecSupply.isZero() && !totalStakedOpec.isZero()) {
+    stakedPercent = totalStakedOpec.mul(100).div(totalOpecSupply).toNumber();
   }
 
   let liquidityPercent = 0;
 
-  if (totalGmxSupply && !totalGmxSupply.isZero() && totalGmxInLiquidity) {
-    liquidityPercent = totalGmxInLiquidity.mul(100).div(totalGmxSupply).toNumber();
+  if (totalOpecSupply && !totalOpecSupply.isZero() && totalOpecInLiquidity) {
+    liquidityPercent = totalOpecInLiquidity.mul(100).div(totalOpecSupply).toNumber();
   }
 
   let notStakedPercent = 100 - stakedPercent - liquidityPercent;
 
-  let gmxDistributionData = [
+  let opecDistributionData = [
     {
       name: "staked",
       value: stakedPercent,
@@ -360,17 +360,17 @@ export default function DashboardV2() {
 
   const totalStatsStartDate = chainId === AVALANCHE ? "06 Jan 2022" : "01 Sep 2021";
 
-  let stableGlp = 0;
-  let totalGlp = 0;
+  let stableXpc = 0;
+  let totalXpc = 0;
 
-  let glpPool = tokenList.map((token) => {
+  let xpcPool = tokenList.map((token) => {
     const tokenInfo = infoTokens[token.address];
     if (tokenInfo.usdgAmount && adjustedUsdgSupply) {
       const currentWeightBps = tokenInfo.usdgAmount.mul(BASIS_POINTS_DIVISOR).div(adjustedUsdgSupply);
       if (tokenInfo.isStable) {
-        stableGlp += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);
+        stableXpc += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);
       }
-      totalGlp += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);
+      totalXpc += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);
       return {
         fullname: token.name,
         name: token.symbol,
@@ -380,23 +380,23 @@ export default function DashboardV2() {
     return null;
   });
 
-  let stablePercentage = totalGlp > 0 ? ((stableGlp * 100) / totalGlp).toFixed(2) : "0.0";
+  let stablePercentage = totalXpc > 0 ? ((stableXpc * 100) / totalXpc).toFixed(2) : "0.0";
 
-  glpPool = glpPool.filter(function (element) {
+  xpcPool = xpcPool.filter(function (element) {
     return element !== null;
   });
 
-  glpPool = glpPool.sort(function (a, b) {
+  xpcPool = xpcPool.sort(function (a, b) {
     if (a.value < b.value) return 1;
     else return -1;
   });
 
-  gmxDistributionData = gmxDistributionData.sort(function (a, b) {
+  opecDistributionData = opecDistributionData.sort(function (a, b) {
     if (a.value < b.value) return 1;
     else return -1;
   });
 
-  const [gmxActiveIndex, setGMXActiveIndex] = useState(null);
+  const [opecActiveIndex, setGMXActiveIndex] = useState(null);
 
   const onGMXDistributionChartEnter = (_, index) => {
     setGMXActiveIndex(index);
@@ -406,14 +406,14 @@ export default function DashboardV2() {
     setGMXActiveIndex(null);
   };
 
-  const [glpActiveIndex, setGLPActiveIndex] = useState(null);
+  const [xpcActiveIndex, setXPCActiveIndex] = useState(null);
 
-  const onGLPPoolChartEnter = (_, index) => {
-    setGLPActiveIndex(index);
+  const onXPCPoolChartEnter = (_, index) => {
+    setXPCActiveIndex(index);
   };
 
-  const onGLPPoolChartLeave = (_, index) => {
-    setGLPActiveIndex(null);
+  const onXPCPoolChartLeave = (_, index) => {
+    setXPCActiveIndex(null);
   };
 
   const CustomTooltip = ({ active, payload }) => {
@@ -442,13 +442,13 @@ export default function DashboardV2() {
             <div className="Page-description">
               {chainName} Total Stats start from {totalStatsStartDate}.<br /> For detailed stats:{" "}
               {chainId === ARBITRUM && (
-                <a href="https://stats.gmx.io" target="_blank" rel="noopener noreferrer">
-                  https://stats.gmx.io
+                <a href="https://stats.opec.io" target="_blank" rel="noopener noreferrer">
+                  https://stats.opec.io
                 </a>
               )}
               {chainId === AVALANCHE && (
-                <a href="https://stats.gmx.io/avalanche" target="_blank" rel="noopener noreferrer">
-                  https://stats.gmx.io/avalanche
+                <a href="https://stats.opec.io/avalanche" target="_blank" rel="noopener noreferrer">
+                  https://stats.opec.io/avalanche
                 </a>
               )}
               .
@@ -467,17 +467,17 @@ export default function DashboardV2() {
                     <TooltipComponent
                       handle={`$${formatAmount(tvl, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
-                      renderContent={() => `Assets Under Management: GMX staked (All chains) + GLP pool (${chainName})`}
+                      renderContent={() => `Assets Under Management: OPEC staked (All chains) + XPC pool (${chainName})`}
                     />
                   </div>
                 </div>
                 <div className="App-card-row">
-                  <div className="label">GLP Pool</div>
+                  <div className="label">XPC Pool</div>
                   <div>
                     <TooltipComponent
                       handle={`$${formatAmount(aum, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
-                      renderContent={() => `Total value of tokens in GLP pool (${chainName})`}
+                      renderContent={() => `Total value of tokens in XPC pool (${chainName})`}
                     />
                   </div>
                 </div>
@@ -525,23 +525,23 @@ export default function DashboardV2() {
               Tokens {chainId === AVALANCHE && <img src={avalanche24Icon} alt="avalanche24Icon" />}
               {chainId === ARBITRUM && <img src={arbitrum24Icon} alt="arbitrum24Icon" />}
             </div>
-            <div className="Page-description">Platform and GLP index tokens.</div>
+            <div className="Page-description">Platform and XPC index tokens.</div>
           </div>
           <div className="DashboardV2-token-cards">
-            <div className="stats-wrapper stats-wrapper--gmx">
+            <div className="stats-wrapper stats-wrapper--opec">
               <div className="App-card">
                 <div className="stats-block">
                   <div className="App-card-title">
                     <div className="App-card-title-mark">
                       <div className="App-card-title-mark-icon">
-                        <img src={gmx40Icon} alt="gmx40Icon" />
+                        <img src={opec40Icon} alt="opec40Icon" />
                       </div>
                       <div className="App-card-title-mark-info">
-                        <div className="App-card-title-mark-title">GMX</div>
-                        <div className="App-card-title-mark-subtitle">GMX</div>
+                        <div className="App-card-title-mark-title">OPEC</div>
+                        <div className="App-card-title-mark-subtitle">OPEC</div>
                       </div>
                       <div>
-                        <AssetDropdown assetSymbol="GMX" />
+                        <AssetDropdown assetSymbol="OPEC" />
                       </div>
                     </div>
                   </div>
@@ -550,17 +550,17 @@ export default function DashboardV2() {
                     <div className="App-card-row">
                       <div className="label">Price</div>
                       <div>
-                        {!gmxPrice && "..."}
-                        {gmxPrice && (
+                        {!opecPrice && "..."}
+                        {opecPrice && (
                           <TooltipComponent
                             position="right-bottom"
                             className="nowrap"
-                            handle={"$" + formatAmount(gmxPrice, USD_DECIMALS, 2, true)}
+                            handle={"$" + formatAmount(opecPrice, USD_DECIMALS, 2, true)}
                             renderContent={() => (
                               <>
-                                Price on Arbitrum: ${formatAmount(gmxPriceFromArbitrum, USD_DECIMALS, 2, true)}
+                                Price on Arbitrum: ${formatAmount(opecPriceFromArbitrum, USD_DECIMALS, 2, true)}
                                 <br />
-                                Price on Avalanche: ${formatAmount(gmxPriceFromAvalanche, USD_DECIMALS, 2, true)}
+                                Price on Avalanche: ${formatAmount(opecPriceFromAvalanche, USD_DECIMALS, 2, true)}
                               </>
                             )}
                           />
@@ -569,7 +569,7 @@ export default function DashboardV2() {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Supply</div>
-                      <div>{formatAmount(totalGmxSupply, GMX_DECIMALS, 0, true)} GMX</div>
+                      <div>{formatAmount(totalOpecSupply, GMX_DECIMALS, 0, true)} OPEC</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Total Staked</div>
@@ -578,12 +578,12 @@ export default function DashboardV2() {
                           <TooltipComponent
                             position="right-bottom"
                             className="nowrap"
-                            handle={`$${formatAmount(stakedGmxSupplyUsd, USD_DECIMALS, 0, true)}`}
+                            handle={`$${formatAmount(stakedOpecSupplyUsd, USD_DECIMALS, 0, true)}`}
                             renderContent={() => (
                               <>
-                                Staked on Arbitrum: {formatAmount(arbitrumStakedGmx, GMX_DECIMALS, 0, true)} GMX
+                                Staked on Arbitrum: {formatAmount(arbitrumStakedOpec, GMX_DECIMALS, 0, true)} OPEC
                                 <br />
-                                Staked on Avalanche: {formatAmount(avaxStakedGmx, GMX_DECIMALS, 0, true)} GMX
+                                Staked on Avalanche: {formatAmount(avaxStakedOpec, GMX_DECIMALS, 0, true)} OPEC
                               </>
                             )}
                           />
@@ -592,15 +592,15 @@ export default function DashboardV2() {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Market Cap</div>
-                      <div>${formatAmount(gmxMarketCap, USD_DECIMALS, 0, true)}</div>
+                      <div>${formatAmount(opecMarketCap, USD_DECIMALS, 0, true)}</div>
                     </div>
                   </div>
                 </div>
                 <div className="stats-piechart" onMouseLeave={onGMXDistributionChartLeave}>
-                  {gmxDistributionData.length > 0 && (
+                  {opecDistributionData.length > 0 && (
                     <PieChart width={210} height={210}>
                       <Pie
-                        data={gmxDistributionData}
+                        data={opecDistributionData}
                         cx={100}
                         cy={100}
                         innerRadius={73}
@@ -614,19 +614,19 @@ export default function DashboardV2() {
                         onMouseOut={onGMXDistributionChartLeave}
                         onMouseLeave={onGMXDistributionChartLeave}
                       >
-                        {gmxDistributionData.map((entry, index) => (
+                        {opecDistributionData.map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
                             fill={entry.color}
                             style={{
                               filter:
-                                gmxActiveIndex === index
+                                opecActiveIndex === index
                                   ? `drop-shadow(0px 0px 6px ${hexToRgba(entry.color, 0.7)})`
                                   : "none",
                               cursor: "pointer",
                             }}
                             stroke={entry.color}
-                            strokeWidth={gmxActiveIndex === index ? 1 : 1}
+                            strokeWidth={opecActiveIndex === index ? 1 : 1}
                           />
                         ))}
                       </Pie>
@@ -643,7 +643,7 @@ export default function DashboardV2() {
                   <div className="App-card-title">
                     <div className="App-card-title-mark">
                       <div className="App-card-title-mark-icon">
-                        <img src={glp40Icon} alt="glp40Icon" />
+                        <img src={xpc40Icon} alt="xpc40Icon" />
                         {chainId === ARBITRUM ? (
                           <img src={arbitrum16Icon} alt="arbitrum16Icon" className="selected-network-symbol" />
                         ) : (
@@ -651,11 +651,11 @@ export default function DashboardV2() {
                         )}
                       </div>
                       <div className="App-card-title-mark-info">
-                        <div className="App-card-title-mark-title">GLP</div>
-                        <div className="App-card-title-mark-subtitle">GLP</div>
+                        <div className="App-card-title-mark-title">XPC</div>
+                        <div className="App-card-title-mark-subtitle">XPC</div>
                       </div>
                       <div>
-                        <AssetDropdown assetSymbol="GLP" />
+                        <AssetDropdown assetSymbol="XPC" />
                       </div>
                     </div>
                   </div>
@@ -663,19 +663,19 @@ export default function DashboardV2() {
                   <div className="App-card-content">
                     <div className="App-card-row">
                       <div className="label">Price</div>
-                      <div>${formatAmount(glpPrice, USD_DECIMALS, 3, true)}</div>
+                      <div>${formatAmount(xpcPrice, USD_DECIMALS, 3, true)}</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Supply</div>
-                      <div>{formatAmount(glpSupply, GLP_DECIMALS, 0, true)} GLP</div>
+                      <div>{formatAmount(xpcSupply, XPC_DECIMALS, 0, true)} XPC</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Total Staked</div>
-                      <div>${formatAmount(glpMarketCap, USD_DECIMALS, 0, true)}</div>
+                      <div>${formatAmount(xpcMarketCap, USD_DECIMALS, 0, true)}</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Market Cap</div>
-                      <div>${formatAmount(glpMarketCap, USD_DECIMALS, 0, true)}</div>
+                      <div>${formatAmount(xpcMarketCap, USD_DECIMALS, 0, true)}</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Stablecoin Percentage</div>
@@ -683,11 +683,11 @@ export default function DashboardV2() {
                     </div>
                   </div>
                 </div>
-                <div className="stats-piechart" onMouseOut={onGLPPoolChartLeave}>
-                  {glpPool.length > 0 && (
+                <div className="stats-piechart" onMouseOut={onXPCPoolChartLeave}>
+                  {xpcPool.length > 0 && (
                     <PieChart width={210} height={210}>
                       <Pie
-                        data={glpPool}
+                        data={xpcPool}
                         cx={100}
                         cy={100}
                         innerRadius={73}
@@ -696,29 +696,29 @@ export default function DashboardV2() {
                         dataKey="value"
                         startAngle={90}
                         endAngle={-270}
-                        onMouseEnter={onGLPPoolChartEnter}
-                        onMouseOut={onGLPPoolChartLeave}
-                        onMouseLeave={onGLPPoolChartLeave}
+                        onMouseEnter={onXPCPoolChartEnter}
+                        onMouseOut={onXPCPoolChartLeave}
+                        onMouseLeave={onXPCPoolChartLeave}
                         paddingAngle={2}
                       >
-                        {glpPool.map((entry, index) => (
+                        {xpcPool.map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
-                            fill={GLPPOOLCOLORS[entry.name]}
+                            fill={XPCPOOLCOLORS[entry.name]}
                             style={{
                               filter:
-                                glpActiveIndex === index
-                                  ? `drop-shadow(0px 0px 6px ${hexToRgba(GLPPOOLCOLORS[entry.name], 0.7)})`
+                                xpcActiveIndex === index
+                                  ? `drop-shadow(0px 0px 6px ${hexToRgba(XPCPOOLCOLORS[entry.name], 0.7)})`
                                   : "none",
                               cursor: "pointer",
                             }}
-                            stroke={GLPPOOLCOLORS[entry.name]}
-                            strokeWidth={glpActiveIndex === index ? 1 : 1}
+                            stroke={XPCPOOLCOLORS[entry.name]}
+                            strokeWidth={xpcActiveIndex === index ? 1 : 1}
                           />
                         ))}
                       </Pie>
                       <text x={"50%"} y={"50%"} fill="white" textAnchor="middle" dominantBaseline="middle">
-                        GLP Pool
+                        XPC Pool
                       </text>
                       <Tooltip content={<CustomTooltip />} />
                     </PieChart>
@@ -728,7 +728,7 @@ export default function DashboardV2() {
             </div>
             <div className="token-table-wrapper App-card">
               <div className="App-card-title">
-                GLP Index Composition {chainId === AVALANCHE && <img src={avalanche16Icon} alt="avalanche16Icon" />}
+                XPC Index Composition {chainId === AVALANCHE && <img src={avalanche16Icon} alt="avalanche16Icon" />}
                 {chainId === ARBITRUM && <img src={arbitrum16Icon} alt="arbitrum16Icon" />}
               </div>
               <div className="App-card-divider"></div>

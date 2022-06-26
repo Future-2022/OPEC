@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
-export default function SellGlp(props) {
+export default function SellXpc(props) {
   useEffect(() => {
-    window.location.href = "/buy_glp#redeem";
+    window.location.href = "/buy_xpc#redeem";
   }, []);
   return <div className="Page page-layout"></div>;
 }

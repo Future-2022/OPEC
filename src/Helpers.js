@@ -81,7 +81,7 @@ export const DEPOSIT_FEE = 30;
 export const DUST_BNB = "2000000000000000";
 export const DUST_USD = expandDecimals(1, USD_DECIMALS);
 export const PRECISION = expandDecimals(1, 30);
-export const GLP_DECIMALS = 18;
+export const XPC_DECIMALS = 18;
 export const GMX_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
@@ -94,7 +94,7 @@ export const MARGIN_FEE_BASIS_POINTS = 10;
 
 export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
 
-export const GLP_COOLDOWN_DURATION = 15 * 60;
+export const XPC_COOLDOWN_DURATION = 15 * 60;
 export const THRESHOLD_REDEMPTION_VALUE = expandDecimals(993, 27); // 0.993
 export const FUNDING_RATE_PRECISION = 1000000;
 
@@ -121,7 +121,7 @@ export const IS_PNL_IN_LEVERAGE_KEY = "Exchange-swap-is-pnl-in-leverage";
 export const SHOW_PNL_AFTER_FEES_KEY = "Exchange-swap-show-pnl-after-fees";
 export const DISABLE_ORDER_VALIDATION_KEY = "disable-order-validation";
 export const SHOULD_SHOW_POSITION_LINES_KEY = "Exchange-swap-should-show-position-lines";
-export const REFERRAL_CODE_KEY = "GMX-referralCode";
+export const REFERRAL_CODE_KEY = "OPEC-referralCode";
 export const REFERRAL_CODE_QUERY_PARAM = "ref";
 export const REFERRALS_SELECTED_TAB_KEY = "Referrals-selected-tab";
 export const MAX_REFERRAL_CODE_LENGTH = 20;
@@ -131,7 +131,7 @@ export const TRIGGER_PREFIX_BELOW = "<";
 
 export const MIN_PROFIT_BIPS = 0;
 
-export const GLPPOOLCOLORS = {
+export const XPCPOOLCOLORS = {
   ETH: "#6062a6",
   BTC: "#F7931A",
   USDC: "#2775CA",
@@ -147,11 +147,11 @@ export const GLPPOOLCOLORS = {
 
 export const ICONLINKS = {
   42161: {
-    GMX: {
-      coingecko: "https://www.coingecko.com/en/coins/gmx",
+    OPEC: {
+      coingecko: "https://www.coingecko.com/en/coins/opec",
       arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
     },
-    GLP: {
+    XPC: {
       arbitrum: "https://arbiscan.io/token/0x1aDDD80E6039594eE970E5872D247bf0414C8903",
     },
     ETH: {
@@ -191,11 +191,11 @@ export const ICONLINKS = {
     },
   },
   43114: {
-    GMX: {
-      coingecko: "https://www.coingecko.com/en/coins/gmx",
+    OPEC: {
+      coingecko: "https://www.coingecko.com/en/coins/opec",
       avalanche: "https://snowtrace.io/address/0x62edc0692bd897d2295872a9ffcac5425011c661",
     },
-    GLP: {
+    XPC: {
       avalanche: "https://snowtrace.io/address/0x9e295B5B976a184B14aD8cd72413aD846C299660",
     },
     AVAX: {
@@ -223,11 +223,11 @@ export const ICONLINKS = {
     },
   },
   43113: {
-    GMX: {
-      coingecko: "https://www.coingecko.com/en/coins/gmx",
+    OPEC: {
+      coingecko: "https://www.coingecko.com/en/coins/opec",
       avalanche: "https://snowtrace.io/address/0x62edc0692bd897d2295872a9ffcac5425011c661",
     },
-    GLP: {
+    XPC: {
       avalanche: "https://snowtrace.io/address/0x9e295B5B976a184B14aD8cd72413aD846C299660",
     },
     AVAX: {
@@ -259,36 +259,36 @@ export const ICONLINKS = {
 export const platformTokens = {
   42161: {
     // arbitrum
-    GMX: {
-      name: "GMX",
-      symbol: "GMX",
+    OPEC: {
+      name: "OPEC",
+      symbol: "OPEC",
       decimals: 18,
-      address: getContract(ARBITRUM, "GMX"),
+      address: getContract(ARBITRUM, "OPEC"),
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
-    GLP: {
-      name: "GMX LP",
-      symbol: "GLP",
+    XPC: {
+      name: "OPEC LP",
+      symbol: "XPC",
       decimals: 18,
-      address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      address: getContract(ARBITRUM, "StakedXpcTracker"), // address of fsXPC token because user only holds fsXPC
+      imageUrl: "https://github.com/opec-io/opec-assets/blob/main/OPEC-Assets/PNG/XPC_LOGO%20ONLY.png?raw=true",
     },
   },
   43114: {
     // avalanche
-    GMX: {
-      name: "GMX",
-      symbol: "GMX",
+    OPEC: {
+      name: "OPEC",
+      symbol: "OPEC",
       decimals: 18,
-      address: getContract(AVALANCHE, "GMX"),
+      address: getContract(AVALANCHE, "OPEC"),
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
     },
-    GLP: {
-      name: "GMX LP",
-      symbol: "GLP",
+    XPC: {
+      name: "OPEC LP",
+      symbol: "XPC",
       decimals: 18,
-      address: getContract(AVALANCHE, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      address: getContract(AVALANCHE, "StakedXpcTracker"), // address of fsXPC token because user only holds fsXPC
+      imageUrl: "https://github.com/opec-io/opec-assets/blob/main/OPEC-Assets/PNG/XPC_LOGO%20ONLY.png?raw=true",
     },
   },
 };
@@ -582,9 +582,9 @@ export function getFeeBasisPoints(
   return feeBasisPoints.add(taxBps).toNumber();
 }
 
-export function getBuyGlpToAmount(fromAmount, swapTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getBuyXpcToAmount(fromAmount, swapTokenAddress, infoTokens, xpcPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
-  if (!fromAmount || !swapTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!fromAmount || !swapTokenAddress || !infoTokens || !xpcPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -593,8 +593,8 @@ export function getBuyGlpToAmount(fromAmount, swapTokenAddress, infoTokens, glpP
     return defaultValue;
   }
 
-  let glpAmount = fromAmount.mul(swapToken.minPrice).div(glpPrice);
-  glpAmount = adjustForDecimals(glpAmount, swapToken.decimals, USDG_DECIMALS);
+  let xpcAmount = fromAmount.mul(swapToken.minPrice).div(xpcPrice);
+  xpcAmount = adjustForDecimals(xpcAmount, swapToken.decimals, USDG_DECIMALS);
 
   let usdgAmount = fromAmount.mul(swapToken.minPrice).div(PRECISION);
   usdgAmount = adjustForDecimals(usdgAmount, swapToken.decimals, USDG_DECIMALS);
@@ -608,14 +608,14 @@ export function getBuyGlpToAmount(fromAmount, swapTokenAddress, infoTokens, glpP
     totalTokenWeights
   );
 
-  glpAmount = glpAmount.mul(BASIS_POINTS_DIVISOR - feeBasisPoints).div(BASIS_POINTS_DIVISOR);
+  xpcAmount = xpcAmount.mul(BASIS_POINTS_DIVISOR - feeBasisPoints).div(BASIS_POINTS_DIVISOR);
 
-  return { amount: glpAmount, feeBasisPoints };
+  return { amount: xpcAmount, feeBasisPoints };
 }
 
-export function getSellGlpFromAmount(toAmount, swapTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getSellXpcFromAmount(toAmount, swapTokenAddress, infoTokens, xpcPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
-  if (!toAmount || !swapTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!toAmount || !swapTokenAddress || !infoTokens || !xpcPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -624,8 +624,8 @@ export function getSellGlpFromAmount(toAmount, swapTokenAddress, infoTokens, glp
     return defaultValue;
   }
 
-  let glpAmount = toAmount.mul(swapToken.maxPrice).div(glpPrice);
-  glpAmount = adjustForDecimals(glpAmount, swapToken.decimals, USDG_DECIMALS);
+  let xpcAmount = toAmount.mul(swapToken.maxPrice).div(xpcPrice);
+  xpcAmount = adjustForDecimals(xpcAmount, swapToken.decimals, USDG_DECIMALS);
 
   let usdgAmount = toAmount.mul(swapToken.maxPrice).div(PRECISION);
   usdgAmount = adjustForDecimals(usdgAmount, swapToken.decimals, USDG_DECIMALS);
@@ -639,14 +639,14 @@ export function getSellGlpFromAmount(toAmount, swapTokenAddress, infoTokens, glp
     totalTokenWeights
   );
 
-  glpAmount = glpAmount.mul(BASIS_POINTS_DIVISOR).div(BASIS_POINTS_DIVISOR - feeBasisPoints);
+  xpcAmount = xpcAmount.mul(BASIS_POINTS_DIVISOR).div(BASIS_POINTS_DIVISOR - feeBasisPoints);
 
-  return { amount: glpAmount, feeBasisPoints };
+  return { amount: xpcAmount, feeBasisPoints };
 }
 
-export function getBuyGlpFromAmount(toAmount, fromTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getBuyXpcFromAmount(toAmount, fromTokenAddress, infoTokens, xpcPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
-  if (!toAmount || !fromTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!toAmount || !fromTokenAddress || !infoTokens || !xpcPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -655,10 +655,10 @@ export function getBuyGlpFromAmount(toAmount, fromTokenAddress, infoTokens, glpP
     return defaultValue;
   }
 
-  let fromAmount = toAmount.mul(glpPrice).div(fromToken.minPrice);
-  fromAmount = adjustForDecimals(fromAmount, GLP_DECIMALS, fromToken.decimals);
+  let fromAmount = toAmount.mul(xpcPrice).div(fromToken.minPrice);
+  fromAmount = adjustForDecimals(fromAmount, XPC_DECIMALS, fromToken.decimals);
 
-  const usdgAmount = toAmount.mul(glpPrice).div(PRECISION);
+  const usdgAmount = toAmount.mul(xpcPrice).div(PRECISION);
   const feeBasisPoints = getFeeBasisPoints(
     fromToken,
     usdgAmount,
@@ -674,9 +674,9 @@ export function getBuyGlpFromAmount(toAmount, fromTokenAddress, infoTokens, glpP
   return { amount: fromAmount, feeBasisPoints };
 }
 
-export function getSellGlpToAmount(toAmount, fromTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getSellXpcToAmount(toAmount, fromTokenAddress, infoTokens, xpcPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
-  if (!toAmount || !fromTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!toAmount || !fromTokenAddress || !infoTokens || !xpcPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -685,10 +685,10 @@ export function getSellGlpToAmount(toAmount, fromTokenAddress, infoTokens, glpPr
     return defaultValue;
   }
 
-  let fromAmount = toAmount.mul(glpPrice).div(fromToken.maxPrice);
-  fromAmount = adjustForDecimals(fromAmount, GLP_DECIMALS, fromToken.decimals);
+  let fromAmount = toAmount.mul(xpcPrice).div(fromToken.maxPrice);
+  fromAmount = adjustForDecimals(fromAmount, XPC_DECIMALS, fromToken.decimals);
 
-  const usdgAmount = toAmount.mul(glpPrice).div(PRECISION);
+  const usdgAmount = toAmount.mul(xpcPrice).div(PRECISION);
   const feeBasisPoints = getFeeBasisPoints(
     fromToken,
     usdgAmount,
@@ -2457,7 +2457,7 @@ export function getBalanceAndSupplyData(balances) {
     return {};
   }
 
-  const keys = ["gmx", "esGmx", "glp", "stakedGmxTracker"];
+  const keys = ["opec", "esOpec", "xpc", "stakedOpecTracker"];
   const balanceData = {};
   const supplyData = {};
   const propsLength = 2;
@@ -2477,12 +2477,12 @@ export function getDepositBalanceData(depositBalances) {
   }
 
   const keys = [
-    "gmxInStakedGmx",
-    "esGmxInStakedGmx",
-    "stakedGmxInBonusGmx",
-    "bonusGmxInFeeGmx",
-    "bnGmxInFeeGmx",
-    "glpInStakedGlp",
+    "opecInStakedOpec",
+    "esOpecInStakedOpec",
+    "stakedOpecInBonusOpec",
+    "bonusOpecInFeeOpec",
+    "bnOpecInFeeOpec",
+    "xpcInStakedXpc",
   ];
   const data = {};
 
@@ -2499,7 +2499,7 @@ export function getVestingData(vestingInfo) {
     return;
   }
 
-  const keys = ["gmxVester", "glpVester"];
+  const keys = ["opecVester", "xpcVester"];
   const data = {};
   const propsLength = 7;
 
@@ -2532,7 +2532,7 @@ export function getStakingData(stakingInfo) {
     return;
   }
 
-  const keys = ["stakedGmxTracker", "bonusGmxTracker", "feeGmxTracker", "stakedGlpTracker", "feeGlpTracker"];
+  const keys = ["stakedOpecTracker", "bonusOpecTracker", "feeOpecTracker", "stakedXpcTracker", "feeXpcTracker"];
   const data = {};
   const propsLength = 5;
 
@@ -2558,9 +2558,9 @@ export function getProcessedData(
   vestingData,
   aum,
   nativeTokenPrice,
-  stakedGmxSupply,
-  gmxPrice,
-  gmxSupply
+  stakedOpecSupply,
+  opecPrice,
+  opecSupply
 ) {
   if (
     !balanceData ||
@@ -2570,127 +2570,127 @@ export function getProcessedData(
     !vestingData ||
     !aum ||
     !nativeTokenPrice ||
-    !stakedGmxSupply ||
-    !gmxPrice ||
-    !gmxSupply
+    !stakedOpecSupply ||
+    !opecPrice ||
+    !opecSupply
   ) {
     return {};
   }
 
   const data = {};
 
-  data.gmxBalance = balanceData.gmx;
-  data.gmxBalanceUsd = balanceData.gmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.opecBalance = balanceData.opec;
+  data.opecBalanceUsd = balanceData.opec.mul(opecPrice).div(expandDecimals(1, 18));
 
-  data.gmxSupply = bigNumberify(gmxSupply);
+  data.opecSupply = bigNumberify(opecSupply);
 
-  data.gmxSupplyUsd = data.gmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
-  data.stakedGmxSupply = stakedGmxSupply;
-  data.stakedGmxSupplyUsd = stakedGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
-  data.gmxInStakedGmx = depositBalanceData.gmxInStakedGmx;
-  data.gmxInStakedGmxUsd = depositBalanceData.gmxInStakedGmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.opecSupplyUsd = data.opecSupply.mul(opecPrice).div(expandDecimals(1, 18));
+  data.stakedOpecSupply = stakedOpecSupply;
+  data.stakedOpecSupplyUsd = stakedOpecSupply.mul(opecPrice).div(expandDecimals(1, 18));
+  data.opecInStakedOpec = depositBalanceData.opecInStakedOpec;
+  data.opecInStakedOpecUsd = depositBalanceData.opecInStakedOpec.mul(opecPrice).div(expandDecimals(1, 18));
 
-  data.esGmxBalance = balanceData.esGmx;
-  data.esGmxBalanceUsd = balanceData.esGmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.esOpecBalance = balanceData.esOpec;
+  data.esOpecBalanceUsd = balanceData.esOpec.mul(opecPrice).div(expandDecimals(1, 18));
 
-  data.stakedGmxTrackerSupply = supplyData.stakedGmxTracker;
-  data.stakedGmxTrackerSupplyUsd = supplyData.stakedGmxTracker.mul(gmxPrice).div(expandDecimals(1, 18));
-  data.stakedEsGmxSupply = data.stakedGmxTrackerSupply.sub(data.stakedGmxSupply);
-  data.stakedEsGmxSupplyUsd = data.stakedEsGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.stakedOpecTrackerSupply = supplyData.stakedOpecTracker;
+  data.stakedOpecTrackerSupplyUsd = supplyData.stakedOpecTracker.mul(opecPrice).div(expandDecimals(1, 18));
+  data.stakedEsOpecSupply = data.stakedOpecTrackerSupply.sub(data.stakedOpecSupply);
+  data.stakedEsOpecSupplyUsd = data.stakedEsOpecSupply.mul(opecPrice).div(expandDecimals(1, 18));
 
-  data.esGmxInStakedGmx = depositBalanceData.esGmxInStakedGmx;
-  data.esGmxInStakedGmxUsd = depositBalanceData.esGmxInStakedGmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.esOpecInStakedOpec = depositBalanceData.esOpecInStakedOpec;
+  data.esOpecInStakedOpecUsd = depositBalanceData.esOpecInStakedOpec.mul(opecPrice).div(expandDecimals(1, 18));
 
-  data.bnGmxInFeeGmx = depositBalanceData.bnGmxInFeeGmx;
-  data.bonusGmxInFeeGmx = depositBalanceData.bonusGmxInFeeGmx;
-  data.feeGmxSupply = stakingData.feeGmxTracker.totalSupply;
-  data.feeGmxSupplyUsd = data.feeGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.bnOpecInFeeOpec = depositBalanceData.bnOpecInFeeOpec;
+  data.bonusOpecInFeeOpec = depositBalanceData.bonusOpecInFeeOpec;
+  data.feeOpecSupply = stakingData.feeOpecTracker.totalSupply;
+  data.feeOpecSupplyUsd = data.feeOpecSupply.mul(opecPrice).div(expandDecimals(1, 18));
 
-  data.stakedGmxTrackerRewards = stakingData.stakedGmxTracker.claimable;
-  data.stakedGmxTrackerRewardsUsd = stakingData.stakedGmxTracker.claimable.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.stakedOpecTrackerRewards = stakingData.stakedOpecTracker.claimable;
+  data.stakedOpecTrackerRewardsUsd = stakingData.stakedOpecTracker.claimable.mul(opecPrice).div(expandDecimals(1, 18));
 
-  data.bonusGmxTrackerRewards = stakingData.bonusGmxTracker.claimable;
+  data.bonusOpecTrackerRewards = stakingData.bonusOpecTracker.claimable;
 
-  data.feeGmxTrackerRewards = stakingData.feeGmxTracker.claimable;
-  data.feeGmxTrackerRewardsUsd = stakingData.feeGmxTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
+  data.feeOpecTrackerRewards = stakingData.feeOpecTracker.claimable;
+  data.feeOpecTrackerRewardsUsd = stakingData.feeOpecTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
 
   data.boostBasisPoints = bigNumberify(0);
-  if (data && data.bnGmxInFeeGmx && data.bonusGmxInFeeGmx && data.bonusGmxInFeeGmx.gt(0)) {
-    data.boostBasisPoints = data.bnGmxInFeeGmx.mul(BASIS_POINTS_DIVISOR).div(data.bonusGmxInFeeGmx);
+  if (data && data.bnOpecInFeeOpec && data.bonusOpecInFeeOpec && data.bonusOpecInFeeOpec.gt(0)) {
+    data.boostBasisPoints = data.bnOpecInFeeOpec.mul(BASIS_POINTS_DIVISOR).div(data.bonusOpecInFeeOpec);
   }
 
-  data.stakedGmxTrackerAnnualRewardsUsd = stakingData.stakedGmxTracker.tokensPerInterval
+  data.stakedOpecTrackerAnnualRewardsUsd = stakingData.stakedOpecTracker.tokensPerInterval
     .mul(SECONDS_PER_YEAR)
-    .mul(gmxPrice)
+    .mul(opecPrice)
     .div(expandDecimals(1, 18));
-  data.gmxAprForEsGmx =
-    data.stakedGmxTrackerSupplyUsd && data.stakedGmxTrackerSupplyUsd.gt(0)
-      ? data.stakedGmxTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.stakedGmxTrackerSupplyUsd)
+  data.opecAprForEsOpec =
+    data.stakedOpecTrackerSupplyUsd && data.stakedOpecTrackerSupplyUsd.gt(0)
+      ? data.stakedOpecTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.stakedOpecTrackerSupplyUsd)
       : bigNumberify(0);
-  data.feeGmxTrackerAnnualRewardsUsd = stakingData.feeGmxTracker.tokensPerInterval
-    .mul(SECONDS_PER_YEAR)
-    .mul(nativeTokenPrice)
-    .div(expandDecimals(1, 18));
-  data.gmxAprForNativeToken =
-    data.feeGmxSupplyUsd && data.feeGmxSupplyUsd.gt(0)
-      ? data.feeGmxTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.feeGmxSupplyUsd)
-      : bigNumberify(0);
-  data.gmxBoostAprForNativeToken = data.gmxAprForNativeToken.mul(data.boostBasisPoints).div(BASIS_POINTS_DIVISOR);
-  data.gmxAprTotal = data.gmxAprForNativeToken.add(data.gmxAprForEsGmx);
-  data.gmxAprTotalWithBoost = data.gmxAprForNativeToken.add(data.gmxBoostAprForNativeToken).add(data.gmxAprForEsGmx);
-  data.gmxAprForNativeTokenWithBoost = data.gmxAprForNativeToken.add(data.gmxBoostAprForNativeToken);
-
-  data.totalGmxRewardsUsd = data.stakedGmxTrackerRewardsUsd.add(data.feeGmxTrackerRewardsUsd);
-
-  data.glpSupply = supplyData.glp;
-  data.glpPrice =
-    data.glpSupply && data.glpSupply.gt(0)
-      ? aum.mul(expandDecimals(1, GLP_DECIMALS)).div(data.glpSupply)
-      : bigNumberify(0);
-
-  data.glpSupplyUsd = supplyData.glp.mul(data.glpPrice).div(expandDecimals(1, 18));
-
-  data.glpBalance = depositBalanceData.glpInStakedGlp;
-  data.glpBalanceUsd = depositBalanceData.glpInStakedGlp.mul(data.glpPrice).div(expandDecimals(1, GLP_DECIMALS));
-
-  data.stakedGlpTrackerRewards = stakingData.stakedGlpTracker.claimable;
-  data.stakedGlpTrackerRewardsUsd = stakingData.stakedGlpTracker.claimable.mul(gmxPrice).div(expandDecimals(1, 18));
-
-  data.feeGlpTrackerRewards = stakingData.feeGlpTracker.claimable;
-  data.feeGlpTrackerRewardsUsd = stakingData.feeGlpTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
-
-  data.stakedGlpTrackerAnnualRewardsUsd = stakingData.stakedGlpTracker.tokensPerInterval
-    .mul(SECONDS_PER_YEAR)
-    .mul(gmxPrice)
-    .div(expandDecimals(1, 18));
-  data.glpAprForEsGmx =
-    data.glpSupplyUsd && data.glpSupplyUsd.gt(0)
-      ? data.stakedGlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.glpSupplyUsd)
-      : bigNumberify(0);
-  data.feeGlpTrackerAnnualRewardsUsd = stakingData.feeGlpTracker.tokensPerInterval
+  data.feeOpecTrackerAnnualRewardsUsd = stakingData.feeOpecTracker.tokensPerInterval
     .mul(SECONDS_PER_YEAR)
     .mul(nativeTokenPrice)
     .div(expandDecimals(1, 18));
-  data.glpAprForNativeToken =
-    data.glpSupplyUsd && data.glpSupplyUsd.gt(0)
-      ? data.feeGlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.glpSupplyUsd)
+  data.opecAprForNativeToken =
+    data.feeOpecSupplyUsd && data.feeOpecSupplyUsd.gt(0)
+      ? data.feeOpecTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.feeOpecSupplyUsd)
       : bigNumberify(0);
-  data.glpAprTotal = data.glpAprForNativeToken.add(data.glpAprForEsGmx);
+  data.opecBoostAprForNativeToken = data.opecAprForNativeToken.mul(data.boostBasisPoints).div(BASIS_POINTS_DIVISOR);
+  data.opecAprTotal = data.opecAprForNativeToken.add(data.opecAprForEsOpec);
+  data.opecAprTotalWithBoost = data.opecAprForNativeToken.add(data.opecBoostAprForNativeToken).add(data.opecAprForEsOpec);
+  data.opecAprForNativeTokenWithBoost = data.opecAprForNativeToken.add(data.opecBoostAprForNativeToken);
 
-  data.totalGlpRewardsUsd = data.stakedGlpTrackerRewardsUsd.add(data.feeGlpTrackerRewardsUsd);
+  data.totalOpecRewardsUsd = data.stakedOpecTrackerRewardsUsd.add(data.feeOpecTrackerRewardsUsd);
 
-  data.totalEsGmxRewards = data.stakedGmxTrackerRewards.add(data.stakedGlpTrackerRewards);
-  data.totalEsGmxRewardsUsd = data.stakedGmxTrackerRewardsUsd.add(data.stakedGlpTrackerRewardsUsd);
+  data.xpcSupply = supplyData.xpc;
+  data.xpcPrice =
+    data.xpcSupply && data.xpcSupply.gt(0)
+      ? aum.mul(expandDecimals(1, XPC_DECIMALS)).div(data.xpcSupply)
+      : bigNumberify(0);
 
-  data.gmxVesterRewards = vestingData.gmxVester.claimable;
-  data.glpVesterRewards = vestingData.glpVester.claimable;
-  data.totalVesterRewards = data.gmxVesterRewards.add(data.glpVesterRewards);
-  data.totalVesterRewardsUsd = data.totalVesterRewards.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.xpcSupplyUsd = supplyData.xpc.mul(data.xpcPrice).div(expandDecimals(1, 18));
 
-  data.totalNativeTokenRewards = data.feeGmxTrackerRewards.add(data.feeGlpTrackerRewards);
-  data.totalNativeTokenRewardsUsd = data.feeGmxTrackerRewardsUsd.add(data.feeGlpTrackerRewardsUsd);
+  data.xpcBalance = depositBalanceData.xpcInStakedXpc;
+  data.xpcBalanceUsd = depositBalanceData.xpcInStakedXpc.mul(data.xpcPrice).div(expandDecimals(1, XPC_DECIMALS));
 
-  data.totalRewardsUsd = data.totalEsGmxRewardsUsd.add(data.totalNativeTokenRewardsUsd).add(data.totalVesterRewardsUsd);
+  data.stakedXpcTrackerRewards = stakingData.stakedXpcTracker.claimable;
+  data.stakedXpcTrackerRewardsUsd = stakingData.stakedXpcTracker.claimable.mul(opecPrice).div(expandDecimals(1, 18));
+
+  data.feeXpcTrackerRewards = stakingData.feeXpcTracker.claimable;
+  data.feeXpcTrackerRewardsUsd = stakingData.feeXpcTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
+
+  data.stakedXpcTrackerAnnualRewardsUsd = stakingData.stakedXpcTracker.tokensPerInterval
+    .mul(SECONDS_PER_YEAR)
+    .mul(opecPrice)
+    .div(expandDecimals(1, 18));
+  data.xpcAprForEsOpec =
+    data.xpcSupplyUsd && data.xpcSupplyUsd.gt(0)
+      ? data.stakedXpcTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.xpcSupplyUsd)
+      : bigNumberify(0);
+  data.feeXpcTrackerAnnualRewardsUsd = stakingData.feeXpcTracker.tokensPerInterval
+    .mul(SECONDS_PER_YEAR)
+    .mul(nativeTokenPrice)
+    .div(expandDecimals(1, 18));
+  data.xpcAprForNativeToken =
+    data.xpcSupplyUsd && data.xpcSupplyUsd.gt(0)
+      ? data.feeXpcTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.xpcSupplyUsd)
+      : bigNumberify(0);
+  data.xpcAprTotal = data.xpcAprForNativeToken.add(data.xpcAprForEsOpec);
+
+  data.totalXpcRewardsUsd = data.stakedXpcTrackerRewardsUsd.add(data.feeXpcTrackerRewardsUsd);
+
+  data.totalEsOpecRewards = data.stakedOpecTrackerRewards.add(data.stakedXpcTrackerRewards);
+  data.totalEsOpecRewardsUsd = data.stakedOpecTrackerRewardsUsd.add(data.stakedXpcTrackerRewardsUsd);
+
+  data.opecVesterRewards = vestingData.opecVester.claimable;
+  data.xpcVesterRewards = vestingData.xpcVester.claimable;
+  data.totalVesterRewards = data.opecVesterRewards.add(data.xpcVesterRewards);
+  data.totalVesterRewardsUsd = data.totalVesterRewards.mul(opecPrice).div(expandDecimals(1, 18));
+
+  data.totalNativeTokenRewards = data.feeOpecTrackerRewards.add(data.feeXpcTrackerRewards);
+  data.totalNativeTokenRewardsUsd = data.feeOpecTrackerRewardsUsd.add(data.feeXpcTrackerRewardsUsd);
+
+  data.totalRewardsUsd = data.totalEsOpecRewardsUsd.add(data.totalNativeTokenRewardsUsd).add(data.totalVesterRewardsUsd);
 
   return data;
 }
@@ -2724,7 +2724,7 @@ export function sleep(ms) {
 
 export function getPageTitle(data) {
   return `${data} | Decentralized
-  Perpetual Exchange | GMX`;
+  Perpetual Exchange | OPEC`;
 }
 
 export function isHashZero(value) {
@@ -2756,5 +2756,5 @@ export function useDebounce(value, delay) {
 }
 
 export function isDevelopment() {
-  return !window.location.origin?.includes("gmx.io");
+  return !window.location.origin?.includes("opec.io");
 }

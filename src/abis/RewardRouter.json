@@ -243,7 +243,7 @@
     },
     {
       "inputs": [],
-      "name": "glp",
+      "name": "xpc",
       "outputs": [
         {
           "internalType": "address",
@@ -256,7 +256,7 @@
     },
     {
       "inputs": [],
-      "name": "glpManager",
+      "name": "xpcManager",
       "outputs": [
         {
           "internalType": "address",
@@ -269,7 +269,7 @@
     },
     {
       "inputs": [],
-      "name": "glpVester",
+      "name": "xpcVester",
       "outputs": [
         {
           "internalType": "address",
@@ -386,7 +386,7 @@
         },
         {
           "internalType": "address",
-          "name": "_glp",
+          "name": "_xpc",
           "type": "address"
         },
         {
@@ -416,7 +416,7 @@
         },
         {
           "internalType": "address",
-          "name": "_glpManager",
+          "name": "_xpcManager",
           "type": "address"
         },
         {
@@ -426,7 +426,7 @@
         },
         {
           "internalType": "address",
-          "name": "_glpVester",
+          "name": "_xpcVester",
           "type": "address"
         }
       ],
@@ -630,7 +630,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_glpAmount",
+          "name": "_xpcAmount",
           "type": "uint256"
         },
         {
@@ -659,7 +659,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_glpAmount",
+          "name": "_xpcAmount",
           "type": "uint256"
         },
         {

@@ -23,22 +23,22 @@ import RewardReader from "../../abis/RewardReader.json";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
 
-import "./ClaimEsGmx.css";
+import "./ClaimEsOpec.css";
 
 import arbitrumIcon from "../../img/ic_arbitrum_96.svg";
 import avaIcon from "../../img/ic_avalanche_96.svg";
 
 const VEST_WITH_GMX_ARB = "VEST_WITH_GMX_ARB";
-const VEST_WITH_GLP_ARB = "VEST_WITH_GLP_ARB";
+const VEST_WITH_XPC_ARB = "VEST_WITH_XPC_ARB";
 const VEST_WITH_GMX_AVAX = "VEST_WITH_GMX_AVAX";
-const VEST_WITH_GLP_AVAX = "VEST_WITH_GLP_AVAX";
+const VEST_WITH_XPC_AVAX = "VEST_WITH_XPC_AVAX";
 
 export function getVestingDataV2(vestingInfo) {
   if (!vestingInfo || vestingInfo.length === 0) {
     return;
   }
 
-  const keys = ["gmxVester", "glpVester"];
+  const keys = ["opecVester", "xpcVester"];
   const data = {};
   const propsLength = 12;
 
@@ -85,7 +85,7 @@ function getVestingValues({ minRatio, amount, vestingDataItem }) {
 
   const ratioMultiplier = 10000;
   const maxVestableAmount = vestingDataItem.maxVestableAmount;
-  const nextMaxVestableEsGmx = maxVestableAmount.add(amount);
+  const nextMaxVestableEsOpec = maxVestableAmount.add(amount);
 
   const combinedAverageStakedAmount = vestingDataItem.combinedAverageStakedAmount;
   if (maxVestableAmount.gt(0)) {
@@ -115,22 +115,22 @@ function getVestingValues({ minRatio, amount, vestingDataItem }) {
       .add(nextTransferredAverageStakedAmount.mul(nextTransferredCumulativeReward).div(totalCumulativeReward));
   }
 
-  const nextRatio = nextCombinedAverageStakedAmount.mul(ratioMultiplier).div(nextMaxVestableEsGmx);
+  const nextRatio = nextCombinedAverageStakedAmount.mul(ratioMultiplier).div(nextMaxVestableEsOpec);
 
   const initialStakingAmount = currentRatio.mul(maxVestableAmount);
-  const nextStakingAmount = nextRatio.mul(nextMaxVestableEsGmx);
+  const nextStakingAmount = nextRatio.mul(nextMaxVestableEsOpec);
 
   return {
     maxVestableAmount,
     currentRatio,
-    nextMaxVestableEsGmx,
+    nextMaxVestableEsOpec,
     nextRatio,
     initialStakingAmount,
     nextStakingAmount,
   };
 }
 
-export default function ClaimEsGmx({ setPendingTxns }) {
+export default function ClaimEsOpec({ setPendingTxns }) {
   const { active, account, library } = useWeb3React();
   const { chainId } = useChainId();
   const [selectedOption, setSelectedOption] = useState("");
@@ -139,13 +139,13 @@ export default function ClaimEsGmx({ setPendingTxns }) {
 
   const isArbitrum = chainId === ARBITRUM;
 
-  const esGmxIouAddress = getContract(chainId, "ES_GMX_IOU");
+  const esOpecIouAddress = getContract(chainId, "ES_GMX_IOU");
 
-  const { data: esGmxIouBalance } = useSWR(
+  const { data: esOpecIouBalance } = useSWR(
     isArbitrum && [
-      `ClaimEsGmx:esGmxIouBalance:${active}`,
+      `ClaimEsOpec:esOpecIouBalance:${active}`,
       chainId,
-      esGmxIouAddress,
+      esOpecIouAddress,
       "balanceOf",
       account || PLACEHOLDER_ACCOUNT,
     ],
@@ -157,8 +157,8 @@ export default function ClaimEsGmx({ setPendingTxns }) {
   const arbRewardReaderAddress = getContract(ARBITRUM, "RewardReader");
   const avaxRewardReaderAddress = getContract(AVALANCHE, "RewardReader");
 
-  const arbVesterAdddresses = [getContract(ARBITRUM, "GmxVester"), getContract(ARBITRUM, "GlpVester")];
-  const avaxVesterAdddresses = [getContract(AVALANCHE, "GmxVester"), getContract(AVALANCHE, "GlpVester")];
+  const arbVesterAdddresses = [getContract(ARBITRUM, "OpecVester"), getContract(ARBITRUM, "XpcVester")];
+  const avaxVesterAdddresses = [getContract(AVALANCHE, "OpecVester"), getContract(AVALANCHE, "XpcVester")];
 
   const { data: arbVestingInfo } = useSWR(
     [
@@ -194,13 +194,13 @@ export default function ClaimEsGmx({ setPendingTxns }) {
   let maxVestableAmount;
   let currentRatio;
 
-  let nextMaxVestableEsGmx;
+  let nextMaxVestableEsOpec;
   let nextRatio;
 
   let initialStakingAmount;
   let nextStakingAmount;
 
-  let stakingToken = "staked GMX";
+  let stakingToken = "staked OPEC";
 
   const shouldShowStakingAmounts = false;
 
@@ -208,56 +208,56 @@ export default function ClaimEsGmx({ setPendingTxns }) {
     const result = getVestingValues({
       minRatio: bigNumberify(4),
       amount,
-      vestingDataItem: arbVestingData.gmxVester,
+      vestingDataItem: arbVestingData.opecVester,
     });
 
     if (result) {
-      ({ maxVestableAmount, currentRatio, nextMaxVestableEsGmx, nextRatio, initialStakingAmount, nextStakingAmount } =
+      ({ maxVestableAmount, currentRatio, nextMaxVestableEsOpec, nextRatio, initialStakingAmount, nextStakingAmount } =
         result);
     }
   }
 
-  if (selectedOption === VEST_WITH_GLP_ARB && arbVestingData) {
+  if (selectedOption === VEST_WITH_XPC_ARB && arbVestingData) {
     const result = getVestingValues({
       minRatio: bigNumberify(320),
       amount,
-      vestingDataItem: arbVestingData.glpVester,
+      vestingDataItem: arbVestingData.xpcVester,
     });
 
     if (result) {
-      ({ maxVestableAmount, currentRatio, nextMaxVestableEsGmx, nextRatio, initialStakingAmount, nextStakingAmount } =
+      ({ maxVestableAmount, currentRatio, nextMaxVestableEsOpec, nextRatio, initialStakingAmount, nextStakingAmount } =
         result);
     }
 
-    stakingToken = "GLP";
+    stakingToken = "XPC";
   }
 
   if (selectedOption === VEST_WITH_GMX_AVAX && avaxVestingData) {
     const result = getVestingValues({
       minRatio: bigNumberify(4),
       amount,
-      vestingDataItem: avaxVestingData.gmxVester,
+      vestingDataItem: avaxVestingData.opecVester,
     });
 
     if (result) {
-      ({ maxVestableAmount, currentRatio, nextMaxVestableEsGmx, nextRatio, initialStakingAmount, nextStakingAmount } =
+      ({ maxVestableAmount, currentRatio, nextMaxVestableEsOpec, nextRatio, initialStakingAmount, nextStakingAmount } =
         result);
     }
   }
 
-  if (selectedOption === VEST_WITH_GLP_AVAX && avaxVestingData) {
+  if (selectedOption === VEST_WITH_XPC_AVAX && avaxVestingData) {
     const result = getVestingValues({
       minRatio: bigNumberify(320),
       amount,
-      vestingDataItem: avaxVestingData.glpVester,
+      vestingDataItem: avaxVestingData.xpcVester,
     });
 
     if (result) {
-      ({ maxVestableAmount, currentRatio, nextMaxVestableEsGmx, nextRatio, initialStakingAmount, nextStakingAmount } =
+      ({ maxVestableAmount, currentRatio, nextMaxVestableEsOpec, nextRatio, initialStakingAmount, nextStakingAmount } =
         result);
     }
 
-    stakingToken = "GLP";
+    stakingToken = "XPC";
   }
 
   const getError = () => {
@@ -265,7 +265,7 @@ export default function ClaimEsGmx({ setPendingTxns }) {
       return "Wallet not connected";
     }
 
-    if (esGmxIouBalance && esGmxIouBalance.eq(0)) {
+    if (esOpecIouBalance && esOpecIouBalance.eq(0)) {
       return "No esGMX to claim";
     }
 
@@ -307,7 +307,7 @@ export default function ClaimEsGmx({ setPendingTxns }) {
       receiver = "0x544a6ec142Aa9A7F75235fE111F61eF2EbdC250a";
     }
 
-    if (selectedOption === VEST_WITH_GLP_ARB) {
+    if (selectedOption === VEST_WITH_XPC_ARB) {
       receiver = "0x9d8f6f6eE45275A5Ca3C6f6269c5622b1F9ED515";
     }
 
@@ -315,11 +315,11 @@ export default function ClaimEsGmx({ setPendingTxns }) {
       receiver = "0x171a321A78dAE0CDC0Ba3409194df955DEEcA746";
     }
 
-    if (selectedOption === VEST_WITH_GLP_AVAX) {
+    if (selectedOption === VEST_WITH_XPC_AVAX) {
       receiver = "0x28863Dd19fb52DF38A9f2C6dfed40eeB996e3818";
     }
 
-    const contract = new ethers.Contract(esGmxIouAddress, Token.abi, library.getSigner());
+    const contract = new ethers.Contract(esOpecIouAddress, Token.abi, library.getSigner());
     callContract(chainId, contract, "transfer", [receiver, amount], {
       sentMsg: "Claim submitted!",
       failMsg: "Claim failed.",
@@ -333,7 +333,7 @@ export default function ClaimEsGmx({ setPendingTxns }) {
   };
 
   return (
-    <div className="ClaimEsGmx Page page-layout">
+    <div className="ClaimEsOpec Page page-layout">
       <div className="Page-title-section mt-0">
         <div className="Page-title">Claim esGMX</div>
         {!isArbitrum && (
@@ -346,10 +346,10 @@ export default function ClaimEsGmx({ setPendingTxns }) {
           <div>
             <div className="Page-description">
               <br />
-              You have {formatAmount(esGmxIouBalance, 18, 2, true)} esGMX (IOU) tokens.
+              You have {formatAmount(esOpecIouBalance, 18, 2, true)} esGMX (IOU) tokens.
               <br />
               <br />
-              The address of the esGMX (IOU) token is {esGmxIouAddress}.<br />
+              The address of the esGMX (IOU) token is {esOpecIouAddress}.<br />
               The esGMX (IOU) token is transferrable. You can add the token to your wallet and send it to another
               address to claim if you'd like.
               <br />
@@ -364,7 +364,7 @@ export default function ClaimEsGmx({ setPendingTxns }) {
               <br />
               You can check your claim history{" "}
               <a
-                href={`https://arbiscan.io/token/${esGmxIouAddress}?a=${account}`}
+                href={`https://arbiscan.io/token/${esOpecIouAddress}?a=${account}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -373,21 +373,21 @@ export default function ClaimEsGmx({ setPendingTxns }) {
               .
             </div>
             <br />
-            <div className="ClaimEsGmx-vesting-options">
+            <div className="ClaimEsOpec-vesting-options">
               <Checkbox
                 className="arbitrum btn btn-primary btn-left btn-lg"
                 isChecked={selectedOption === VEST_WITH_GMX_ARB}
                 setIsChecked={() => setSelectedOption(VEST_WITH_GMX_ARB)}
               >
-                <div className="ClaimEsGmx-option-label">Vest with GMX on Arbitrum</div>
+                <div className="ClaimEsOpec-option-label">Vest with OPEC on Arbitrum</div>
                 <img src={arbitrumIcon} alt="arbitrum" />
               </Checkbox>
               <Checkbox
                 className="arbitrum btn btn-primary btn-left btn-lg"
-                isChecked={selectedOption === VEST_WITH_GLP_ARB}
-                setIsChecked={() => setSelectedOption(VEST_WITH_GLP_ARB)}
+                isChecked={selectedOption === VEST_WITH_XPC_ARB}
+                setIsChecked={() => setSelectedOption(VEST_WITH_XPC_ARB)}
               >
-                <div className="ClaimEsGmx-option-label">Vest with GLP on Arbitrum</div>
+                <div className="ClaimEsOpec-option-label">Vest with XPC on Arbitrum</div>
                 <img src={arbitrumIcon} alt="arbitrum" />
               </Checkbox>
               <Checkbox
@@ -395,15 +395,15 @@ export default function ClaimEsGmx({ setPendingTxns }) {
                 isChecked={selectedOption === VEST_WITH_GMX_AVAX}
                 setIsChecked={() => setSelectedOption(VEST_WITH_GMX_AVAX)}
               >
-                <div className="ClaimEsGmx-option-label">Vest with GMX on Avalanche</div>
+                <div className="ClaimEsOpec-option-label">Vest with OPEC on Avalanche</div>
                 <img src={avaIcon} alt="avalanche" />
               </Checkbox>
               <Checkbox
                 className="avalanche btn btn-primary btn-left btn-lg"
-                isChecked={selectedOption === VEST_WITH_GLP_AVAX}
-                setIsChecked={() => setSelectedOption(VEST_WITH_GLP_AVAX)}
+                isChecked={selectedOption === VEST_WITH_XPC_AVAX}
+                setIsChecked={() => setSelectedOption(VEST_WITH_XPC_AVAX)}
               >
-                <div className="ClaimEsGmx-option-label avalanche">Vest with GLP on Avalanche</div>
+                <div className="ClaimEsOpec-option-label avalanche">Vest with XPC on Avalanche</div>
                 <img src={avaIcon} alt="avalanche" />
               </Checkbox>
             </div>
@@ -415,7 +415,7 @@ export default function ClaimEsGmx({ setPendingTxns }) {
                 {shouldShowStakingAmounts && `${formatAmount(initialStakingAmount, 18, 2, true)}.`}
                 <br />
                 After claiming you will be able to vest a maximum of {formatAmount(
-                  nextMaxVestableEsGmx,
+                  nextMaxVestableEsOpec,
                   18,
                   2,
                   true
@@ -427,13 +427,13 @@ export default function ClaimEsGmx({ setPendingTxns }) {
               </div>
             )}
             <div>
-              <div className="ClaimEsGmx-input-label muted">Amount to claim</div>
-              <div className="ClaimEsGmx-input-container">
+              <div className="ClaimEsOpec-input-label muted">Amount to claim</div>
+              <div className="ClaimEsOpec-input-container">
                 <input type="number" placeholder="0.0" value={value} onChange={(e) => setValue(e.target.value)} />
-                {value !== formatAmountFree(esGmxIouBalance, 18, 18) && (
+                {value !== formatAmountFree(esOpecIouBalance, 18, 18) && (
                   <div
-                    className="ClaimEsGmx-max-button"
-                    onClick={() => setValue(formatAmountFree(esGmxIouBalance, 18, 18))}
+                    className="ClaimEsOpec-max-button"
+                    onClick={() => setValue(formatAmountFree(esOpecIouBalance, 18, 18))}
                   >
                     MAX
                   </div>

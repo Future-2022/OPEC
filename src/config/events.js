@@ -13,7 +13,7 @@ let eventsData = [
   //     },
   //     {
   //       text: "Trade Now",
-  //       link: "https://gmx.io/trade",
+  //       link: "https://opec.io/trade",
   //     },
   //   ],
   // },
@@ -26,7 +26,7 @@ let eventsData = [
   //   buttons: [
   //     {
   //       text: "Trade Now",
-  //       link: "https://gmx.io/trade",
+  //       link: "https://opec.io/trade",
   //     },
   //   ],
   // },
@@ -49,16 +49,16 @@ let eventsData = [
     title: "Referral Program Launch",
     isActive: true,
     validTill: "5/04/2022 12:00:00 PM",
-    bodyText: "The GMX referral program is now live! Get fee discounts and refer traders to earn rewards.",
+    bodyText: "The OPEC referral program is now live! Get fee discounts and refer traders to earn rewards.",
     
     buttons: [
       {
         text: "Read More",
-        link: "https://gmx.io/referrals",
+        link: "https://opec.io/referrals",
       },
       {
         text: "Join Now",
-        link: "https://gmx.io/referrals",
+        link: "https://opec.io/referrals",
       },
     ],
   },
