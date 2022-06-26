@@ -231,7 +231,7 @@ export default function BeginAccountTransfer(props) {
         <div className="Page-description">
           Please only use this for full account transfers.
           <br />
-          This will transfer all your OPEC, esGMX, XPC and Multiplier Points to your new account.
+          This will transfer all your OPEC, esOPEC, XPC and Multiplier Points to your new account.
           <br />
           Transfers are only supported if the receiving account has not staked OPEC or XPC tokens before.
           <br />
