@@ -25,7 +25,7 @@ export const UI_VERSION = "1.3";
 export const PLACEHOLDER_ACCOUNT = ethers.Wallet.createRandom().address;
 
 export const MAINNET = 56;
-export const AVALANCHE = 43114;
+export const AVALANCHE = 43113;
 export const AVALANCHE_TESTNET = 43113;
 export const TESTNET = 97;
 export const ARBITRUM_TESTNET = 421611;
@@ -57,7 +57,7 @@ const MAX_GAS_PRICE_MAP = {
 };
 
 const ARBITRUM_RPC_PROVIDERS = ["https://arb1.arbitrum.io/rpc"];
-const AVALANCHE_RPC_PROVIDERS = ["https://api.avax.network/ext/bc/C/rpc"];
+const AVALANCHE_RPC_PROVIDERS = ["https://api.avax-test.network/ext/C/rpc"];
 const AVALANCHE_TESTNET_RPC_PROVIDERS = ["https://api.avax-test.network/ext/C/rpc"];
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
 export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
