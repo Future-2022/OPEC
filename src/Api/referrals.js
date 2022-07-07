@@ -15,7 +15,6 @@ import {
   fetcher,
   isHashZero,
   REFERRAL_CODE_KEY,
-  AVALANCHE_TESTNET,
 } from "../Helpers";
 import { arbitrumReferralsGraphClient, avalancheReferralsGraphClient } from "./common";
 import { getContract } from "../Addresses";
@@ -30,8 +29,6 @@ function getGraphClient(chainId) {
   if (chainId === ARBITRUM) {
     return arbitrumReferralsGraphClient;
   } else if (chainId === AVALANCHE) {
-    return avalancheReferralsGraphClient;
-  } else if (chainId === AVALANCHE_TESTNET) {
     return avalancheReferralsGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);

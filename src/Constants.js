@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 
-import { MAINNET, TESTNET, ARBITRUM_TESTNET, ARBITRUM, AVALANCHE, AVALANCHE_TESTNET } from "./Helpers";
+import { MAINNET, TESTNET, ARBITRUM_TESTNET, ARBITRUM, AVALANCHE } from "./Helpers";
 
 const { parseEther } = ethers.utils;
 
@@ -55,20 +55,7 @@ const constants = {
     INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.01"),
     // contract requires that execution fee be strictly greater than instead of gte
     DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0100001"),
-  },
-  [AVALANCHE_TESTNET]: {
-    nativeTokenSymbol: "AVAX",
-    wrappedTokenSymbol: "WAVAX",
-    defaultCollateralSymbol: "MIM",
-    defaultFlagOrdersEnabled: true,
-    positionReaderPropsLength: 9,
-    v2: true,
-
-    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.01"),
-    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.01"),
-    // contract requires that execution fee be strictly greater than instead of gte
-    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0100001"),
-  },
+  }
 };
 
 export const getConstant = (chainId, key) => {

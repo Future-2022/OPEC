@@ -18,7 +18,7 @@ export default function Footer() {
           <img src={logoImg} alt="MetaMask" />
         </div>
         <div className="Footer-social-link-block">
-          <a className="App-social-link" href="https://twitter.com/GMX_IO" target="_blank" rel="noopener noreferrer">
+          <a className="App-social-link" href="https://twitter.com/OPEC_IO" target="_blank" rel="noopener noreferrer">
             <img src={twitterIcon} alt="Twitter" />
           </a>
           <a className="App-social-link" href="https://medium.com/@opec.io" target="_blank" rel="noopener noreferrer">
@@ -27,7 +27,7 @@ export default function Footer() {
           <a className="App-social-link" href="https://github.com/opec-io" target="_blank" rel="noopener noreferrer">
             <img src={githubIcon} alt="Github" />
           </a>
-          <a className="App-social-link" href="https://t.me/GMX_IO" target="_blank" rel="noopener noreferrer">
+          <a className="App-social-link" href="https://t.me/OPEC_IO" target="_blank" rel="noopener noreferrer">
             <img src={telegramIcon} alt="Telegram" />
           </a>
           <a className="App-social-link" href="https://discord.gg/cxjZYR4gQK" target="_blank" rel="noopener noreferrer">

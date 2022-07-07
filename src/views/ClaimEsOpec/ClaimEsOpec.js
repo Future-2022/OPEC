@@ -28,9 +28,9 @@ import "./ClaimEsOpec.css";
 import arbitrumIcon from "../../img/ic_arbitrum_96.svg";
 import avaIcon from "../../img/ic_avalanche_96.svg";
 
-const VEST_WITH_GMX_ARB = "VEST_WITH_GMX_ARB";
+const VEST_WITH_OPEC_ARB = "VEST_WITH_OPEC_ARB";
 const VEST_WITH_XPC_ARB = "VEST_WITH_XPC_ARB";
-const VEST_WITH_GMX_AVAX = "VEST_WITH_GMX_AVAX";
+const VEST_WITH_OPEC_AVAX = "VEST_WITH_OPEC_AVAX";
 const VEST_WITH_XPC_AVAX = "VEST_WITH_XPC_AVAX";
 
 export function getVestingDataV2(vestingInfo) {
@@ -139,7 +139,7 @@ export default function ClaimEsOpec({ setPendingTxns }) {
 
   const isArbitrum = chainId === ARBITRUM;
 
-  const esOpecIouAddress = getContract(chainId, "ES_GMX_IOU");
+  const esOpecIouAddress = getContract(chainId, "ES_OPEC_IOU");
 
   const { data: esOpecIouBalance } = useSWR(
     isArbitrum && [
@@ -204,7 +204,7 @@ export default function ClaimEsOpec({ setPendingTxns }) {
 
   const shouldShowStakingAmounts = false;
 
-  if (selectedOption === VEST_WITH_GMX_ARB && arbVestingData) {
+  if (selectedOption === VEST_WITH_OPEC_ARB && arbVestingData) {
     const result = getVestingValues({
       minRatio: bigNumberify(4),
       amount,
@@ -232,7 +232,7 @@ export default function ClaimEsOpec({ setPendingTxns }) {
     stakingToken = "XPC";
   }
 
-  if (selectedOption === VEST_WITH_GMX_AVAX && avaxVestingData) {
+  if (selectedOption === VEST_WITH_OPEC_AVAX && avaxVestingData) {
     const result = getVestingValues({
       minRatio: bigNumberify(4),
       amount,
@@ -266,7 +266,7 @@ export default function ClaimEsOpec({ setPendingTxns }) {
     }
 
     if (esOpecIouBalance && esOpecIouBalance.eq(0)) {
-      return "No esGMX to claim";
+      return "No esOPEC to claim";
     }
 
     if (!amount || amount.eq(0)) {
@@ -303,7 +303,7 @@ export default function ClaimEsOpec({ setPendingTxns }) {
 
     let receiver;
 
-    if (selectedOption === VEST_WITH_GMX_ARB) {
+    if (selectedOption === VEST_WITH_OPEC_ARB) {
       receiver = "0x544a6ec142Aa9A7F75235fE111F61eF2EbdC250a";
     }
 
@@ -311,7 +311,7 @@ export default function ClaimEsOpec({ setPendingTxns }) {
       receiver = "0x9d8f6f6eE45275A5Ca3C6f6269c5622b1F9ED515";
     }
 
-    if (selectedOption === VEST_WITH_GMX_AVAX) {
+    if (selectedOption === VEST_WITH_OPEC_AVAX) {
       receiver = "0x171a321A78dAE0CDC0Ba3409194df955DEEcA746";
     }
 
@@ -335,7 +335,7 @@ export default function ClaimEsOpec({ setPendingTxns }) {
   return (
     <div className="ClaimEsOpec Page page-layout">
       <div className="Page-title-section mt-0">
-        <div className="Page-title">Claim esGMX</div>
+        <div className="Page-title">Claim esOPEC</div>
         {!isArbitrum && (
           <div className="Page-description">
             <br />
@@ -346,21 +346,21 @@ export default function ClaimEsOpec({ setPendingTxns }) {
           <div>
             <div className="Page-description">
               <br />
-              You have {formatAmount(esOpecIouBalance, 18, 2, true)} esGMX (IOU) tokens.
+              You have {formatAmount(esOpecIouBalance, 18, 2, true)} esOPEC (IOU) tokens.
               <br />
               <br />
-              The address of the esGMX (IOU) token is {esOpecIouAddress}.<br />
-              The esGMX (IOU) token is transferrable. You can add the token to your wallet and send it to another
+              The address of the esOPEC (IOU) token is {esOpecIouAddress}.<br />
+              The esOPEC (IOU) token is transferrable. You can add the token to your wallet and send it to another
               address to claim if you'd like.
               <br />
               <br />
               Select your vesting option below then click "Claim".
               <br />
-              After claiming, the esGMX tokens will be airdropped to your account on the selected network within 7 days.{" "}
+              After claiming, the esOPEC tokens will be airdropped to your account on the selected network within 7 days.{" "}
               <br />
-              The esGMX tokens can be staked or vested at any time.
+              The esOPEC tokens can be staked or vested at any time.
               <br />
-              Your esGMX (IOU) balance will decrease by your claim amount after claiming, this is expected behaviour.
+              Your esOPEC (IOU) balance will decrease by your claim amount after claiming, this is expected behaviour.
               <br />
               You can check your claim history{" "}
               <a
@@ -376,8 +376,8 @@ export default function ClaimEsOpec({ setPendingTxns }) {
             <div className="ClaimEsOpec-vesting-options">
               <Checkbox
                 className="arbitrum btn btn-primary btn-left btn-lg"
-                isChecked={selectedOption === VEST_WITH_GMX_ARB}
-                setIsChecked={() => setSelectedOption(VEST_WITH_GMX_ARB)}
+                isChecked={selectedOption === VEST_WITH_OPEC_ARB}
+                setIsChecked={() => setSelectedOption(VEST_WITH_OPEC_ARB)}
               >
                 <div className="ClaimEsOpec-option-label">Vest with OPEC on Arbitrum</div>
                 <img src={arbitrumIcon} alt="arbitrum" />
@@ -392,8 +392,8 @@ export default function ClaimEsOpec({ setPendingTxns }) {
               </Checkbox>
               <Checkbox
                 className="avalanche btn btn-primary btn-left btn-lg"
-                isChecked={selectedOption === VEST_WITH_GMX_AVAX}
-                setIsChecked={() => setSelectedOption(VEST_WITH_GMX_AVAX)}
+                isChecked={selectedOption === VEST_WITH_OPEC_AVAX}
+                setIsChecked={() => setSelectedOption(VEST_WITH_OPEC_AVAX)}
               >
                 <div className="ClaimEsOpec-option-label">Vest with OPEC on Avalanche</div>
                 <img src={avaIcon} alt="avalanche" />
@@ -410,8 +410,8 @@ export default function ClaimEsOpec({ setPendingTxns }) {
             <br />
             {!error && (
               <div className="muted">
-                You can currently vest a maximum of {formatAmount(maxVestableAmount, 18, 2, true)} esGMX tokens at a
-                ratio of {formatAmount(currentRatio, 4, 2, true)} {stakingToken} to 1 esGMX.{" "}
+                You can currently vest a maximum of {formatAmount(maxVestableAmount, 18, 2, true)} esOPEC tokens at a
+                ratio of {formatAmount(currentRatio, 4, 2, true)} {stakingToken} to 1 esOPEC.{" "}
                 {shouldShowStakingAmounts && `${formatAmount(initialStakingAmount, 18, 2, true)}.`}
                 <br />
                 After claiming you will be able to vest a maximum of {formatAmount(
@@ -420,7 +420,7 @@ export default function ClaimEsOpec({ setPendingTxns }) {
                   2,
                   true
                 )}{" "}
-                esGMX at a ratio of {formatAmount(nextRatio, 4, 2, true)} {stakingToken} to 1 esGMX.{" "}
+                esOPEC at a ratio of {formatAmount(nextRatio, 4, 2, true)} {stakingToken} to 1 esOPEC.{" "}
                 {shouldShowStakingAmounts && `${formatAmount(nextStakingAmount, 18, 2, true)}.`}
                 <br />
                 <br />

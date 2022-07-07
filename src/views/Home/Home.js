@@ -49,7 +49,7 @@ export default function Home() {
   // }, {
   //   id: 3,
   //   question: "What is the XPC Token? ",
-  //   answer: "The XPC token represents the liquidity users provide to the OPEC platform for Swaps and Margin Trading.<br><br>To provide liquidity to XPC you <a href='https://opec.io/buy_xpc' target='_blank'>trade</a> your crypto asset BTC, ETH, LINK, UNI, USDC, USDT, MIM, or FRAX to the liquidity pool, in exchange, you gain exposure to a diversified index of tokens while earning 50% of the platform trading fees and esGMX."
+  //   answer: "The XPC token represents the liquidity users provide to the OPEC platform for Swaps and Margin Trading.<br><br>To provide liquidity to XPC you <a href='https://opec.io/buy_xpc' target='_blank'>trade</a> your crypto asset BTC, ETH, LINK, UNI, USDC, USDT, MIM, or FRAX to the liquidity pool, in exchange, you gain exposure to a diversified index of tokens while earning 50% of the platform trading fees and esOPEC."
   // }, {
   //   id: 4,
   //   question: "What can I trade on OPEC? ",

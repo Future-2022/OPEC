@@ -25,13 +25,12 @@ export const UI_VERSION = "1.3";
 export const PLACEHOLDER_ACCOUNT = ethers.Wallet.createRandom().address;
 
 export const MAINNET = 56;
-export const AVALANCHE = 43114;
-export const AVALANCHE_TESTNET = 43113;
+export const AVALANCHE = 43113;
 export const TESTNET = 97;
 export const ARBITRUM_TESTNET = 421611;
 export const ARBITRUM = 42161;
 // TODO take it from web3
-export const DEFAULT_CHAIN_ID = AVALANCHE_TESTNET;
+export const DEFAULT_CHAIN_ID = AVALANCHE;
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
 export const MIN_PROFIT_TIME = 0;
@@ -43,8 +42,7 @@ const CHAIN_NAMES_MAP = {
   [TESTNET]: "BSC Testnet",
   [ARBITRUM_TESTNET]: "Arbitrum Testnet",
   [ARBITRUM]: "Arbitrum",
-  [AVALANCHE]: "Avalanche",
-  [AVALANCHE_TESTNET]: "Avalanche Testnet",
+  [AVALANCHE]: "Avalanche Testnet",
 };
 
 const GAS_PRICE_ADJUSTMENT_MAP = {
@@ -57,8 +55,8 @@ const MAX_GAS_PRICE_MAP = {
 };
 
 const ARBITRUM_RPC_PROVIDERS = ["https://arb1.arbitrum.io/rpc"];
-const AVALANCHE_RPC_PROVIDERS = ["https://api.avax.network/ext/bc/C/rpc"];
-const AVALANCHE_TESTNET_RPC_PROVIDERS = ["https://api.avax-test.network/ext/bc/C/rpc"];
+// const AVALANCHE_RPC_PROVIDERS = ["https://api.avax.network/ext/bc/C/rpc"];
+const AVALANCHE_RPC_PROVIDERS = ["https://api.avax-test.network/ext/C/rpc"];
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
 export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
 export const SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY = "eagerconnect";
@@ -82,7 +80,7 @@ export const DUST_BNB = "2000000000000000";
 export const DUST_USD = expandDecimals(1, USD_DECIMALS);
 export const PRECISION = expandDecimals(1, 30);
 export const XPC_DECIMALS = 18;
-export const GMX_DECIMALS = 18;
+export const OPEC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
 export const TAX_BASIS_POINTS = 50;
@@ -148,7 +146,7 @@ export const XPCPOOLCOLORS = {
 export const ICONLINKS = {
   42161: {
     OPEC: {
-      coingecko: "https://www.coingecko.com/en/coins/opec",
+      coingecko: "https://www.coingecko.com/en/coins/gmx",
       arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
     },
     XPC: {
@@ -190,45 +188,45 @@ export const ICONLINKS = {
       arbitrum: "https://arbiscan.io/address/0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
     },
   },
-  43114: {
-    OPEC: {
-      coingecko: "https://www.coingecko.com/en/coins/opec",
-      avalanche: "https://snowtrace.io/address/0x62edc0692bd897d2295872a9ffcac5425011c661",
-    },
-    XPC: {
-      avalanche: "https://snowtrace.io/address/0x9e295B5B976a184B14aD8cd72413aD846C299660",
-    },
-    AVAX: {
-      coingecko: "https://www.coingecko.com/en/coins/avalanche",
-    },
-    ETH: {
-      coingecko: "https://www.coingecko.com/en/coins/weth",
-      avalanche: "https://snowtrace.io/address/0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
-    },
-    BTC: {
-      coingecko: "https://www.coingecko.com/en/coins/wrapped-bitcoin",
-      avalanche: "https://snowtrace.io/address/0x50b7545627a5162f82a992c33b87adc75187b218",
-    },
-    MIM: {
-      coingecko: "https://www.coingecko.com/en/coins/magic-internet-money",
-      avalanche: "https://snowtrace.io/address/0x130966628846bfd36ff31a822705796e8cb8c18d",
-    },
-    "USDC.e": {
-      coingecko: "https://www.coingecko.com/en/coins/usd-coin-avalanche-bridged-usdc-e",
-      avalanche: "https://snowtrace.io/address/0xa7d7079b0fead91f3e65f86e8915cb59c1a4c664",
-    },
-    USDC: {
-      coingecko: "https://www.coingecko.com/en/coins/usd-coin",
-      avalanche: "https://snowtrace.io/address/0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
-    },
-  },
+  // 43114: {
+  //   OPEC: {
+  //     coingecko: "https://www.coingecko.com/en/coins/opec",
+  //     avalanche: "https://snowtrace.io/address/0x62edc0692bd897d2295872a9ffcac5425011c661",
+  //   },
+  //   XPC: {
+  //     avalanche: "https://snowtrace.io/address/0x9e295B5B976a184B14aD8cd72413aD846C299660",
+  //   },
+  //   AVAX: {
+  //     coingecko: "https://www.coingecko.com/en/coins/avalanche",
+  //   },
+  //   ETH: {
+  //     coingecko: "https://www.coingecko.com/en/coins/weth",
+  //     avalanche: "https://snowtrace.io/address/0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+  //   },
+  //   BTC: {
+  //     coingecko: "https://www.coingecko.com/en/coins/wrapped-bitcoin",
+  //     avalanche: "https://snowtrace.io/address/0x50b7545627a5162f82a992c33b87adc75187b218",
+  //   },
+  //   MIM: {
+  //     coingecko: "https://www.coingecko.com/en/coins/magic-internet-money",
+  //     avalanche: "https://snowtrace.io/address/0x130966628846bfd36ff31a822705796e8cb8c18d",
+  //   },
+  //   "USDC.e": {
+  //     coingecko: "https://www.coingecko.com/en/coins/usd-coin-avalanche-bridged-usdc-e",
+  //     avalanche: "https://snowtrace.io/address/0xa7d7079b0fead91f3e65f86e8915cb59c1a4c664",
+  //   },
+  //   USDC: {
+  //     coingecko: "https://www.coingecko.com/en/coins/usd-coin",
+  //     avalanche: "https://snowtrace.io/address/0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+  //   },
+  // },
   43113: {
     OPEC: {
       coingecko: "https://www.coingecko.com/en/coins/opec",
-      avalanche: "https://snowtrace.io/address/0x62edc0692bd897d2295872a9ffcac5425011c661",
+      avalanche: "https://testnet.snowtrace.io/address/0xeBC2C29BCd212A5251E0980B6Fc9e81717A8Fb3E",
     },
     XPC: {
-      avalanche: "https://snowtrace.io/address/0x9e295B5B976a184B14aD8cd72413aD846C299660",
+      avalanche: "https://testnet.snowtrace.io/address/0xDE7A1DC9a73f22F9B628636539E2b8d2FE866069",
     },
     AVAX: {
       coingecko: "https://www.coingecko.com/en/coins/avalanche",
@@ -271,10 +269,10 @@ export const platformTokens = {
       symbol: "XPC",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedXpcTracker"), // address of fsXPC token because user only holds fsXPC
-      imageUrl: "https://github.com/opec-io/opec-assets/blob/main/OPEC-Assets/PNG/XPC_LOGO%20ONLY.png?raw=true",
+      imageUrl: "https://github.com/gmx-io/opec-assets/blob/main/OPEC-Assets/PNG/XPC_LOGO%20ONLY.png?raw=true",
     },
   },
-  43114: {
+  43113: {
     // avalanche
     OPEC: {
       name: "OPEC",
@@ -290,10 +288,10 @@ export const platformTokens = {
       address: getContract(AVALANCHE, "StakedXpcTracker"), // address of fsXPC token because user only holds fsXPC
       imageUrl: "https://github.com/opec-io/opec-assets/blob/main/OPEC-Assets/PNG/XPC_LOGO%20ONLY.png?raw=true",
     },
-  },
+  }
 };
 
-const supportedChainIds = [ARBITRUM, AVALANCHE, AVALANCHE_TESTNET];
+const supportedChainIds = [ARBITRUM, AVALANCHE];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,
 });
@@ -304,7 +302,6 @@ const getWalletConnectConnector = () => {
     rpc: {
       [AVALANCHE]: AVALANCHE_RPC_PROVIDERS[0],
       [ARBITRUM]: ARBITRUM_RPC_PROVIDERS[0],
-      [AVALANCHE_TESTNET]: AVALANCHE_TESTNET_RPC_PROVIDERS[0],
     },
     qrcode: true,
     chainId,
@@ -1305,7 +1302,6 @@ const RPC_PROVIDERS = {
   [MAINNET]: BSC_RPC_PROVIDERS,
   [ARBITRUM]: ARBITRUM_RPC_PROVIDERS,
   [AVALANCHE]: AVALANCHE_RPC_PROVIDERS,
-  [AVALANCHE_TESTNET]: AVALANCHE_TESTNET_RPC_PROVIDERS,
 };
 
 const FALLBACK_PROVIDERS = {
@@ -1969,8 +1965,6 @@ export function getExplorerUrl(chainId) {
   } else if (chainId === ARBITRUM) {
     return "https://arbiscan.io/";
   } else if (chainId === AVALANCHE) {
-    return "https://snowtrace.io/";
-  } else if (chainId === AVALANCHE_TESTNET) {
     return "https://testnet.snowtrace.io/";
   }
 
@@ -2186,17 +2180,6 @@ const NETWORK_METADATA = {
     },
     rpcUrls: AVALANCHE_RPC_PROVIDERS,
     blockExplorerUrls: [getExplorerUrl(AVALANCHE)],
-  },
-  [AVALANCHE_TESTNET]: {
-    chainId: "0x" + AVALANCHE_TESTNET.toString(16),
-    chainName: "Avalanche",
-    nativeCurrency: {
-      name: "AVAX",
-      symbol: "AVAX",
-      decimals: 18,
-    },
-    rpcUrls: AVALANCHE_TESTNET_RPC_PROVIDERS,
-    blockExplorerUrls: [getExplorerUrl(AVALANCHE_TESTNET)],
   },
 };
 

@@ -23,7 +23,7 @@ import {
   getChainName,
   useChainId,
   USD_DECIMALS,
-  GMX_DECIMALS,
+  OPEC_DECIMALS,
   XPC_DECIMALS,
   BASIS_POINTS_DIVISOR,
   ARBITRUM,
@@ -201,12 +201,12 @@ export default function DashboardV2() {
 
   let opecMarketCap;
   if (opecPrice && totalOpecSupply) {
-    opecMarketCap = opecPrice.mul(totalOpecSupply).div(expandDecimals(1, GMX_DECIMALS));
+    opecMarketCap = opecPrice.mul(totalOpecSupply).div(expandDecimals(1, OPEC_DECIMALS));
   }
 
   let stakedOpecSupplyUsd;
   if (opecPrice && totalStakedOpec) {
-    stakedOpecSupplyUsd = totalStakedOpec.mul(opecPrice).div(expandDecimals(1, GMX_DECIMALS));
+    stakedOpecSupplyUsd = totalStakedOpec.mul(opecPrice).div(expandDecimals(1, OPEC_DECIMALS));
   }
 
   let aum;
@@ -228,7 +228,7 @@ export default function DashboardV2() {
 
   let tvl;
   if (xpcMarketCap && opecPrice && totalStakedOpec) {
-    tvl = xpcMarketCap.add(opecPrice.mul(totalStakedOpec).div(expandDecimals(1, GMX_DECIMALS)));
+    tvl = xpcMarketCap.add(opecPrice.mul(totalStakedOpec).div(expandDecimals(1, OPEC_DECIMALS)));
   }
 
   const ethFloorPriceFund = expandDecimals(350 + 148 + 384, 18);
@@ -396,14 +396,14 @@ export default function DashboardV2() {
     else return -1;
   });
 
-  const [opecActiveIndex, setGMXActiveIndex] = useState(null);
+  const [opecActiveIndex, setOPECActiveIndex] = useState(null);
 
-  const onGMXDistributionChartEnter = (_, index) => {
-    setGMXActiveIndex(index);
+  const onOPECDistributionChartEnter = (_, index) => {
+    setOPECActiveIndex(index);
   };
 
-  const onGMXDistributionChartLeave = (_, index) => {
-    setGMXActiveIndex(null);
+  const onOPECDistributionChartLeave = (_, index) => {
+    setOPECActiveIndex(null);
   };
 
   const [xpcActiveIndex, setXPCActiveIndex] = useState(null);
@@ -569,7 +569,7 @@ export default function DashboardV2() {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Supply</div>
-                      <div>{formatAmount(totalOpecSupply, GMX_DECIMALS, 0, true)} OPEC</div>
+                      <div>{formatAmount(totalOpecSupply, OPEC_DECIMALS, 0, true)} OPEC</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Total Staked</div>
@@ -581,9 +581,9 @@ export default function DashboardV2() {
                             handle={`$${formatAmount(stakedOpecSupplyUsd, USD_DECIMALS, 0, true)}`}
                             renderContent={() => (
                               <>
-                                Staked on Arbitrum: {formatAmount(arbitrumStakedOpec, GMX_DECIMALS, 0, true)} OPEC
+                                Staked on Arbitrum: {formatAmount(arbitrumStakedOpec, OPEC_DECIMALS, 0, true)} OPEC
                                 <br />
-                                Staked on Avalanche: {formatAmount(avaxStakedOpec, GMX_DECIMALS, 0, true)} OPEC
+                                Staked on Avalanche: {formatAmount(avaxStakedOpec, OPEC_DECIMALS, 0, true)} OPEC
                               </>
                             )}
                           />
@@ -596,7 +596,7 @@ export default function DashboardV2() {
                     </div>
                   </div>
                 </div>
-                <div className="stats-piechart" onMouseLeave={onGMXDistributionChartLeave}>
+                <div className="stats-piechart" onMouseLeave={onOPECDistributionChartLeave}>
                   {opecDistributionData.length > 0 && (
                     <PieChart width={210} height={210}>
                       <Pie
@@ -610,9 +610,9 @@ export default function DashboardV2() {
                         startAngle={90}
                         endAngle={-270}
                         paddingAngle={2}
-                        onMouseEnter={onGMXDistributionChartEnter}
-                        onMouseOut={onGMXDistributionChartLeave}
-                        onMouseLeave={onGMXDistributionChartLeave}
+                        onMouseEnter={onOPECDistributionChartEnter}
+                        onMouseOut={onOPECDistributionChartLeave}
+                        onMouseLeave={onOPECDistributionChartLeave}
                       >
                         {opecDistributionData.map((entry, index) => (
                           <Cell

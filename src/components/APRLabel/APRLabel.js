@@ -35,8 +35,8 @@ export default function APRLabel({ chainId, label }) {
   const vaultAddress = getContract(chainId, "Vault");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
   const opecAddress = getContract(chainId, "OPEC");
-  const esOpecAddress = getContract(chainId, "ES_GMX");
-  const bnOpecAddress = getContract(chainId, "BN_GMX");
+  const esOpecAddress = getContract(chainId, "ES_OPEC");
+  const bnOpecAddress = getContract(chainId, "BN_OPEC");
   const xpcAddress = getContract(chainId, "XPC");
 
   const stakedOpecTrackerAddress = getContract(chainId, "StakedOpecTracker");

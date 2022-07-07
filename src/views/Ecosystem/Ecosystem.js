@@ -41,7 +41,7 @@ export default function Ecosystem() {
     },
     {
       title: "OPEC Announcements",
-      link: "https://t.me/GMX_Announcements",
+      link: "https://t.me/OPEC_Announcements",
       about: "OPEC Announcements and Updates",
       chainIds: [ARBITRUM, AVALANCHE],
     },
@@ -66,7 +66,7 @@ export default function Ecosystem() {
     },
     {
       title: "OPEC Positions Bot",
-      link: "https://t.me/GMXPositions",
+      link: "https://t.me/OPECPositions",
       about: "Telegram bot for OPEC position updates",
       creatorLabel: "@zhongfu",
       creatorLink: "https://t.me/zhongfu",
@@ -138,7 +138,7 @@ export default function Ecosystem() {
       link: "https://debank.com/",
       about: "DeFi Portfolio Tracker",
       announcementLabel: "https://twitter.com",
-      announcementLink: "https://twitter.com/GMX_IO/status/1439711532884152324",
+      announcementLink: "https://twitter.com/OPEC_IO/status/1439711532884152324",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
@@ -146,7 +146,7 @@ export default function Ecosystem() {
       link: "https://defillama.com",
       about: "Decentralized Finance Dashboard",
       announcementLabel: "https://twitter.com",
-      announcementLink: "https://twitter.com/GMX_IO/status/1438124768033660938",
+      announcementLink: "https://twitter.com/OPEC_IO/status/1438124768033660938",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
@@ -154,7 +154,7 @@ export default function Ecosystem() {
       link: "https://dopex.io",
       about: "Decentralized Options Protocol",
       announcementLabel: "https://twitter.com",
-      announcementLink: "https://twitter.com/GMX_IO/status/1482445801523716099",
+      announcementLink: "https://twitter.com/OPEC_IO/status/1482445801523716099",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
@@ -170,7 +170,7 @@ export default function Ecosystem() {
       link: "https://jonesdao.io",
       about: "Decentralized Options Strategies",
       announcementLabel: "https://twitter.com",
-      announcementLink: "https://twitter.com/GMX_IO/status/1482788805635678212",
+      announcementLink: "https://twitter.com/OPEC_IO/status/1482788805635678212",
       chainIds: [ARBITRUM],
     },
     {
@@ -178,7 +178,7 @@ export default function Ecosystem() {
       link: "https://yieldyak.com/",
       about: "Yield Optimizer on Avalanche",
       announcementLabel: "https://twitter.com",
-      announcementLink: "https://twitter.com/GMX_IO/status/1484601407378378754",
+      announcementLink: "https://twitter.com/OPEC_IO/status/1484601407378378754",
       chainIds: [AVALANCHE],
     },
     {
@@ -202,7 +202,7 @@ export default function Ecosystem() {
       link: "https://dodoex.io/",
       about: "Decentralized Trading Protocol",
       announcementLabel: "https://twitter.com",
-      announcementLink: "https://twitter.com/GMX_IO/status/1438899138549145605",
+      announcementLink: "https://twitter.com/OPEC_IO/status/1438899138549145605",
       chainIds: [ARBITRUM, AVALANCHE],
     },
     {
@@ -210,7 +210,7 @@ export default function Ecosystem() {
       link: "https://openocean.finance/",
       about: "DEX Aggregator",
       announcementLabel: "https://twitter.com",
-      announcementLink: "https://twitter.com/GMX_IO/status/1495780826016989191",
+      announcementLink: "https://twitter.com/OPEC_IO/status/1495780826016989191",
       chainIds: [ARBITRUM, AVALANCHE],
     },
   ];
@@ -218,7 +218,7 @@ export default function Ecosystem() {
   const telegramGroups = [
     {
       title: "OPEC",
-      link: "https://t.me/GMX_IO",
+      link: "https://t.me/OPEC_IO",
       about: "Telegram Group",
     },
     {
@@ -228,7 +228,7 @@ export default function Ecosystem() {
     },
     {
       title: "OPEC (Portuguese)",
-      link: "https://t.me/GMX_Portuguese",
+      link: "https://t.me/OPEC_Portuguese",
       about: "Telegram Group (Portuguese)",
     },
     {

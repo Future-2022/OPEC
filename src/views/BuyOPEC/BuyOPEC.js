@@ -250,7 +250,7 @@ export default function BuyOPEC() {
                     OPEC bonds can be bought on Olympus Pro with a discount and a small vesting period:
                   </div>
                   <div className="buy-opec">
-                    <Button size="xl" imgSrc={ohmArbitrum} href="https://pro.olympusdao.finance/#/partners/GMX">
+                    <Button size="xl" imgSrc={ohmArbitrum} href="https://pro.olympusdao.finance/#/partners/OPEC">
                       Olympus Pro
                     </Button>
                   </div>

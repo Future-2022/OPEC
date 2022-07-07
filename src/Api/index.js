@@ -35,7 +35,6 @@ import {
   expandDecimals,
   getInfoTokens,
   helperToast,
-  AVALANCHE_TESTNET,
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
@@ -48,8 +47,6 @@ function getOpecGraphClient(chainId) {
   if (chainId === ARBITRUM) {
     return arbitrumGraphClient;
   } else if (chainId === AVALANCHE) {
-    return avalancheGraphClient;
-  } else if (chainId === AVALANCHE_TESTNET) {
     return avalancheGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);
@@ -400,11 +397,11 @@ export function useTrades(chainId, account) {
 }
 
 export function useStakedOpecSupply(library, active) {
-  const opecAddressArb = getContract(ARBITRUM, "OPEC");
-  const stakedOpecTrackerAddressArb = getContract(ARBITRUM, "StakedOpecTracker");
+  const gmxAddressArb = getContract(ARBITRUM, "GMX");
+  const stakedOpecTrackerAddressArb = getContract(ARBITRUM, "StakedGmxTracker");
 
   const { data: arbData, mutate: arbMutate } = useSWR(
-    [`StakeV2:stakedOpecSupply:${active}`, ARBITRUM, opecAddressArb, "balanceOf", stakedOpecTrackerAddressArb],
+    [`StakeV2:stakedGmxSupply:${active}`, ARBITRUM, gmxAddressArb, "balanceOf", stakedOpecTrackerAddressArb],
     {
       fetcher: fetcher(library, Token),
     }
@@ -531,33 +528,33 @@ export function useTotalOpecStaked() {
 export function useTotalOpecInLiquidity() {
   let poolAddressArbitrum = getContract(ARBITRUM, "UniswapOpecEthPool");
   let poolAddressAvax = getContract(AVALANCHE, "TraderJoeOpecAvaxPool");
-  let totalGMX = useRef(bigNumberify(0));
+  let totalOPEC = useRef(bigNumberify(0));
 
-  const { data: opecInLiquidityOnArbitrum, mutate: mutateGMXInLiquidityOnArbitrum } = useSWR(
+  const { data: opecInLiquidityOnArbitrum, mutate: mutateOPECInLiquidityOnArbitrum } = useSWR(
     [`StakeV2:opecInLiquidity:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "OPEC"), "balanceOf", poolAddressArbitrum],
     {
       fetcher: fetcher(undefined, Token),
     }
   );
-  const { data: opecInLiquidityOnAvax, mutate: mutateGMXInLiquidityOnAvax } = useSWR(
+  const { data: opecInLiquidityOnAvax, mutate: mutateOPECInLiquidityOnAvax } = useSWR(
     [`StakeV2:opecInLiquidity:${AVALANCHE}`, AVALANCHE, getContract(AVALANCHE, "OPEC"), "balanceOf", poolAddressAvax],
     {
       fetcher: fetcher(undefined, Token),
     }
   );
   const mutate = useCallback(() => {
-    mutateGMXInLiquidityOnArbitrum();
-    mutateGMXInLiquidityOnAvax();
-  }, [mutateGMXInLiquidityOnArbitrum, mutateGMXInLiquidityOnAvax]);
+    mutateOPECInLiquidityOnArbitrum();
+    mutateOPECInLiquidityOnAvax();
+  }, [mutateOPECInLiquidityOnArbitrum, mutateOPECInLiquidityOnAvax]);
 
   if (opecInLiquidityOnAvax && opecInLiquidityOnArbitrum) {
     let total = bigNumberify(opecInLiquidityOnArbitrum).add(opecInLiquidityOnAvax);
-    totalGMX.current = total;
+    totalOPEC.current = total;
   }
   return {
     avax: opecInLiquidityOnAvax,
     arbitrum: opecInLiquidityOnArbitrum,
-    total: totalGMX.current,
+    total: totalOPEC.current,
     mutate,
   };
 }
@@ -571,6 +568,7 @@ function useOpecPriceFromAvalanche() {
   const { _reserve0: opecReserve, _reserve1: avaxReserve } = data || {};
 
   const vaultAddress = getContract(AVALANCHE, "Vault");
+
   const avaxAddress = getTokenBySymbol(AVALANCHE, "WAVAX").address;
   const { data: avaxPrice, mutate: updateAvaxPrice } = useSWR(
     [`StakeV2:avaxPrice`, AVALANCHE, vaultAddress, "getMinPrice", avaxAddress],

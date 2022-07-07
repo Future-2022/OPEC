@@ -17,6 +17,8 @@ function getDotColor(network) {
       return "#4275a8";
     case "Avalanche":
       return "#E84142";
+    case "Avalanche Test":
+      return "#EC0142";
     default:
       return "";
   }
@@ -194,6 +196,7 @@ export default function NetworkSelector(props) {
           className={"network-select"}
           styles={customStyles}
           getOptionLabel={(e) => {
+            console.log('*****************', e.label);
             var optionIcon = require("../../img/" + e.icon);
             return (
               <div style={{ display: "flex", alignItems: "center" }}>
