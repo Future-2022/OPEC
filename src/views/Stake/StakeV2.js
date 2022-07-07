@@ -446,13 +446,13 @@ function VesterDepositModal(props) {
                   onChange={(e) => setValue(e.target.value)}
                 />
               </div>
-              <div className="PositionEditor-token-symbol">esOPEC</div>
+              <div className="PositionEditor-token-symbol">esGMX</div>
             </div>
           </div>
           <div className="VesterDepositModal-info-rows">
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Wallet</div>
-              <div className="align-right">{formatAmount(balance, 18, 2, true)} esOPEC</div>
+              <div className="align-right">{formatAmount(balance, 18, 2, true)} esGMX</div>
             </div>
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Vault Capacity</div>
@@ -471,9 +471,9 @@ function VesterDepositModal(props) {
                         Vault Capacity for your Account
                         <br />
                         <br />
-                        Deposited: {formatAmount(vestedAmount, 18, 2, true)} esOPEC
+                        Deposited: {formatAmount(vestedAmount, 18, 2, true)} esGMX
                         <br />
-                        Max Capacity: {formatAmount(maxVestableAmount, 18, 2, true)} esOPEC
+                        Max Capacity: {formatAmount(maxVestableAmount, 18, 2, true)} esGMX
                         <br />
                       </>
                     );
@@ -505,7 +505,7 @@ function VesterDepositModal(props) {
                           <div>
                             <br />
                             You need a total of at least {formatAmount(nextReserveAmount, 18, 2, true)}{" "}
-                            {stakeTokenLabel} to vest {formatAmount(amount, 18, 2, true)} esOPEC.
+                            {stakeTokenLabel} to vest {formatAmount(amount, 18, 2, true)} esGMX.
                           </div>
                         )}
                       </>
@@ -555,7 +555,7 @@ function VesterWithdrawModal(props) {
           This will withdraw and unreserve all tokens as well as pause vesting.
           <br />
           <br />
-          esOPEC tokens that have been converted to OPEC will remain as OPEC tokens.
+          esGMX tokens that have been converted to OPEC will remain as OPEC tokens.
           <br />
           <br />
           To claim OPEC tokens without withdrawing, use the "Claim" button under the Total Rewards section.
@@ -733,12 +733,12 @@ function CompoundModal(props) {
           </div>
           <div>
             <Checkbox isChecked={shouldClaimEsOpec} setIsChecked={setShouldClaimEsOpec} disabled={shouldStakeEsOpec}>
-              Claim esOPEC Rewards
+              Claim esGMX Rewards
             </Checkbox>
           </div>
           <div>
             <Checkbox isChecked={shouldStakeEsOpec} setIsChecked={toggleShouldStakeEsOpec}>
-              Stake esOPEC Rewards
+              Stake esGMX Rewards
             </Checkbox>
           </div>
           <div>
@@ -852,7 +852,7 @@ function ClaimModal(props) {
           </div>
           <div>
             <Checkbox isChecked={shouldClaimEsOpec} setIsChecked={setShouldClaimEsOpec}>
-              Claim esOPEC Rewards
+              Claim esGMX Rewards
             </Checkbox>
           </div>
           <div>
@@ -1158,10 +1158,10 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
 
   const showStakeEsOpecModal = () => {
     setIsStakeModalVisible(true);
-    setStakeModalTitle("Stake esOPEC");
+    setStakeModalTitle("Stake esGMX");
     setStakeModalMaxAmount(processedData.esOpecBalance);
     setStakeValue("");
-    setStakingTokenSymbol("esOPEC");
+    setStakingTokenSymbol("esGMX");
     setStakingTokenAddress(esOpecAddress);
     setStakingFarmAddress(AddressZero);
     setStakeMethodName("stakeEsOpec");
@@ -1175,7 +1175,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
 
     setIsVesterDepositModalVisible(true);
     setVesterDepositTitle("OPEC Vault");
-    setVesterDepositStakeTokenLabel("staked OPEC + esOPEC + Multiplier Points");
+    setVesterDepositStakeTokenLabel("staked OPEC + esGMX + Multiplier Points");
     setVesterDepositMaxAmount(remainingVestableAmount);
     setVesterDepositBalance(processedData.esOpecBalance);
     setVesterDepositEscrowedBalance(vestingData.opecVester.escrowedBalance);
@@ -1257,7 +1257,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
 
   const showUnstakeEsOpecModal = () => {
     setIsUnstakeModalVisible(true);
-    setUnstakeModalTitle("Unstake esOPEC");
+    setUnstakeModalTitle("Unstake esGMX");
     let maxAmount = processedData.esOpecInStakedOpec;
     if (
       processedData.esOpecInStakedOpec &&
@@ -1271,7 +1271,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     setUnstakeModalMaxAmount(maxAmount);
     setUnstakeModalReservedAmount(vestingData.opecVesterPairAmount);
     setUnstakeValue("");
-    setUnstakingTokenSymbol("esOPEC");
+    setUnstakingTokenSymbol("esGMX");
     setUnstakeMethodName("unstakeEsOpec");
   };
 
@@ -1307,7 +1307,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     }
     let esOpecAmountStr;
     if (processedData.esOpecInStakedOpec && processedData.esOpecInStakedOpec.gt(0)) {
-      esOpecAmountStr = formatAmount(processedData.esOpecInStakedOpec, 18, 2, true) + " esOPEC";
+      esOpecAmountStr = formatAmount(processedData.esOpecInStakedOpec, 18, 2, true) + " esGMX";
     }
     let mpAmountStr;
     if (processedData.bonusOpecInFeeOpec && processedData.bnOpecInFeeOpec.gt(0)) {
@@ -1844,14 +1844,14 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
               <div className="App-card-row">
                 <div className="label">Wallet</div>
                 <div>
-                  {formatKeyAmount(processedData, "esOpecBalance", 18, 2, true)} esOPEC ($
+                  {formatKeyAmount(processedData, "esOpecBalance", 18, 2, true)} esGMX ($
                   {formatKeyAmount(processedData, "esOpecBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "esOpecInStakedOpec", 18, 2, true)} esOPEC ($
+                  {formatKeyAmount(processedData, "esOpecInStakedOpec", 18, 2, true)} esGMX ($
                   {formatKeyAmount(processedData, "esOpecInStakedOpecUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
@@ -1899,14 +1899,14 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
               <div className="App-card-row">
                 <div className="label">Total Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "stakedEsOpecSupply", 18, 0, true)} esOPEC ($
+                  {formatKeyAmount(processedData, "stakedEsOpecSupply", 18, 0, true)} esGMX ($
                   {formatKeyAmount(processedData, "stakedEsOpecSupplyUsd", USD_DECIMALS, 0, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Total Supply</div>
                 <div>
-                  {formatAmount(esOpecSupply, 18, 0, true)} esOPEC (${formatAmount(esOpecSupplyUsd, USD_DECIMALS, 0, true)}
+                  {formatAmount(esOpecSupply, 18, 0, true)} esGMX (${formatAmount(esOpecSupplyUsd, USD_DECIMALS, 0, true)}
                   )
                 </div>
               </div>
@@ -1937,7 +1937,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
         <div className="Tab-title-section">
           <div className="Page-title">Vest</div>
           <div className="Page-description">
-            Convert esOPEC tokens to OPEC tokens.
+            Convert esGMX tokens to OPEC tokens.
             <br />
             Please read the{" "}
             <a href="https://gmxio.gitbook.io/gmx/rewards#vesting" target="_blank" rel="noopener noreferrer">
@@ -1963,7 +1963,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                           <>
                             {formatAmount(processedData.opecInStakedOpec, 18, 2, true)} OPEC
                             <br />
-                            {formatAmount(processedData.esOpecInStakedOpec, 18, 2, true)} esOPEC
+                            {formatAmount(processedData.esOpecInStakedOpec, 18, 2, true)} esGMX
                             <br />
                             {formatAmount(processedData.bnOpecInFeeOpec, 18, 2, true)} Multiplier Points
                           </>
@@ -1996,7 +1996,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                           <>
                             {formatKeyAmount(vestingData, "opecVesterClaimSum", 18, 4, true)} tokens have been converted
                             to OPEC from the&nbsp;
-                            {formatKeyAmount(vestingData, "opecVesterVestedAmount", 18, 4, true)} esOPEC deposited for
+                            {formatKeyAmount(vestingData, "opecVesterVestedAmount", 18, 4, true)} esGMX deposited for
                             vesting.
                           </>
                         );
@@ -2074,7 +2074,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                           <>
                             {formatKeyAmount(vestingData, "xpcVesterClaimSum", 18, 4, true)} tokens have been converted
                             to OPEC from the&nbsp;
-                            {formatKeyAmount(vestingData, "xpcVesterVestedAmount", 18, 4, true)} esOPEC deposited for
+                            {formatKeyAmount(vestingData, "xpcVesterVestedAmount", 18, 4, true)} esGMX deposited for
                             vesting.
                           </>
                         );

@@ -564,7 +564,7 @@ export function useTotalOpecInLiquidity() {
 
 function useOpecPriceFromAvalanche() {
   const poolAddress = getContract(AVALANCHE, "TraderJoeOpecAvaxPool");
-  console.log('poolAddress',poolAddress);
+
   const { data, mutate: updateReserves } = useSWR(["TraderJoeOpecAvaxReserves", AVALANCHE, poolAddress, "getReserves"], {
     fetcher: fetcher(undefined, UniswapV2),
   });
@@ -572,7 +572,6 @@ function useOpecPriceFromAvalanche() {
 
   const vaultAddress = getContract(AVALANCHE, "Vault");
   const avaxAddress = getTokenBySymbol(AVALANCHE, "WAVAX").address;
-  console.log(vaultAddress, "------", avaxAddress);
   const { data: avaxPrice, mutate: updateAvaxPrice } = useSWR(
     [`StakeV2:avaxPrice`, AVALANCHE, vaultAddress, "getMinPrice", avaxAddress],
     {

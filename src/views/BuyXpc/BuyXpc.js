@@ -21,7 +21,7 @@ export default function BuyXpc(props) {
     setIsBuying(buying);
   }, [history.location.hash]);
 
-  return (  
+  return (
     <div className="default-container page-layout">
       <div className="section-title-block">
         <div className="section-title-icon">

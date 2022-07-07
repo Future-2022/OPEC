@@ -270,19 +270,6 @@
     },
     {
       "inputs": [],
-      "name": "inWhitelistMode",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "name",
       "outputs": [
         {
@@ -386,19 +373,6 @@
     {
       "inputs": [
         {
-          "internalType": "bool",
-          "name": "_inWhitelistMode",
-          "type": "bool"
-        }
-      ],
-      "name": "setInWhitelistMode",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "string",
           "name": "_name",
           "type": "string"
@@ -410,24 +384,6 @@
         }
       ],
       "name": "setInfo",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_handler",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "_isWhitelisted",
-          "type": "bool"
-        }
-      ],
-      "name": "setWhitelistedHandler",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -593,25 +549,6 @@
       "name": "unstake",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "whitelistedHandlers",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {

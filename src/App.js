@@ -41,7 +41,6 @@ import {
   REFERRAL_CODE_QUERY_PARAM,
   isDevelopment,
   DISABLE_ORDER_VALIDATION_KEY,
-  AVALANCHE_TESTNET,
 } from "./Helpers";
 
 import Home from "./views/Home/Home";
@@ -256,12 +255,6 @@ function AppHeaderUser({
       value: AVALANCHE,
       icon: "ic_avalanche_24.svg",
       color: "#E841424D",
-    },
-    {
-      label: "Avalanche Test",
-      value: AVALANCHE_TESTNET,
-      icon: "ic_avalanche_24.svg",
-      color: "#c64f79",
     },
   ];
 
